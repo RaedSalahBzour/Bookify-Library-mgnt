@@ -25,7 +25,12 @@ namespace Bookify_Library_mgnt.Data
                 .HasMany(b => b.UserBooks)
                 .WithOne(ub => ub.Book)
                 .HasForeignKey(ub => ub.BookId);
+            modelBuilder.Entity<Book>()
+        .HasKey(b => b.Id);
 
+            modelBuilder.Entity<Book>()
+                .Property(b => b.Id)
+                .ValueGeneratedOnAdd();
             modelBuilder.Entity<Book>()
                 .HasMany(b => b.CategoryBooks)
                 .WithOne(cb => cb.Book)
@@ -35,22 +40,42 @@ namespace Bookify_Library_mgnt.Data
                 .HasMany(c => c.CategoryBooks)
                 .WithOne(cb => cb.Category)
                 .HasForeignKey(cb => cb.CategoryId);
+            modelBuilder.Entity<Category>()
+        .HasKey(c => c.Id);
 
+            modelBuilder.Entity<Category>()
+                .Property(c => c.Id)
+                .ValueGeneratedOnAdd();
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Book)
                 .WithMany(b => b.Reviews)
                 .HasForeignKey(r => r.BookId);
+            modelBuilder.Entity<Review>()
+        .HasKey(r => r.Id);
 
+            modelBuilder.Entity<Review>()
+                .Property(r => r.Id)
+                .ValueGeneratedOnAdd();
             modelBuilder.Entity<Borrowing>()
                 .HasOne(b => b.Book)
                 .WithMany(b => b.Borrowings)
                 .HasForeignKey(b => b.BookId);
+            modelBuilder.Entity<Borrowing>()
+        .HasKey(b => b.Id);
 
+            modelBuilder.Entity<Borrowing>()
+                .Property(b => b.Id)
+                .ValueGeneratedOnAdd();
             modelBuilder.Entity<User>()
                 .HasMany(u => u.UserBooks)
                 .WithOne(ub => ub.User)
                 .HasForeignKey(ub => ub.UserId);
+            modelBuilder.Entity<User>()
+        .HasKey(u => u.Id);
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.Id)
+                .ValueGeneratedOnAdd();
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Reviews)
                 .WithOne(r => r.User)

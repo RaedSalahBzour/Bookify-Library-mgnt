@@ -1,12 +1,9 @@
-﻿using Bookify_Library_mgnt.Data;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.EntityFrameworkCore;
-namespace Bookify_Library_mgnt.Models
-{
-    public class Book
-    {
+﻿using Bookify_Library_mgnt.Models;
 
+namespace Bookify_Library_mgnt.Dtos
+{
+    public class BooksDto
+    {
         public string Id { get; set; }
         public string Author { get; set; }
         public string? Description { get; set; }
@@ -16,9 +13,5 @@ namespace Bookify_Library_mgnt.Models
         public DateTime PublishDate { get; set; }
         public List<Review> Reviews { get; set; }
         public List<Borrowing> Borrowings { get; set; }
-        public List<UserBook> UserBooks { get; set; }
-        public List<CategoryBook> CategoryBooks { get; set; }
-
     }
 }
-
