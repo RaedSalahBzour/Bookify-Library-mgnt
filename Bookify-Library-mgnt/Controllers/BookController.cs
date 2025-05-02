@@ -1,4 +1,4 @@
-﻿using Bookify_Library_mgnt.Dtos;
+﻿using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +19,14 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllBooks()
         {
             var books = await _bookRepository.GetAllAsync();
             return Ok(books);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById([FromRoute] string id)
+        public async Task<IActionResult> GetBookById([FromRoute] string id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
             if (book == null)
@@ -40,7 +40,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> CreateBook([FromBody] CreateBookDto bookDto)
         {
             var book = await _bookRepository.CreateBookAsync(bookDto);
-            return CreatedAtAction(nameof(GetById), new { Id = book.Id }, bookDto);
+            return CreatedAtAction(nameof(GetBookById), new { Id = book.Id }, bookDto);
         }
 
         [HttpPut("{id:guid}")]

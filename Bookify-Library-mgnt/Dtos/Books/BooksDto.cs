@@ -1,6 +1,6 @@
 ﻿using Bookify_Library_mgnt.Models;
 
-namespace Bookify_Library_mgnt.Dtos
+namespace Bookify_Library_mgnt.Dtos.Books
 {
     public class BooksDto
     {

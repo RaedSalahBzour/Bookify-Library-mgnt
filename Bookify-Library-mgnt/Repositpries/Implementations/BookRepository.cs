@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Bookify_Library_mgnt.Data;
-using Bookify_Library_mgnt.Dtos;
+using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +37,10 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
         }
         public async Task<Book> CreateBookAsync(CreateBookDto bookDto)
         {
+            if (bookDto == null)
+            {
+                return null;
+            }
             var book = _mapper.Map<Book>(bookDto);
             _context.Books.Add(book);
             await _context.SaveChangesAsync();

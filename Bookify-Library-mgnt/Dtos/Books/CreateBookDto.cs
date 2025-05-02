@@ -1,6 +1,6 @@
-﻿namespace Bookify_Library_mgnt.Dtos
+﻿namespace Bookify_Library_mgnt.Dtos.Books
 {
-    public class UpdateBookDto
+    public class CreateBookDto
     {
         public string Author { get; set; }
         public string? Description { get; set; }
