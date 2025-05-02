@@ -8,5 +8,6 @@
         public string? CoverUrl { get; set; }
         public string ISBN { get; set; }
         public DateTime PublishDate { get; set; }
+        public List<string> CategoryIds { get; set; }
     }
 }

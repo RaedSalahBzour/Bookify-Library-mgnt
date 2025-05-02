@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 namespace Bookify_Library_mgnt.Models
 {
     public class Book
@@ -16,7 +17,9 @@ namespace Bookify_Library_mgnt.Models
         public DateTime PublishDate { get; set; }
         public List<Review> Reviews { get; set; }
         public List<Borrowing> Borrowings { get; set; }
+        [JsonIgnore]
         public List<UserBook> UserBooks { get; set; }
+        [JsonIgnore]
         public List<CategoryBook> CategoryBooks { get; set; }
 
     }

@@ -42,6 +42,20 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
                 return null;
             }
             var book = _mapper.Map<Book>(bookDto);
+            book.CategoryBooks = new List<CategoryBook>();
+            foreach (var categoryId in bookDto.CategoryIds)
+            {
+                var categoryExists = await _context.Categories.AnyAsync(c => c.Id == categoryId);
+                if (categoryExists)
+                {
+                    book.CategoryBooks.Add(new CategoryBook
+                    {
+                        BookId = book.Id,
+                        CategoryId = categoryId
+                    });
+                }
+            }
+
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
             return book;

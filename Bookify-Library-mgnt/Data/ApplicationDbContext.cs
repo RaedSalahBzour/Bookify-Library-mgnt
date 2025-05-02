@@ -21,6 +21,12 @@ namespace Bookify_Library_mgnt.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<CategoryBook>()
+           .HasKey(cb => new { cb.BookId, cb.CategoryId });
+
+            modelBuilder.Entity<UserBook>()
+           .HasKey(cb => new { cb.UserId, cb.BookId });
+
             modelBuilder.Entity<Book>()
                 .HasMany(b => b.UserBooks)
                 .WithOne(ub => ub.Book)
@@ -96,11 +102,8 @@ namespace Bookify_Library_mgnt.Data
            .WithOne(r => r.User)
            .HasForeignKey(r => r.UserId);
 
-            modelBuilder.Entity<CategoryBook>()
-           .HasKey(cb => new { cb.CategoryId, cb.BookId });
 
-            modelBuilder.Entity<UserBook>()
-           .HasKey(cb => new { cb.UserId, cb.BookId });
+
 
         }
 

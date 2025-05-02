@@ -8,9 +8,11 @@ namespace Bookify_Library_mgnt.Mappings
     {
         public CategoryMapping()
         {
-            CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Category, CreateCategoryDto>().ReverseMap();
             CreateMap<Category, UpdateCategoryDto>().ReverseMap();
+            CreateMap<Category, CategoryDto>()
+            .ForMember(dest => dest.Books,
+                opt => opt.MapFrom(src => src.CategoryBooks.Select(cb => cb.Book))).ReverseMap();
         }
     }
 }

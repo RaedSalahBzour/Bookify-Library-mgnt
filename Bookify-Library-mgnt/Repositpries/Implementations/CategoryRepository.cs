@@ -17,13 +17,14 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             _mapper = mapper;
         }
 
+
         public async Task<IEnumerable<CategoryDto>> GetAllAsync()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _context.Categories.Include(c => c.CategoryBooks)
+                .ThenInclude(c => c.Book).ToListAsync();
             var categoriesDto = _mapper.Map<IEnumerable<CategoryDto>>(categories);
             return categoriesDto;
         }
-
         public async Task<CategoryDto> GetByIdAsync(string id)
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);

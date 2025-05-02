@@ -8,9 +8,12 @@ namespace Bookify_Library_mgnt.Mappings
     {
         public BookMapping()
         {
-            CreateMap<Book, CreateBookDto>().ReverseMap();
-            CreateMap<Book, UpdateBookDto>().ReverseMap();
-            CreateMap<Book, BooksDto>().ReverseMap();
+            CreateMap<Book, CreateBookDto>().ReverseMap()
+                .ForMember(dest => dest.CategoryBooks, opt => opt.Ignore()); ;
+            CreateMap<Book, UpdateBookDto>().ReverseMap()
+                .ForMember(dest => dest.CategoryBooks, opt => opt.Ignore()); ;
+            CreateMap<Book, BooksDto>().ReverseMap()
+                .ForMember(dest => dest.CategoryBooks, opt => opt.Ignore()); ;
         }
     }
 }
