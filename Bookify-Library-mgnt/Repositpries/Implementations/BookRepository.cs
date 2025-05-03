@@ -20,7 +20,7 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
 
         public async Task<IEnumerable<BooksDto>> GetAllAsync()
         {
-            var books = await _context.Books.ToListAsync();
+            var books = await _context.Books.Include(b => b.Reviews).ToListAsync();
             var booksDto = _mapper.Map<IEnumerable<BooksDto>>(books);
             return booksDto;
         }
@@ -37,10 +37,7 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
         }
         public async Task<Book> CreateBookAsync(CreateBookDto bookDto)
         {
-            if (bookDto == null)
-            {
-                return null;
-            }
+
             var book = _mapper.Map<Book>(bookDto);
             book.CategoryBooks = new List<CategoryBook>();
             foreach (var categoryId in bookDto.CategoryIds)

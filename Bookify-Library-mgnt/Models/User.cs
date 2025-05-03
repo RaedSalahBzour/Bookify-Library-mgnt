@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 namespace Bookify_Library_mgnt.Models
 {
@@ -6,6 +7,7 @@ namespace Bookify_Library_mgnt.Models
     {
         public List<Review> Reviews { get; set; }
         public List<Borrowing> Borrowings { get; set; }
+        [JsonIgnore]
         public List<UserBook> UserBooks { get; set; }
 
 
