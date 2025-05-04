@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bookify_Library_mgnt.Data;
 using Bookify_Library_mgnt.Dtos.Users;
+using Bookify_Library_mgnt.Helper;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -21,16 +22,33 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserDto>> GetUsersAsync()
+        public async Task<PagedResult<UserDto>> GetUsersAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var users = await _context.Users.ToListAsync();
-            var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
-            return usersDto;
+            var query = _context.Users
+                .Include(u => u.Borrowings)
+                .Include(u => u.Reviews)
+                .AsQueryable();
 
+            var totalCount = await query.CountAsync();
+
+            var users = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
+
+            return new PagedResult<UserDto>
+            {
+                Items = usersDto,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
         public async Task<UserDto> GetUserByIdAsync(string id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _context.Users.Include(u => u.Borrowings).Include(u => u.Reviews).FirstOrDefaultAsync(x => x.Id == id);
             if (user == null)
             {
                 return null;

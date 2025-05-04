@@ -18,9 +18,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetReviews()
+        public async Task<IActionResult> GetReviews(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _reviewRepository.GetReviewsAsync());
+            return Ok(await _reviewRepository.GetReviewsAsync(pageNumber, pageSize));
         }
 
         [HttpGet("{id:guid}")]
@@ -33,15 +33,9 @@ namespace Bookify_Library_mgnt.Controllers
             }
             return Ok(review);
         }
-
-
         [HttpPost]
         public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto reviewDto)
         {
-            if (reviewDto == null)
-            {
-                return BadRequest("provaide a valid Review");
-            }
             var review = await _reviewRepository.CreateReviewAsync(reviewDto);
             return CreatedAtAction(nameof(GetReviewById), new { id = review.Id }, reviewDto);
         }
@@ -49,17 +43,14 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateReview([FromRoute] string id, [FromBody] UpdateReviewDto reviewDto)
         {
-            if (reviewDto == null)
-            {
-                return BadRequest("provaide a valid Review");
-            }
+
             var review = await _reviewRepository.UpdateReviewAsync(id, reviewDto);
             return Ok(reviewDto);
 
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteReview(string id)
+        public async Task<IActionResult> DeleteReview([FromRoute] string id)
         {
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review == null)

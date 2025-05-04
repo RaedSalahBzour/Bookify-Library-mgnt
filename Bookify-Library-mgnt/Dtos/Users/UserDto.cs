@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using Bookify_Library_mgnt.Dtos.Borrowings;
+using Bookify_Library_mgnt.Dtos.Reviews;
+using Bookify_Library_mgnt.Models;
+using System.Text.Json.Serialization;
 
 namespace Bookify_Library_mgnt.Dtos.Users
 {
@@ -7,6 +10,8 @@ namespace Bookify_Library_mgnt.Dtos.Users
         public string UserName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public List<ReviewDto> Reviews { get; set; }
+        public List<BorrowingDto> Borrowings { get; set; }
 
     }
 }

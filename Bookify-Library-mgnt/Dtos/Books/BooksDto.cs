@@ -1,4 +1,5 @@
-﻿using Bookify_Library_mgnt.Dtos.Reviews;
+﻿using Bookify_Library_mgnt.Dtos.Borrowings;
+using Bookify_Library_mgnt.Dtos.Reviews;
 using Bookify_Library_mgnt.Models;
 
 namespace Bookify_Library_mgnt.Dtos.Books
@@ -13,6 +14,6 @@ namespace Bookify_Library_mgnt.Dtos.Books
         public string ISBN { get; set; }
         public DateTime PublishDate { get; set; }
         public List<ReviewDto> Reviews { get; set; }
-        public List<Borrowing> Borrowings { get; set; }
+        public List<BorrowingDto> Borrowings { get; set; }
     }
 }

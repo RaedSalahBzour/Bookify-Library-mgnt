@@ -19,9 +19,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetCategories(int pageNumber = 1, int pageSize = 10)
         {
-            var categories = await _categoryRepository.GetAllAsync();
+            var categories = await _categoryRepository.GetCategoriesAsync(pageNumber, pageSize);
             return Ok(categories);
         }
 

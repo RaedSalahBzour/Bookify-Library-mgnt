@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bookify_Library_mgnt.Data;
 using Bookify_Library_mgnt.Dtos.Books;
+using Bookify_Library_mgnt.Helper;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,29 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<BooksDto>> GetAllAsync()
+        public async Task<PagedResult<BooksDto>> GetBooksAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var books = await _context.Books.Include(b => b.Reviews).ToListAsync();
+            var query = _context.Books
+                .Include(b => b.Reviews)
+                .Include(b => b.Borrowings)
+                .AsQueryable();
+
+            var totalCount = await query.CountAsync();
+
+            var books = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
             var booksDto = _mapper.Map<IEnumerable<BooksDto>>(books);
-            return booksDto;
+
+            return new PagedResult<BooksDto>
+            {
+                Items = booksDto,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<BooksDto> GetByIdAsync(string id)

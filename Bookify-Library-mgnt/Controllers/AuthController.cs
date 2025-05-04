@@ -18,9 +18,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _authRepository.GetUsersAsync());
+            return Ok(await _authRepository.GetUsersAsync(pageNumber, pageSize));
         }
 
         [HttpGet("{id:guid}")]
