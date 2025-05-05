@@ -5,6 +5,7 @@ using Bookify_Library_mgnt.Helper;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Bookify_Library_mgnt.Repositpries.Implementations
 {
@@ -19,12 +20,35 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             _mapper = mapper;
         }
 
-        public async Task<PagedResult<BooksDto>> GetBooksAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<PagedResult<BooksDto>> GetBooksAsync(
+            int pageNumber = 1, int pageSize = 10,
+            string? title = null,
+            string? category = null,
+            DateOnly? publishtDate = null
+           )
         {
             var query = _context.Books
-                .Include(b => b.Reviews)
-                .Include(b => b.Borrowings)
-                .AsQueryable();
+                 .Include(b => b.Reviews)
+                 .Include(b => b.Borrowings)
+                 .Include(b => b.CategoryBooks)
+                 .ThenInclude(cb => cb.Category)
+                 .AsQueryable();
+            if (!string.IsNullOrEmpty(title))
+            {
+                query = query.Where(b => b.Title.Contains(title));
+            }
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                query = query.Where(b => b.CategoryBooks
+                                          .Any(cb => cb.Category.Name == category));
+            }
+
+            if (publishtDate.HasValue)
+            {
+                query = query.Where(b => DateOnly.FromDateTime(b.PublishDate) == publishtDate.Value);
+            }
+
 
             var totalCount = await query.CountAsync();
 

@@ -19,9 +19,12 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllBooks(int pageNumber = 1, int pageSize = 10,
+                    string? title = null,
+                    string? category = null,
+                   DateOnly? publishtDate = null)
         {
-            var books = await _bookRepository.GetBooksAsync(pageNumber, pageSize);
+            var books = await _bookRepository.GetBooksAsync(pageNumber, pageSize, title, category, publishtDate);
             return Ok(books);
         }
 
