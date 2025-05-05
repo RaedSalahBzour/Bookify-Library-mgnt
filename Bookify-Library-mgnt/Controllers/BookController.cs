@@ -22,9 +22,11 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> GetAllBooks(int pageNumber = 1, int pageSize = 10,
                     string? title = null,
                     string? category = null,
-                   DateOnly? publishtDate = null)
+                   DateOnly? publishtDate = null,
+                   string? sortBy = null,
+                   bool descending = false)
         {
-            var books = await _bookRepository.GetBooksAsync(pageNumber, pageSize, title, category, publishtDate);
+            var books = await _bookRepository.GetBooksAsync(pageNumber, pageSize, title, category, publishtDate, sortBy, descending);
             return Ok(books);
         }
 

@@ -6,6 +6,7 @@ using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 
 namespace Bookify_Library_mgnt.Repositpries.Implementations
 {
@@ -24,10 +25,12 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             int pageNumber = 1, int pageSize = 10,
             string? title = null,
             string? category = null,
-            DateOnly? publishtDate = null
+            DateOnly? publishtDate = null,
+            string? sortBy = null,
+            bool descending = false
            )
         {
-            var query = _context.Books
+            var query = _context.Books.AsNoTracking()
                  .Include(b => b.Reviews)
                  .Include(b => b.Borrowings)
                  .Include(b => b.CategoryBooks)
@@ -48,7 +51,22 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             {
                 query = query.Where(b => DateOnly.FromDateTime(b.PublishDate) == publishtDate.Value);
             }
+            query = sortBy?.ToLower() switch
+            {
+                "rating" => descending
+                    ? query.OrderByDescending(b => b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0)
+                    : query.OrderBy(b => b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0),
 
+                "title" => descending
+                    ? query.OrderByDescending(b => b.Title)
+                    : query.OrderBy(b => b.Title),
+
+                "publishdate" => descending
+                    ? query.OrderByDescending(b => b.PublishDate)
+                    : query.OrderBy(b => b.PublishDate),
+
+                _ => query.OrderBy(b => b.Title)
+            };
 
             var totalCount = await query.CountAsync();
 
