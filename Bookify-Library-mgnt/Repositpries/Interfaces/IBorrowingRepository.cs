@@ -6,10 +6,11 @@ namespace Bookify_Library_mgnt.Repositpries.Interfaces
 {
     public interface IBorrowingRepository
     {
-        Task<PagedResult<BorrowingDto>> GetBorrowingsAsync(int pageNumber = 1, int pageSize = 10);
-        Task<BorrowingDto> GetBorrowingByIdAsync(string id);
-        Task<Borrowing> CreateBorrowingAsync(CreateBorrowingDto borrowingDto);
-        Task<Borrowing> UpdateBorrowingAsync(string id, UpdateBorrowingDto borrowingdto);
-        Task<string> DeleteBorrowingAsync(string id);
+        IQueryable<Borrowing> GetBorrowingsAsync();
+        Task<Borrowing> GetBorrowingByIdAsync(string id);
+        Task<Borrowing> CreateBorrowingAsync(Borrowing borrowing);
+        Task<Borrowing> UpdateBorrowingAsync(Borrowing borrowing);
+        Task<Borrowing> DeleteBorrowingAsync(Borrowing borrowing);
+        Task SaveChangesAsync();
     }
 }

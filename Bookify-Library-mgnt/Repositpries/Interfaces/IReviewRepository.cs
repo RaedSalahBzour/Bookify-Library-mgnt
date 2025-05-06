@@ -7,11 +7,11 @@ namespace Bookify_Library_mgnt.Repositpries.Interfaces
 {
     public interface IReviewRepository
     {
-        Task<IQueryable<Review>> GetReviewsAsync();
+        IQueryable<Review> GetReviewsAsync();
         Task<Review> GetReviewByIdAsync(string id);
         Task<Review> CreateReviewAsync(Review review);
-        Task<Review> UpdateReviewAsync(string id, Review review);
-        Task<Review> DeleteReviewAsync(string id);
+        Task<Review> UpdateReviewAsync(Review review);
+        Task<Review> DeleteReviewAsync(Review review);
         Task<bool> IsUserAndBookExists(string userId, string bookId);
         Task SaveChangesAsync();
 

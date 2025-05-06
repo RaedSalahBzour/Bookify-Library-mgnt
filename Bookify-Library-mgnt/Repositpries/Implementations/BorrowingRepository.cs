@@ -14,104 +14,40 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
     public class BorrowingRepository : IBorrowingRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public BorrowingRepository(ApplicationDbContext context, IMapper mapper)
+        public BorrowingRepository(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
-        public async Task<PagedResult<BorrowingDto>> GetBorrowingsAsync(int pageNumber = 1, int pageSize = 10)
+        public IQueryable<Borrowing> GetBorrowingsAsync()
         {
-            var query = _context.Borrowings.AsQueryable();
-            var totalBorrowings = await query.CountAsync();
-            var borrowings = await query.Skip((pageNumber - 1) * pageSize)
-                             .Take(pageSize)
-                             .ToListAsync();
-            var borrowingsDto = _mapper.Map<IEnumerable<BorrowingDto>>(borrowings);
-            return new PagedResult<BorrowingDto>
-            {
-                Items = borrowingsDto,
-                TotalCount = totalBorrowings,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
+            return _context.Borrowings.AsQueryable();
         }
-        public async Task<BorrowingDto> GetBorrowingByIdAsync(string id)
+        public async Task<Borrowing> GetBorrowingByIdAsync(string id)
         {
-            var borrowing = await _context.Borrowings.FirstOrDefaultAsync(x => x.Id == id);
-            if (borrowing == null) { return null; }
-            var borrowingDto = _mapper.Map<BorrowingDto>(borrowing);
-            return borrowingDto;
+            return await _context.Borrowings.FirstOrDefaultAsync(x => x.Id == id);
         }
-        public async Task<Borrowing> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
+        public async Task<Borrowing> CreateBorrowingAsync(Borrowing borrowing)
         {
-            var borrowing = _mapper.Map<Borrowing>(borrowingDto);
             await _context.Borrowings.AddAsync(borrowing);
-            await _context.SaveChangesAsync();
             return borrowing;
         }
 
-        public async Task<Borrowing> UpdateBorrowingAsync(string id, UpdateBorrowingDto borrowingdto)
+        public async Task<Borrowing> UpdateBorrowingAsync(Borrowing borrowing)
         {
-            var borrowing = await _context.Borrowings.FirstOrDefaultAsync(x => x.Id == id);
-            if (borrowing == null) { return null; }
-            _mapper.Map(borrowingdto, borrowing);
             _context.Borrowings.Update(borrowing);
-            await _context.SaveChangesAsync();
             return borrowing;
         }
-        public async Task<string> DeleteBorrowingAsync(string id)
+        public async Task<Borrowing> DeleteBorrowingAsync(Borrowing borrowing)
         {
-            var borrowing = await _context.Borrowings.FirstOrDefaultAsync(x => x.Id == id);
-            if (borrowing == null) { return null; }
             _context.Borrowings.Remove(borrowing);
-            await _context.SaveChangesAsync();
-            return borrowing.Id;
+            return borrowing;
         }
 
-    }
-
-
-    public static class BorrowingEndpoints
-    {
-        public static void MapBorrowingEndpoints(this IEndpointRouteBuilder routes)
+        public async Task SaveChangesAsync()
         {
-            var group = routes.MapGroup("/api/Borrowing").WithTags(nameof(Borrowing));
-
-            group.MapGet("/", () =>
-            {
-                return new[] { new Borrowing() };
-            })
-            .WithName("GetAllBorrowings")
-            .WithOpenApi();
-
-            group.MapGet("/{id}", (int id) =>
-            {
-                //return new Borrowing { ID = id };
-            })
-            .WithName("GetBorrowingById")
-            .WithOpenApi();
-
-            group.MapPut("/{id}", (int id, Borrowing input) =>
-            {
-                return TypedResults.NoContent();
-            })
-            .WithName("UpdateBorrowing")
-            .WithOpenApi();
-
-            group.MapPost("/", (Borrowing model) =>
-            {
-                //return TypedResults.Created($"/api/Borrowings/{model.ID}", model);
-            })
-            .WithName("CreateBorrowing")
-            .WithOpenApi();
-
-            group.MapDelete("/{id}", (int id) =>
-            {
-                //return TypedResults.Ok(new Borrowing { ID = id });
-            })
-            .WithName("DeleteBorrowing")
-            .WithOpenApi();
+            await _context.SaveChangesAsync();
         }
     }
+
+
 }

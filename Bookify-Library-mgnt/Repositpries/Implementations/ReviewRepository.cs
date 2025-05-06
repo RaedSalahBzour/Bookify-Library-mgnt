@@ -13,14 +13,12 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
     public class ReviewRepository : IReviewRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public ReviewRepository(ApplicationDbContext context, IMapper mapper)
+        public ReviewRepository(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
-        public async Task<IQueryable<Review>> GetReviewsAsync()
+        public IQueryable<Review> GetReviewsAsync()
         {
             return _context.Reviews.AsQueryable();
         }
@@ -34,21 +32,15 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             await _context.Reviews.AddAsync(review);
             return review;
         }
-        public async Task<Review> UpdateReviewAsync(string id, Review review)
+        public async Task<Review> UpdateReviewAsync(Review review)
         {
             _context.Reviews.Update(review);
             return review;
         }
 
-        public async Task<Review> DeleteReviewAsync(string id)
+        public async Task<Review> DeleteReviewAsync(Review review)
         {
-            var review = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
-            if (review is null)
-            {
-                return null;
-            }
             _context.Reviews.Remove(review);
-            await _context.SaveChangesAsync();
             return review;
         }
 

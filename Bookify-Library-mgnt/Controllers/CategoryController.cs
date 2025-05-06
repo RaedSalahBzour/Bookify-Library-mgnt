@@ -1,5 +1,6 @@
 ﻿using Bookify_Library_mgnt.Dtos.Categories;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
+using Bookify_Library_mgnt.Services.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,65 +12,46 @@ namespace Bookify_Library_mgnt.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICategoryService categoryService)
         {
-            _categoryRepository = categoryRepository;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCategories(int pageNumber = 1, int pageSize = 10)
         {
-            var categories = await _categoryRepository.GetCategoriesAsync(pageNumber, pageSize);
+            var categories = await _categoryService.GetCategoriesAsync(pageNumber, pageSize);
             return Ok(categories);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetCategoryById([FromRoute] string id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
-            {
-                return BadRequest("not found");
-            }
+            var category = await _categoryService.GetByIdAsync(id);
             return Ok(category);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto categoryDto)
         {
-            if (categoryDto is null)
-            {
-                return BadRequest("u must provide a category information");
-            }
-            var category = await _categoryRepository.CreateCategoryAsync(categoryDto);
+            var category = await _categoryService.CreateCategoryAsync(categoryDto);
             return CreatedAtAction(nameof(GetCategoryById), new { Id = category.Id }, categoryDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCategory([FromRoute] string id, [FromBody] UpdateCategoryDto categoryDto)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
-            {
-                return null;
-            }
-            await _categoryRepository.UpdateCategoryAsync(id, categoryDto);
+            await _categoryService.UpdateCategoryAsync(id, categoryDto);
             return Ok(categoryDto);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
-            {
-                return BadRequest("not found");
-            }
-            await _categoryRepository.DeleteCategoryAsync(id);
+            await _categoryService.DeleteCategoryAsync(id);
             return NoContent();
-
         }
     }
 }

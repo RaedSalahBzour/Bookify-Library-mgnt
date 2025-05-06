@@ -6,10 +6,11 @@ namespace Bookify_Library_mgnt.Repositpries.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<PagedResult<CategoryDto>> GetCategoriesAsync(int pageNumber = 1, int pageSize = 10);
-        Task<CategoryDto> GetByIdAsync(string id);
-        Task<Category> CreateCategoryAsync(CreateCategoryDto categoryDto);
-        Task<Category> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto);
-        Task<string> DeleteCategoryAsync(string id);
+        IQueryable<Category> GetCategoriesAsync();
+        Task<Category> GetByIdAsync(string id);
+        Task<Category> CreateCategoryAsync(Category category);
+        Task<Category> UpdateCategoryAsync(Category category);
+        Task<Category> DeleteCategoryAsync(Category category);
+        Task SaveChangesAsync();
     }
 }

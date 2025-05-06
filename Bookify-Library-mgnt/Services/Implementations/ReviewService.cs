@@ -19,7 +19,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         }
         public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var queryReviews = await _reviewRepository.GetReviewsAsync();
+            var queryReviews = _reviewRepository.GetReviewsAsync();
             var paginatedReview = await queryReviews.ToPaginationForm(pageNumber, pageSize);
 
             var reviewsDto = _mapper.Map<IEnumerable<ReviewDto>>(paginatedReview.Items);
@@ -59,7 +59,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             if (review is null)
                 return null;//it must be return Result.error(review not found) => Generic Result
             _mapper.Map(dto, review);
-            await _reviewRepository.UpdateReviewAsync(id, review);
+            await _reviewRepository.UpdateReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
             return review;
 
@@ -69,9 +69,11 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
                 return null;//it must be return Result.error(review not found) => Generic Result
-            await _reviewRepository.DeleteReviewAsync(id);
+            await _reviewRepository.DeleteReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
             return review.Id;
         }
+
+
     }
 }
