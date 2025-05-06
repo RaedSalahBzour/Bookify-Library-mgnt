@@ -1,8 +1,10 @@
 ﻿using Bookify_Library_mgnt.Controllers;
 using Bookify_Library_mgnt.Data;
+using Bookify_Library_mgnt.Extensions;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Implementations;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -19,14 +21,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
+builder.Services.AddApplicationServices();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 

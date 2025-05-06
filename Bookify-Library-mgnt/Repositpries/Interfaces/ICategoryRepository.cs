@@ -1,5 +1,5 @@
 ﻿using Bookify_Library_mgnt.Dtos.Categories;
-using Bookify_Library_mgnt.Helper;
+using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
 
 namespace Bookify_Library_mgnt.Repositpries.Interfaces

@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Helper
+﻿namespace Bookify_Library_mgnt.Helper.Pagination
 {
     public class PagedResult<T>
     {

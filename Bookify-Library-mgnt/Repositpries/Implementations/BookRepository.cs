@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Bookify_Library_mgnt.Data;
 using Bookify_Library_mgnt.Dtos.Books;
-using Bookify_Library_mgnt.Helper;
+using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.EntityFrameworkCore;

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Bookify_Library_mgnt.Data;
 using Bookify_Library_mgnt.Dtos.Reviews;
-using Bookify_Library_mgnt.Helper;
+using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Bookify_Library_mgnt.Repositpries.Implementations
 {
@@ -18,59 +20,27 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             _mapper = mapper;
         }
 
-        public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IQueryable<Review>> GetReviewsAsync()
         {
-            var query = _context.Reviews.AsQueryable();
-            var totalCount = await query.CountAsync();
-            var reviews = await query.Skip((pageNumber - 1) * pageSize)
-                         .Take(pageSize)
-                         .ToListAsync();
-            var reviewsDto = _mapper.Map<IEnumerable<ReviewDto>>(reviews);
-            return new PagedResult<ReviewDto>
-            {
-                TotalCount = totalCount,
-                Items = reviewsDto,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-            };
+            return _context.Reviews.AsQueryable();
         }
-        public async Task<ReviewDto> GetReviewByIdAsync(string id)
+        public async Task<Review> GetReviewByIdAsync(string id)
         {
-            var review = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
-            if (review is null)
-            {
-                return null;
-            }
-            var reviewDto = _mapper.Map<ReviewDto>(review);
-            return reviewDto;
+            return await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<Review> CreateReviewAsync(CreateReviewDto dto)
+        public async Task<Review> CreateReviewAsync(Review review)
         {
-
-            var review = _mapper.Map<Review>(dto);
-            var book = await _context.Books.FirstOrDefaultAsync(x => x.Id == dto.BookId);
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == dto.UserId);
-            if (user == null && book == null) return null;
             await _context.Reviews.AddAsync(review);
-            await _context.SaveChangesAsync();
             return review;
         }
-        public async Task<Review> UpdateReviewAsync(string id, UpdateReviewDto dto)
+        public async Task<Review> UpdateReviewAsync(string id, Review review)
         {
-            var review = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
-            if (review is null)
-            {
-                return null;
-            }
-            _mapper.Map(dto, review);
             _context.Reviews.Update(review);
-            await _context.SaveChangesAsync();
             return review;
-
         }
 
-        public async Task<string> DeleteReviewAsync(string id)
+        public async Task<Review> DeleteReviewAsync(string id)
         {
             var review = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
             if (review is null)
@@ -79,7 +49,19 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
             }
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
-            return review.Id;
+            return review;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        public async Task<bool> IsUserAndBookExists(string userId, string bookId)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.Id == bookId);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if (user == null && book == null) return false;
+            return true;
         }
 
     }

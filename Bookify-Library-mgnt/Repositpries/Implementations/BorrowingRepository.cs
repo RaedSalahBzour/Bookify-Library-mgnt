@@ -2,7 +2,7 @@
 using Bookify_Library_mgnt.Data;
 using Bookify_Library_mgnt.Dtos.Borrowings;
 using Bookify_Library_mgnt.Dtos.Users;
-using Bookify_Library_mgnt.Helper;
+using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
