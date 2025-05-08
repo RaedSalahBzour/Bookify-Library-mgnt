@@ -27,52 +27,37 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
-            var user = await _authService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(user);
+            var result = await _authService.GetUserByIdAsync(id);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+            return Ok(result.Data);
         }
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] CreateUserDto userDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var user = await _authService.CreateAsync(userDto);
-            if (user == null)
-            {
-                return BadRequest("User could not be created. Email or username may already be in use.");
-            }
-            return CreatedAtAction(nameof(GetUserById), new { Id = user.Id }, userDto);
-
+            var result = await _authService.CreateAsync(userDto);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+            return CreatedAtAction(nameof(GetUserById), new { Id = result.Data.Id }, userDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto userDto)
         {
-            var user = await _authService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            await _authService.UpdateUserAsync(id, userDto);
-            return Ok(userDto);
+            var result = await _authService.UpdateUserAsync(id, userDto);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+            return Ok(result.Data);
 
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
-            var user = await _authService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            await _authService.DeleteUserAsync(id);
-            return NoContent();
+            var result = await _authService.DeleteUserAsync(id);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+            return Ok(result.Data);
         }
     }
 }

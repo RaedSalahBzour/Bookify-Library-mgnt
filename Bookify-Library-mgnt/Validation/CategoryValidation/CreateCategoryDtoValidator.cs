@@ -1,7 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Categories;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Helper.Validation.CategoryValidation
+namespace Bookify_Library_mgnt.Validation.CategoryValidation
 {
     public class CreateCategoryDtoValidator : AbstractValidator<CreateCategoryDto>
     {

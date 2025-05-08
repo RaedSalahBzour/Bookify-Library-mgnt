@@ -1,7 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Reviews;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Helper.Validation.ReviewValidation
+namespace Bookify_Library_mgnt.Validation.ReviewValidation
 {
     public class CreateReviewDtoValidator : AbstractValidator<CreateReviewDto>
     {

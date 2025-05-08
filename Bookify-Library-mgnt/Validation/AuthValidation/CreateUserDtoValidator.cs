@@ -1,7 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Users;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Helper.Validation.UserValidation
+namespace Bookify_Library_mgnt.Validation.UserValidation
 {
     public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
     {

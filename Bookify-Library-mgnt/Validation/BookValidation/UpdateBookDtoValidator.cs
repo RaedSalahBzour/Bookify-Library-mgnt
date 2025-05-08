@@ -1,11 +1,11 @@
 ﻿using Bookify_Library_mgnt.Dtos.Books;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Helper.Validation.BookValidation
+namespace Bookify_Library_mgnt.Validation.BookValidation
 {
-    public class CreateBookDtoValidator : AbstractValidator<CreateBookDto>
+    public class UpdateBookDtoValidator : AbstractValidator<UpdateBookDto>
     {
-        public CreateBookDtoValidator()
+        public UpdateBookDtoValidator()
         {
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Title is required")
@@ -20,6 +20,5 @@ namespace Bookify_Library_mgnt.Helper.Validation.BookValidation
             RuleFor(x => x.CategoryIds)
                 .NotEmpty().WithMessage("CategoryIds is required");
         }
-
     }
 }
