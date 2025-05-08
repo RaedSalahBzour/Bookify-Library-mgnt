@@ -1,5 +1,6 @@
 ﻿using Bookify_Library_mgnt.Dtos.Users;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
+using Bookify_Library_mgnt.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,23 +11,23 @@ namespace Bookify_Library_mgnt.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepository _authRepository;
+        private readonly IAuthService _authService;
 
-        public AuthController(IAuthRepository authRepository)
+        public AuthController(IAuthService authService)
         {
-            _authRepository = authRepository;
+            _authService = authService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _authRepository.GetUsersAsync(pageNumber, pageSize));
+            return Ok(await _authService.GetUsersAsync(pageNumber, pageSize));
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
-            var user = await _authRepository.GetUserByIdAsync(id);
+            var user = await _authService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -40,25 +41,24 @@ namespace Bookify_Library_mgnt.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var user = await _authRepository.CreateAsync(userDto);
+            var user = await _authService.CreateAsync(userDto);
             if (user == null)
             {
                 return BadRequest("User could not be created. Email or username may already be in use.");
             }
-            return CreatedAtAction(nameof(GetUserById), new { Id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUserById), new { Id = user.Id }, userDto);
 
         }
-
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto userDto)
         {
-            var user = await _authRepository.GetUserByIdAsync(id);
+            var user = await _authService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            await _authRepository.UpdateUserAsync(id, userDto);
+            await _authService.UpdateUserAsync(id, userDto);
             return Ok(userDto);
 
         }
@@ -66,12 +66,12 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
-            var user = await _authRepository.GetUserByIdAsync(id);
+            var user = await _authService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            await _authRepository.DeleteUserAsync(id);
+            await _authService.DeleteUserAsync(id);
             return NoContent();
         }
     }

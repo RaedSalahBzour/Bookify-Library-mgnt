@@ -10,7 +10,7 @@ namespace Bookify_Library_mgnt.Mappings
         {
             CreateMap<Book, CreateBookDto>().ReverseMap();
             CreateMap<Book, UpdateBookDto>().ReverseMap();
-            CreateMap<Book, BooksDto>().ReverseMap();
+            CreateMap<Book, BookDto>().ReverseMap();
 
         }
     }

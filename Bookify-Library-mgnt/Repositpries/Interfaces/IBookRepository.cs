@@ -6,14 +6,12 @@ namespace Bookify_Library_mgnt.Repositpries.Interfaces
 {
     public interface IBookRepository
     {
-        Task<PagedResult<BooksDto>> GetBooksAsync(int pageNumber = 1, int pageSize = 10, string? title = null,
-            string? category = null,
-            DateOnly? publishtDate = null,
-            string? sortBy = null,
-            bool descending = false);
-        Task<BooksDto> GetByIdAsync(string id);
-        Task<Book> CreateBookAsync(CreateBookDto bookDto);
-        Task<Book> UpdateBookAsync(string id, UpdateBookDto bookDto);
-        Task<string> DeleteBookAsync(string id);
+        IQueryable<Book> GetBooksAsync();
+        Task<Book> GetByIdAsync(string id);
+        Task<Book> CreateBookAsync(Book book);
+        Task<Book> UpdateBookAsync(Book book);
+        Task<Book> DeleteBookAsync(Book book);
+        Task SaveChangesAsync();
+        Task<bool> IsCategoryExist(string id);
     }
 }

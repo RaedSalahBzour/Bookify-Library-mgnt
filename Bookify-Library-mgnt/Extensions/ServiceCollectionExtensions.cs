@@ -19,6 +19,8 @@ namespace Bookify_Library_mgnt.Extensions
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IBorrowingService, BorrowingService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

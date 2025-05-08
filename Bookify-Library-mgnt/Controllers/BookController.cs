@@ -1,6 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
+using Bookify_Library_mgnt.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,11 +12,11 @@ namespace Bookify_Library_mgnt.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IBookService _bookService;
 
-        public BookController(IBookRepository bookRepository)
+        public BookController(IBookService bookService)
         {
-            _bookRepository = bookRepository;
+            _bookService = bookService;
         }
 
         [HttpGet]
@@ -26,14 +27,14 @@ namespace Bookify_Library_mgnt.Controllers
                    string? sortBy = null,
                    bool descending = false)
         {
-            var books = await _bookRepository.GetBooksAsync(pageNumber, pageSize, title, category, publishtDate, sortBy, descending);
+            var books = await _bookService.GetBooksAsync(pageNumber, pageSize, title, category, publishtDate, sortBy, descending);
             return Ok(books);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetBookById([FromRoute] string id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookService.GetByIdAsync(id);
             if (book == null)
             {
                 return BadRequest("not found");
@@ -44,19 +45,19 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookDto bookDto)
         {
-            var book = await _bookRepository.CreateBookAsync(bookDto);
+            var book = await _bookService.CreateBookAsync(bookDto);
             return CreatedAtAction(nameof(GetBookById), new { Id = book.Id }, bookDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateBook([FromRoute] string id, [FromBody] UpdateBookDto bookDto)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookService.GetByIdAsync(id);
             if (book is null)
             {
                 return BadRequest("not found");
             }
-            await _bookRepository.UpdateBookAsync(id, bookDto);
+            await _bookService.UpdateBookAsync(id, bookDto);
             return Ok(bookDto);
 
 
@@ -65,12 +66,12 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookService.GetByIdAsync(id);
             if (book is null)
             {
                 return BadRequest("not found");
             }
-            await _bookRepository.DeleteBookAsync(id);
+            await _bookService.DeleteBookAsync(id);
             return NoContent();
         }
     }

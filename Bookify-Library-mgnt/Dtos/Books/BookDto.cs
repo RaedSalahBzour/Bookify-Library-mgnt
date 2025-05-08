@@ -4,7 +4,7 @@ using Bookify_Library_mgnt.Models;
 
 namespace Bookify_Library_mgnt.Dtos.Books
 {
-    public class BooksDto
+    public class BookDto
     {
         public string Id { get; set; }
         public string Author { get; set; }
