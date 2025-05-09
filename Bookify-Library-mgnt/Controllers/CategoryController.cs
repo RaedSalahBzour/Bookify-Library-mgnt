@@ -29,28 +29,44 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetCategoryById([FromRoute] string id)
         {
-            var category = await _categoryService.GetByIdAsync(id);
-            return Ok(category);
+            var result = await _categoryService.GetByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto categoryDto)
         {
-            var category = await _categoryService.CreateCategoryAsync(categoryDto);
-            return CreatedAtAction(nameof(GetCategoryById), new { Id = category.Id }, categoryDto);
+            var result = await _categoryService.CreateCategoryAsync(categoryDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return CreatedAtAction(nameof(GetCategoryById), new { Id = result.Data.Id }, categoryDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCategory([FromRoute] string id, [FromBody] UpdateCategoryDto categoryDto)
         {
-            await _categoryService.UpdateCategoryAsync(id, categoryDto);
+            var result = await _categoryService.UpdateCategoryAsync(id, categoryDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
             return Ok(categoryDto);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
-            await _categoryService.DeleteCategoryAsync(id);
+            var result = await _categoryService.DeleteCategoryAsync(id);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
             return NoContent();
         }
     }

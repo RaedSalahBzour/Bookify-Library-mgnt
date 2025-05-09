@@ -11,12 +11,12 @@ namespace Bookify_Library_mgnt.Validation.BorrowingValidation
                 .NotEmpty()
                 .WithMessage("Borrowing Date Is Required")
                 .GreaterThan(DateTime.Now)
-                .WithMessage("Start date must be in the future.");
+                .WithMessage("Borrowing date must be in the future.");
             RuleFor(x => x.ReturnedOn)
                 .NotEmpty()
                 .WithMessage("Returning Date Is Required")
                 .GreaterThan(x => x.BorrowedOn)
-                .WithMessage("End date must be after Borrowing date.");
+                .WithMessage("Returning date must be after Borrowing date.");
             RuleFor(x => x.UserId).NotEmpty().WithMessage("UserId Date Is Required");
             RuleFor(x => x.BookId).NotEmpty().WithMessage("BookId Date Is Required");
         }

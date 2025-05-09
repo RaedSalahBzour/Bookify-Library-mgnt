@@ -48,12 +48,12 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
         {
             await _context.SaveChangesAsync();
         }
-        public async Task<bool> IsUserAndBookExists(string userId, string bookId)
+        public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
+            string bookId)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(x => x.Id == bookId);
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (user == null && book == null) return false;
-            return true;
+            var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+            var bookExists = await _context.Books.AnyAsync(b => b.Id == bookId);
+            return (userExists, bookExists);
         }
 
     }

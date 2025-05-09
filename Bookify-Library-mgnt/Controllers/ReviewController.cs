@@ -27,36 +27,44 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetReviewById(string id)
         {
-            var review = await _reviewService.GetReviewByIdAsync(id);
-            if (review == null)
+            var result = await _reviewService.GetReviewByIdAsync(id);
+            if (!result.IsSuccess)
             {
-                return NotFound();
+                return BadRequest(result.Errors);
             }
-            return Ok(review);
+            return Ok(result);
         }
         [HttpPost]
         public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto reviewDto)
         {
-            var review = await _reviewService.CreateReviewAsync(reviewDto);
-            return CreatedAtAction(nameof(GetReviewById), new { id = review.Id }, reviewDto);
+            var result = await _reviewService.CreateReviewAsync(reviewDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return CreatedAtAction(nameof(GetReviewById), new { id = result.Data.Id }, reviewDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateReview([FromRoute] string id, [FromBody] UpdateReviewDto reviewDto)
         {
 
-            var review = await _reviewService.UpdateReviewAsync(id, reviewDto);
-            return Ok(reviewDto);
+            var result = await _reviewService.UpdateReviewAsync(id, reviewDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result);
 
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteReview([FromRoute] string id)
         {
-            var review = await _reviewService.GetReviewByIdAsync(id);
-            if (review == null)
+            var result = await _reviewService.GetReviewByIdAsync(id);
+            if (!result.IsSuccess)
             {
-                return NotFound();
+                return BadRequest(result.Errors);
             }
             await _reviewService.DeleteReviewAsync(id);
             return NoContent();

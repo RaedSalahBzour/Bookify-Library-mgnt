@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Dtos.Borrowings;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
+using Bookify_Library_mgnt.Repositpries.Implementations;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using FluentValidation;
+using Humanizer;
 
 namespace Bookify_Library_mgnt.Services.Implementations
 {
@@ -11,10 +15,16 @@ namespace Bookify_Library_mgnt.Services.Implementations
     {
         private readonly IBorrowingRepository _borrowingRepository;
         private readonly IMapper _mapper;
-        public BorrowingService(IBorrowingRepository borrowingRepository, IMapper mapper)
+        private readonly IValidator<CreateBorrowingDto> _crateValidator;
+        private readonly IValidator<UpdateBorrowingDto> _updateValidator;
+        public BorrowingService(IBorrowingRepository borrowingRepository, IMapper mapper,
+            IValidator<CreateBorrowingDto> crateValidator,
+            IValidator<UpdateBorrowingDto> updateValidator)
         {
             _borrowingRepository = borrowingRepository;
             _mapper = mapper;
+            _crateValidator = crateValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task<PagedResult<BorrowingDto>> GetBorrowingsAsync(int pageNumber = 1, int pageSize = 10)
@@ -30,38 +40,64 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 PageSize = pageSize
             };
         }
-        public async Task<BorrowingDto> GetBorrowingByIdAsync(string id)
+        public async Task<Result<BorrowingDto>> GetBorrowingByIdAsync(string id)
         {
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
+            if (borrowing == null) { return Result<BorrowingDto>.Fail(ErrorMessages.NotFound(id)); }
             var borrowingDto = _mapper.Map<BorrowingDto>(borrowing);
-            if (borrowing == null) { return null; }
-            return borrowingDto;
+            return Result<BorrowingDto>.Ok(borrowingDto);
         }
 
-        public async Task<Borrowing> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
+        public async Task<Result<Borrowing>> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
         {
+            var validationResult = await _crateValidator.ValidateAsync(borrowingDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<Borrowing>.Fail(errorMessages);
+            }
             var borrowing = _mapper.Map<Borrowing>(borrowingDto);
+            var (userExists, bookExists) = await _borrowingRepository.
+                CheckUserAndBookExistAsync(borrowingDto.UserId, borrowingDto.BookId);
+            if (!userExists || !bookExists)
+            {
+                var errors = new List<string>();
+
+                if (!userExists)
+                    errors.Add($"User with ID {borrowingDto.UserId} not found");
+
+                if (!bookExists)
+                    errors.Add($"Book with ID {borrowingDto.BookId} not found");
+
+                return Result<Borrowing>.Fail(string.Join(" | ", errors));
+            }
             await _borrowingRepository.CreateBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
-            return borrowing;
+            return Result<Borrowing>.Ok(borrowing);
         }
-        public async Task<Borrowing> UpdateBorrowingAsync(string id, UpdateBorrowingDto borrowingDto)
+        public async Task<Result<Borrowing>> UpdateBorrowingAsync(string id, UpdateBorrowingDto borrowingDto)
         {
+            var validationResult = await _updateValidator.ValidateAsync(borrowingDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<Borrowing>.Fail(errorMessages);
+            }
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return null; }
+            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFound(id)); }
             _mapper.Map(borrowingDto, borrowing);
             await _borrowingRepository.UpdateBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
-            return borrowing;
+            return Result<Borrowing>.Ok(borrowing);
         }
 
-        public async Task<Borrowing> DeleteBorrowingAsync(string id)
+        public async Task<Result<Borrowing>> DeleteBorrowingAsync(string id)
         {
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return null; }
+            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFound(id)); }
             await _borrowingRepository.DeleteBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
-            return borrowing;
+            return Result<Borrowing>.Ok(borrowing);
         }
 
 

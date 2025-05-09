@@ -12,7 +12,7 @@ namespace Bookify_Library_mgnt.Repositpries.Interfaces
         Task<Review> CreateReviewAsync(Review review);
         Task<Review> UpdateReviewAsync(Review review);
         Task<Review> DeleteReviewAsync(Review review);
-        Task<bool> IsUserAndBookExists(string userId, string bookId);
+        Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId, string bookId);
         Task SaveChangesAsync();
 
     }

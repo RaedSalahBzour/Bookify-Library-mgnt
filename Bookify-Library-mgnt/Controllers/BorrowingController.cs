@@ -26,32 +26,39 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetBorrowingById([FromRoute] string id)
         {
-            var borrowing = await _borrowingService.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return NotFound(); }
-            return Ok(borrowing);
+            var result = await _borrowingService.GetBorrowingByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBorrowing([FromBody] CreateBorrowingDto borrowingDto)
         {
-            var borrowing = await _borrowingService.CreateBorrowingAsync(borrowingDto);
-            return CreatedAtAction(nameof(GetBorrowingById), new { Id = borrowing.Id }, borrowingDto);
+            var result = await _borrowingService.CreateBorrowingAsync(borrowingDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return CreatedAtAction(nameof(GetBorrowingById), new { Id = result.Data.Id }, borrowingDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateBorrowing([FromRoute] string id, [FromBody] UpdateBorrowingDto borrowingDto)
         {
-            var borrowing = await _borrowingService.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return NotFound(); }
+            var result = await _borrowingService.GetBorrowingByIdAsync(id);
+            if (!result.IsSuccess) { return BadRequest(result.Errors); }
             await _borrowingService.UpdateBorrowingAsync(id, borrowingDto);
-            return Ok(borrowingDto);
+            return Ok(result);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteBorrowing([FromRoute] string id)
         {
-            var borrowing = await _borrowingService.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return NotFound(); }
+            var result = await _borrowingService.GetBorrowingByIdAsync(id);
+            if (!result.IsSuccess) { return BadRequest(result.Errors); }
             await _borrowingService.DeleteBorrowingAsync(id);
             return NoContent();
         }
