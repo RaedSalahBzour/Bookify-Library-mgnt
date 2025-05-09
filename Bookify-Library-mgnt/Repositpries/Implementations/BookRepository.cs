@@ -32,7 +32,7 @@ namespace Bookify_Library_mgnt.Repositpries.Implementations
 
         public async Task<Book> GetByIdAsync(string id)
         {
-            return await _context.Books.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Books.Include(b => b.CategoryBooks).FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<Book> CreateBookAsync(Book book)
         {

@@ -18,7 +18,9 @@ namespace Bookify_Library_mgnt.Validation.BookValidation
             RuleFor(x => x.PublishDate)
                 .NotEmpty().WithMessage("PublishDate is required");
             RuleFor(x => x.CategoryIds)
-                .NotEmpty().WithMessage("CategoryIds is required");
+                .NotEmpty().WithMessage("CategoryIds is required")
+                .Must(ids => ids.All(id => Guid.TryParse(id, out _)))
+                .WithMessage("All CategoryIds must be valid GUIDs.");
         }
 
     }

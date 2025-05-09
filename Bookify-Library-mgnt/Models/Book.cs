@@ -23,7 +23,7 @@ namespace Bookify_Library_mgnt.Models
         [JsonIgnore]
         public List<UserBook> UserBooks { get; set; }
         [JsonIgnore]
-        public List<CategoryBook> CategoryBooks { get; set; }
+        public List<CategoryBook> CategoryBooks { get; set; } = new();
 
     }
 }

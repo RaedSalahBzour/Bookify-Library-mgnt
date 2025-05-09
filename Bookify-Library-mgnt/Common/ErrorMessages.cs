@@ -8,6 +8,7 @@ namespace Bookify_Library_mgnt.Common
         public static string EmailAlreadyExists(string email) => $"Email '{email}' is already registered.";
         public static string UsernameAlreadyExists(string username) => $"Username '{username}' is already taken.";
         public static string ValidationFailed => "Validation failed. See error details.";
+        public static string AlreadyExist(string id) => $"This record ${id} already exsist";
         public static string OperationFailed(string operation) => $"{operation} failed. Please try again.";
     }
 }

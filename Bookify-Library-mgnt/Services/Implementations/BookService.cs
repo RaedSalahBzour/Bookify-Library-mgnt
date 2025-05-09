@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -13,10 +15,14 @@ namespace Bookify_Library_mgnt.Services.Implementations
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
-        public BookService(IBookRepository bookRepository, IMapper mapper)
+        private readonly IValidator<CreateBookDto> _createValidator;
+        private readonly IValidator<UpdateBookDto> _UpdateValidator;
+        public BookService(IBookRepository bookRepository, IMapper mapper, IValidator<CreateBookDto> createValidator, IValidator<UpdateBookDto> updateValidator)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+            _createValidator = createValidator;
+            _UpdateValidator = updateValidator;
         }
 
 
@@ -66,57 +72,96 @@ namespace Bookify_Library_mgnt.Services.Implementations
             };
         }
 
-        public async Task<BookDto> GetByIdAsync(string id)
+        public async Task<Result<BookDto>> GetByIdAsync(string id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
-            if (book == null) return null;
+            if (book == null) return Result<BookDto>.Fail(ErrorMessages.NotFound(id));
             var bookDto = _mapper.Map<BookDto>(book);
-            return bookDto;
+            return Result<BookDto>.Ok(bookDto);
         }
-        public async Task<Book> CreateBookAsync(CreateBookDto bookDto)
+        public async Task<Result<Book>> CreateBookAsync(CreateBookDto bookDto)
         {
+            var validationResult = await _createValidator.ValidateAsync(bookDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<Book>.Fail(errorMessages);
+            }
             var book = _mapper.Map<Book>(bookDto);
             book.CategoryBooks = new List<CategoryBook>();
             foreach (var categoryId in bookDto.CategoryIds)
             {
                 var categoryExists = await _bookRepository.IsCategoryExist(categoryId);
-                if (categoryExists)
+                if (!categoryExists)
                 {
-                    book.CategoryBooks.Add(new CategoryBook
-                    {
-                        BookId = book.Id,
-                        CategoryId = categoryId
-                    });
+                    return Result<Book>.Fail(ErrorMessages.NotFound(categoryId));
                 }
+                book.CategoryBooks.Add(new CategoryBook
+                {
+                    BookId = book.Id,
+                    CategoryId = categoryId
+                });
             }
             await _bookRepository.CreateBookAsync(book);
             await _bookRepository.SaveChangesAsync();
-            return book;
+            return Result<Book>.Ok(book);
         }
-        public async Task<Book> UpdateBookAsync(string id, UpdateBookDto bookDto)
+        public async Task<Result<Book>> UpdateBookAsync(string id, UpdateBookDto bookDto)
         {
+            var validationResult = await _UpdateValidator.ValidateAsync(bookDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<Book>.Fail(errorMessages);
+            }
+
             var book = await _bookRepository.GetByIdAsync(id);
             if (book is null)
             {
-                return null;
+                return Result<Book>.Fail(ErrorMessages.NotFound(id));
             }
+
             _mapper.Map(bookDto, book);
+
+            var currentCategoryIds = book.CategoryBooks?
+                .Select(cb => cb.CategoryId).ToList() ?? new List<string>();
+
+            foreach (var categoryToRemove in currentCategoryIds)
+            {
+                bookDto.CategoryIds.Remove(categoryToRemove);
+            }
+
+            foreach (var categoryId in bookDto.CategoryIds)
+            {
+                var categoryExists = await _bookRepository.IsCategoryExist(categoryId);
+                if (!categoryExists)
+                {
+                    return Result<Book>.Fail(ErrorMessages.NotFound(categoryId));
+                }
+
+                book.CategoryBooks.Add(new CategoryBook
+                {
+                    BookId = book.Id,
+                    CategoryId = categoryId
+                });
+            }
+
             await _bookRepository.UpdateBookAsync(book);
             await _bookRepository.SaveChangesAsync();
-            return book;
 
+            return Result<Book>.Ok(book);
         }
 
-        public async Task<string> DeleteBookAsync(string id)
+        public async Task<Result<Book>> DeleteBookAsync(string id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
             if (book is null)
             {
-                return null;
+                return Result<Book>.Fail(ErrorMessages.NotFound(id));
             }
             await _bookRepository.DeleteBookAsync(book);
             await _bookRepository.SaveChangesAsync();
-            return book.Id;
+            return Result<Book>.Ok(book);
         }
 
     }

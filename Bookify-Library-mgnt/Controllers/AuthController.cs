@@ -33,7 +33,7 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] CreateUserDto userDto)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userDto)
         {
             var result = await _authService.CreateAsync(userDto);
             if (!result.IsSuccess)

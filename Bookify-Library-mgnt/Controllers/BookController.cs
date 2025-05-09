@@ -1,4 +1,5 @@
-﻿using Bookify_Library_mgnt.Dtos.Books;
+﻿using Bookify_Library_mgnt.Common;
+using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
@@ -34,30 +35,27 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetBookById([FromRoute] string id)
         {
-            var book = await _bookService.GetByIdAsync(id);
-            if (book == null)
-            {
-                return BadRequest("not found");
-            }
-            return Ok(book);
+            var result = await _bookService.GetByIdAsync(id);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookDto bookDto)
         {
-            var book = await _bookService.CreateBookAsync(bookDto);
-            return CreatedAtAction(nameof(GetBookById), new { Id = book.Id }, bookDto);
+            var result = await _bookService.CreateBookAsync(bookDto);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+            return CreatedAtAction(nameof(GetBookById), new { Id = result.Data.Id }, bookDto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateBook([FromRoute] string id, [FromBody] UpdateBookDto bookDto)
         {
-            var book = await _bookService.GetByIdAsync(id);
-            if (book is null)
-            {
-                return BadRequest("not found");
-            }
-            await _bookService.UpdateBookAsync(id, bookDto);
+            var result = await _bookService.UpdateBookAsync(id, bookDto);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
             return Ok(bookDto);
 
 
@@ -66,12 +64,9 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            var book = await _bookService.GetByIdAsync(id);
-            if (book is null)
-            {
-                return BadRequest("not found");
-            }
-            await _bookService.DeleteBookAsync(id);
+            var result = await _bookService.DeleteBookAsync(id);
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
             return NoContent();
         }
     }
