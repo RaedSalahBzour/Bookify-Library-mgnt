@@ -1,14 +1,15 @@
 ﻿using Bookify_Library_mgnt.Dtos.Users;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Bookify_Library_mgnt.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -17,14 +18,13 @@ namespace Bookify_Library_mgnt.Controllers
         {
             _authService = authService;
         }
-
-        [HttpGet]
+        [HttpGet("getUsers")]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
             return Ok(await _authService.GetUsersAsync(pageNumber, pageSize));
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("getUser/{id:guid}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
             var result = await _authService.GetUserByIdAsync(id);
@@ -32,8 +32,9 @@ namespace Bookify_Library_mgnt.Controllers
                 return BadRequest(result.Errors);
             return Ok(result.Data);
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userDto)
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] CreateUserDto userDto)
         {
             var result = await _authService.CreateAsync(userDto);
             if (!result.IsSuccess)
@@ -41,7 +42,7 @@ namespace Bookify_Library_mgnt.Controllers
             return CreatedAtAction(nameof(GetUserById), new { Id = result.Data.Id }, userDto);
         }
 
-        [HttpPut("{id:guid}")]
+        [HttpPut("update/{id:guid}")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto userDto)
         {
             var result = await _authService.UpdateUserAsync(id, userDto);
@@ -50,8 +51,7 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
 
         }
-
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("delete/{id:guid}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
             var result = await _authService.DeleteUserAsync(id);
@@ -59,5 +59,21 @@ namespace Bookify_Library_mgnt.Controllers
                 return BadRequest(result.Errors);
             return Ok(result.Data);
         }
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto login)
+        {
+            var result = await _authService.LoginAsync(login);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
+        }
+        //[HttpPost("logout")]
+        //public async Task<IActionResult> Logout()
+        //{
+
+        //}
     }
 }

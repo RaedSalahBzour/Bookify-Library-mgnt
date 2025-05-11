@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Bookify_Library_mgnt.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController()]
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;

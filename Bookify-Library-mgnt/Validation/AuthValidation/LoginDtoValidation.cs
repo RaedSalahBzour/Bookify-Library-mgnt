@@ -1,18 +1,14 @@
 ﻿using Bookify_Library_mgnt.Dtos.Users;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Validation.UserValidation
+namespace Bookify_Library_mgnt.Validation.AuthValidation
 {
-    public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
+    public class LoginDtoValidation : AbstractValidator<LoginDto>
     {
-        public CreateUserDtoValidator()
+        public LoginDtoValidation()
         {
-            RuleFor(x => x.UserName)
-           .NotEmpty().WithMessage("Username is required")
-           .Length(3, 20).WithMessage("Username must be between 3 and 20 characters")
-           .Matches("^[a-zA-Z0-9_-]+$").WithMessage("Username can only contain letters, numbers, underscores, and hyphens");
-            RuleFor(x => x.Email).NotEmpty().WithMessage("email is required")
-                .EmailAddress().WithMessage("invalid email format");
+            RuleFor(x => x.Email).NotEmpty().WithMessage("the email is required")
+                .EmailAddress().WithMessage("invalid email");
             RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required")
             .MinimumLength(8).WithMessage("Password must be at least 8 characters long")

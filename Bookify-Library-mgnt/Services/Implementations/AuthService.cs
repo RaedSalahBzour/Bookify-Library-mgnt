@@ -18,16 +18,23 @@ namespace Bookify_Library_mgnt.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IValidator<CreateUserDto> _createValidator;
         private readonly IValidator<UpdateUserDto> _updateValidator;
+        private readonly IValidator<LoginDto> _loginValidator;
+        private readonly SignInManager<User> _signInManager;
+        private readonly ITokenService _tokenService;
         public AuthService(UserManager<User> userManager,
             IAuthRepository authRepository, IMapper mapper,
             IValidator<CreateUserDto> createValidator,
-            IValidator<UpdateUserDto> updateValidator)
+            IValidator<UpdateUserDto> updateValidator,
+            IValidator<LoginDto> loginValidator, SignInManager<User> signInManager, ITokenService tokenService)
         {
             _userManager = userManager;
             _authRepository = authRepository;
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
+            _loginValidator = loginValidator;
+            _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         public async Task<PagedResult<UserDto>> GetUsersAsync(int pageNumber = 1, int pageSize = 10)
@@ -103,6 +110,31 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Delete"));
             }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
+        }
+        public async Task<Result<string?>> LoginAsync(LoginDto loginDto)
+        {
+            var validationResult = await _loginValidator.ValidateAsync(loginDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<string?>.Fail(errorMessages);
+            }
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (user is null)
+            {
+                return Result<string?>.Fail(ErrorMessages.LoginFail());
+            }
+            var userHashPassword = new PasswordHasher<User>().HashPassword(user, loginDto.Password);
+            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, loginDto.Password)
+                == PasswordVerificationResult.Failed)
+            {
+                return Result<string?>.Fail(ErrorMessages.LoginFail());
+            }
+
+            var token = _tokenService.GenerateToken(user);
+
+            return Result<string?>.Ok(token);
+
         }
     }
 }

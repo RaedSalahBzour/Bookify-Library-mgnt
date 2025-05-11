@@ -12,5 +12,6 @@ namespace Bookify_Library_mgnt.Services.Interfaces
         Task<Result<User>> CreateAsync(CreateUserDto userDto);
         Task<Result<UserDto>> UpdateUserAsync(string id, UpdateUserDto userDto);
         Task<Result<UserDto>> DeleteUserAsync(string id);
+        Task<Result<string?>> LoginAsync(LoginDto loginDto);
     }
 }
