@@ -1,0 +1,72 @@
+﻿using Bookify_Library_mgnt.Common;
+using Bookify_Library_mgnt.Dtos.Roles;
+using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace Bookify_Library_mgnt.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    //[Authorize(Roles = "Admin")]
+    public class RoleController : ControllerBase
+    {
+        private readonly IRoleService _roleService;
+
+        public RoleController(IRoleService roleService)
+        {
+            _roleService = roleService;
+        }
+
+        [HttpGet("getRoles")]
+        public async Task<IActionResult> GetRoles(int pageNumber = 1, int pageSize = 10)
+        {
+            return Ok(await _roleService.GetRolesAsync(pageNumber, pageSize));
+        }
+
+        [HttpGet("getById/{id:guid}")]
+        public async Task<IActionResult> Get([FromRoute] string id)
+        {
+            var result = await _roleService.GetRoleByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
+        }
+
+        [HttpPost("createRole")]
+        public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto roleDto)
+        {
+            var result = await _roleService.CreateRoleAsync(roleDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
+        }
+
+        [HttpPut("updateRole/{id:guid}")]
+        public async Task<IActionResult> Put([FromRoute] string id, [FromBody] UpdateRoleDto roleDto)
+        {
+            var result = await _roleService.UpdateRoleAsync(id, roleDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
+        }
+
+        [HttpDelete("deleteRole/{id:guid}")]
+        public async Task<IActionResult> Delete([FromRoute] string id)
+        {
+            var result = await _roleService.DeleteRoleAsync(id);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
+        }
+    }
+}
