@@ -1,6 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Users;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ namespace Bookify_Library_mgnt.Controllers
             _authService = authService;
         }
         [HttpGet("getUsers")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
             return Ok(await _authService.GetUsersAsync(pageNumber, pageSize));
@@ -75,5 +77,6 @@ namespace Bookify_Library_mgnt.Controllers
         //{
 
         //}
+
     }
 }

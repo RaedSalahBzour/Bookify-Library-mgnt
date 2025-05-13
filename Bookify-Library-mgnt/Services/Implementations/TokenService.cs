@@ -22,6 +22,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             {
                 new Claim(ClaimTypes.Name,user.UserName),
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
+
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.
                 GetBytes(_configuration.GetValue<string>("JWT:Key")!));
