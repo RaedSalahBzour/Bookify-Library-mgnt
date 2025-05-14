@@ -80,6 +80,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             {
                 return Result<User>.Fail(ErrorMessages.OperationFailed("Create", null));
             }
+            await _userManager.AddToRoleAsync(user, "user");
             return Result<User>.Ok(user);
         }
         public async Task<Result<UserDto>> UpdateUserAsync(string id, UpdateUserDto userDto)
@@ -131,7 +132,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 return Result<string?>.Fail(ErrorMessages.LoginFail());
             }
 
-            var token = _tokenService.GenerateToken(user);
+            var token = await _tokenService.GenerateToken(user);
 
             return Result<string?>.Ok(token);
 

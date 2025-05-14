@@ -5,6 +5,6 @@ namespace Bookify_Library_mgnt.Services.Interfaces
 {
     public interface ITokenService
     {
-        string GenerateToken(User user);
+        Task<string> GenerateToken(User user);
     }
 }

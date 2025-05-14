@@ -3,6 +3,7 @@ using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -49,7 +50,7 @@ namespace Bookify_Library_mgnt.Controllers
                 return BadRequest(result.Errors);
             return CreatedAtAction(nameof(GetBookById), new { Id = result.Data.Id }, bookDto);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateBook([FromRoute] string id, [FromBody] UpdateBookDto bookDto)
         {
@@ -60,6 +61,7 @@ namespace Bookify_Library_mgnt.Controllers
 
 
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] string id)

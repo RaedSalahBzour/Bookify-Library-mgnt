@@ -15,8 +15,9 @@ namespace Bookify_Library_mgnt.Services.Interfaces
         Task<Result<IdentityRole>> CreateRoleAsync(CreateRoleDto roleDto);
         Task<Result<IdentityRole>> UpdateRoleAsync(string id, UpdateRoleDto roleDto);
         Task<Result<IdentityRole>> DeleteRoleAsync(string id);
-        Task<Result<bool>> AddUserToRoleAsync(string userId, string roleId);
-        Task<Result<bool>> RemoveUserFromRoleAsync(string userId, string roleName);
+        Task<Result<string>> AddUserToRoleAsync(string userId, string roleId);
+        Task<Result<string>> RemoveUserFromRoleAsync(string userId, string roleName);
+        Task<Result<IEnumerable<string>>> GetUserRoles(string email);
 
     }
 }

@@ -19,11 +19,13 @@ namespace Bookify_Library_mgnt.Controllers
         {
             _authService = authService;
         }
-        [HttpGet("getUsers")]
-        [Authorize(Roles = "Admin")]
+        [HttpGet()]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
             return Ok(await _authService.GetUsersAsync(pageNumber, pageSize));
+            var userClaims = User.Claims.Select(c => $"{c.Type}: {c.Value}");
+
         }
 
         [HttpGet("getUser/{id:guid}")]

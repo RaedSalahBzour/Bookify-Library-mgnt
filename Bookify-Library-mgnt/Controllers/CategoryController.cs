@@ -1,6 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Categories;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +50,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory([FromRoute] string id, [FromBody] UpdateCategoryDto categoryDto)
         {
             var result = await _categoryService.UpdateCategoryAsync(id, categoryDto);
@@ -60,6 +62,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
             var result = await _categoryService.DeleteCategoryAsync(id);

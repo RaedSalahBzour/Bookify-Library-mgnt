@@ -10,6 +10,7 @@ using Bookify_Library_mgnt.Services.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Bookify_Library_mgnt.Services.Implementations
 {
@@ -127,39 +128,47 @@ namespace Bookify_Library_mgnt.Services.Implementations
             return Result<IdentityRole>.Ok(role);
         }
 
-        public async Task<Result<bool>> AddUserToRoleAsync(string userId, string roleName)
+        public async Task<Result<string>> AddUserToRoleAsync(string userId, string roleName)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
             var role = await _roleManager.FindByNameAsync(roleName);
             if (user == null || role == null)
-                return Result<bool>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
+                return Result<string>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
 
             var result = await _userManager.AddToRoleAsync(user, roleName);
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
-                return Result<bool>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.AddUserToRole), errors));
+                return Result<string>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.AddUserToRole), errors));
 
             }
-            return Result<bool>.Ok(true);
+            return Result<string>.Ok("added");
         }
-        public async Task<Result<bool>> RemoveUserFromRoleAsync(string userId, string roleName)
+        public async Task<Result<string>> RemoveUserFromRoleAsync(string userId, string roleName)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
             var role = await _roleManager.FindByNameAsync(roleName);
             if (user == null || role == null)
-                return Result<bool>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
+                return Result<string>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
 
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
-                return Result<bool>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.RemoveUserFromRole), errors));
+                return Result<string>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.RemoveUserFromRole), errors));
 
             }
-            return Result<bool>.Ok(true);
+            return Result<string>.Ok("Removed");
+        }
+        public async Task<Result<IEnumerable<string>>> GetUserRoles(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Result<IEnumerable<string>>.Fail(ErrorMessages.NotFound(email));
+            var roles = await _userManager.GetRolesAsync(user);
+            return Result<IEnumerable<string>>.Ok(roles);
         }
     }
 }

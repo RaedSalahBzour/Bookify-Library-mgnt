@@ -1,6 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Reviews;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -46,6 +47,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateReview([FromRoute] string id, [FromBody] UpdateReviewDto reviewDto)
         {
 
@@ -59,6 +61,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteReview([FromRoute] string id)
         {
             var result = await _reviewService.GetReviewByIdAsync(id);

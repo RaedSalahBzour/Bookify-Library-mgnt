@@ -1,6 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Borrowings;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -46,6 +47,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateBorrowing([FromRoute] string id, [FromBody] UpdateBorrowingDto borrowingDto)
         {
             var result = await _borrowingService.GetBorrowingByIdAsync(id);
@@ -55,6 +57,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBorrowing([FromRoute] string id)
         {
             var result = await _borrowingService.GetBorrowingByIdAsync(id);
