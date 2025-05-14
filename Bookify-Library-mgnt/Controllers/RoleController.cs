@@ -19,13 +19,13 @@ namespace Bookify_Library_mgnt.Controllers
             _roleService = roleService;
         }
 
-        [HttpGet("getRoles")]
+        [HttpGet]
         public async Task<IActionResult> GetRoles(int pageNumber = 1, int pageSize = 10)
         {
             return Ok(await _roleService.GetRolesAsync(pageNumber, pageSize));
         }
 
-        [HttpGet("getById/{id:guid}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> Get([FromRoute] string id)
         {
             var result = await _roleService.GetRoleByIdAsync(id);
@@ -36,7 +36,7 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
         }
 
-        [HttpPost("createRole")]
+        [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto roleDto)
         {
             var result = await _roleService.CreateRoleAsync(roleDto);
@@ -47,7 +47,7 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
         }
 
-        [HttpPut("updateRole/{id:guid}")]
+        [HttpPut("{id:guid}")]
         public async Task<IActionResult> Put([FromRoute] string id, [FromBody] UpdateRoleDto roleDto)
         {
             var result = await _roleService.UpdateRoleAsync(id, roleDto);
@@ -58,7 +58,7 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
         }
 
-        [HttpDelete("deleteRole/{id:guid}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
             var result = await _roleService.DeleteRoleAsync(id);
@@ -66,6 +66,22 @@ namespace Bookify_Library_mgnt.Controllers
             {
                 return BadRequest(result.Errors);
             }
+            return Ok(result.Data);
+        }
+        [HttpPost("{userId:guid}/roles")]
+        public async Task<IActionResult> AddToRole([FromRoute] string userId, [FromBody] string roleName)
+        {
+            var result = await _roleService.AddUserToRoleAsync(userId, roleName);
+            if (!result.IsSuccess)
+            { return BadRequest(result.Errors); }
+            return Ok(result.Data);
+        }
+        [HttpDelete("{userId:guid}/roles")]
+        public async Task<IActionResult> RemoveFromRole([FromRoute] string userId, [FromBody] string roleName)
+        {
+            var result = await _roleService.RemoveUserFromRoleAsync(userId, roleName);
+            if (!result.IsSuccess)
+            { return BadRequest(result.Errors); }
             return Ok(result.Data);
         }
     }

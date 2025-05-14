@@ -78,7 +78,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var result = await _userManager.CreateAsync(user, userDto.Password);
             if (!result.Succeeded)
             {
-                return Result<User>.Fail(ErrorMessages.OperationFailed("Create"));
+                return Result<User>.Fail(ErrorMessages.OperationFailed("Create", null));
             }
             return Result<User>.Ok(user);
         }
@@ -96,7 +96,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Update"));
+                return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Update", new List<string>()));
             }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }
@@ -107,7 +107,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Delete"));
+                return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Delete", new List<string>()));
             }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }

@@ -2,42 +2,44 @@
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Dtos.Categories;
 using Bookify_Library_mgnt.Dtos.Roles;
+using Bookify_Library_mgnt.Enums;
 using Bookify_Library_mgnt.Helper.Pagination;
+using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bookify_Library_mgnt.Services.Implementations
 {
     public class RoleService : IRoleService
     {
-        private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateRoleDto> _createValidator;
         private readonly IValidator<UpdateRoleDto> _updateValidator;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
 
-        public RoleService(IRoleRepository roleRepository,
+        public RoleService(
             IMapper mapper, IValidator<CreateRoleDto> createValidator,
             IValidator<UpdateRoleDto> updateValidator,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
-            _roleRepository = roleRepository;
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task<PagedResult<RoleDto>> GetRolesAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var roles = _roleRepository.GetRoles();
-            var paginatedRoles = await roles.ToPaginationForm(pageNumber, pageSize);
-            var rolesDto = _mapper.Map<IEnumerable<RoleDto>>(roles);
+            var roles = await _roleManager.Roles.ToPaginationForm(pageNumber, pageSize);
+            var rolesDto = _mapper.Map<IEnumerable<RoleDto>>(roles.Items);
             return new PagedResult<RoleDto>
             {
-                TotalCount = paginatedRoles.TotalCount,
+                TotalCount = roles.TotalCount,
                 Items = rolesDto,
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -45,7 +47,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         }
         public async Task<Result<RoleDto>> GetRoleByIdAsync(string id)
         {
-            var role = await _roleRepository.GetRoleById(id);
+            var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
                 return Result<RoleDto>.Fail(ErrorMessages.NotFound(id));
@@ -67,12 +69,15 @@ namespace Bookify_Library_mgnt.Services.Implementations
             {
                 return Result<IdentityRole>.Fail(ErrorMessages.AlreadyExist(roleDto.RoleName));
             }
-            var roleEntity = new IdentityRole
+            var roleEntity = _mapper.Map<IdentityRole>(roleDto);
+            roleEntity.ConcurrencyStamp = Guid.NewGuid().ToString();
+            var result = await _roleManager.CreateAsync(roleEntity);
+            if (!result.Succeeded)
             {
-                Name = roleDto.RoleName,
-                NormalizedName = roleDto.RoleName.ToUpper()
-            }; await _roleRepository.CreateRoleAsync(roleEntity);
-            await _roleRepository.SaveChangesAsync();
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return Result<IdentityRole>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateRole), errors));
+
+            }
             return Result<IdentityRole>.Ok(roleEntity);
 
         }
@@ -94,10 +99,14 @@ namespace Bookify_Library_mgnt.Services.Implementations
             {
                 return Result<IdentityRole>.Fail(ErrorMessages.AlreadyExist(roleDto.RoleName));
             }
-            role.Name = roleDto.RoleName;
-            role.NormalizedName = roleDto.RoleName.ToUpper();
-            await _roleRepository.UpdateRoleAsync(role);
-            await _roleRepository.SaveChangesAsync();
+            _mapper.Map(roleDto, role);
+            var result = await _roleManager.UpdateAsync(role);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return Result<IdentityRole>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.UpdateRole), errors));
+
+            }
             return Result<IdentityRole>.Ok(role);
         }
 
@@ -108,9 +117,49 @@ namespace Bookify_Library_mgnt.Services.Implementations
             {
                 return Result<IdentityRole>.Fail(ErrorMessages.NotFound(id));
             }
-            await _roleRepository.DeleteRoleAsync(role);
-            await _roleRepository.SaveChangesAsync();
+            var result = await _roleManager.DeleteAsync(role);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return Result<IdentityRole>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.DeleteRole), errors));
+
+            }
             return Result<IdentityRole>.Ok(role);
+        }
+
+        public async Task<Result<bool>> AddUserToRoleAsync(string userId, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (user == null || role == null)
+                return Result<bool>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
+
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return Result<bool>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.AddUserToRole), errors));
+
+            }
+            return Result<bool>.Ok(true);
+        }
+        public async Task<Result<bool>> RemoveUserFromRoleAsync(string userId, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (user == null || role == null)
+                return Result<bool>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
+
+            var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return Result<bool>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.RemoveUserFromRole), errors));
+
+            }
+            return Result<bool>.Ok(true);
         }
     }
 }

@@ -16,7 +16,6 @@ namespace Bookify_Library_mgnt.Extensions
         }
         public static IServiceCollection AddRoleServices(this IServiceCollection services)
         {
-            services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IRoleService, RoleService>();
 
             return services;
