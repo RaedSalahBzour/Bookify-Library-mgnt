@@ -72,7 +72,7 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = builder.Configuration["JWT:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.
             GetBytes(builder.Configuration["JWT:Key"]!)),
-            RoleClaimType = ClaimTypes.Role
+
         };
     }
 
