@@ -47,7 +47,6 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateBorrowing([FromRoute] string id, [FromBody] UpdateBorrowingDto borrowingDto)
         {
             var result = await _borrowingService.GetBorrowingByIdAsync(id);
@@ -57,7 +56,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteBorrowing([FromRoute] string id)
         {
             var result = await _borrowingService.GetBorrowingByIdAsync(id);

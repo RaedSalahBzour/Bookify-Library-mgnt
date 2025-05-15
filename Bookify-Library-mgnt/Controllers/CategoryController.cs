@@ -11,6 +11,7 @@ namespace Bookify_Library_mgnt.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -50,7 +51,6 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory([FromRoute] string id, [FromBody] UpdateCategoryDto categoryDto)
         {
             var result = await _categoryService.UpdateCategoryAsync(id, categoryDto);
@@ -62,7 +62,7 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
             var result = await _categoryService.DeleteCategoryAsync(id);

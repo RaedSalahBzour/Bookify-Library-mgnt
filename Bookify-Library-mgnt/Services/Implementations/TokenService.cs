@@ -12,25 +12,18 @@ namespace Bookify_Library_mgnt.Services.Implementations
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<User> _userManager;
-        public TokenService(IConfiguration configuration, UserManager<User> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public TokenService(IConfiguration configuration, UserManager<User> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<string> GenerateToken(User user)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.NameIdentifier,user.Id),
-
-            };
-            var roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            var claims = await GetAllValidClaimsAsync(user);
             var key = new SymmetricSecurityKey(Encoding.UTF8.
                 GetBytes(_configuration.GetValue<string>("JWT:Key")!));
 
@@ -45,6 +38,33 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        }
+        private async Task<List<Claim>> GetAllValidClaimsAsync(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name,user.UserName),
+                new Claim(ClaimTypes.NameIdentifier,user.Id),
+                new Claim(ClaimTypes.Email,user.Email),
+            };
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            claims.AddRange(userClaims);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var userRole in userRoles)
+            {
+                var role = await _roleManager.FindByNameAsync(userRole);
+                if (role != null)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, userRole));
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    foreach (var roleClaim in roleClaims)
+                    {
+                        claims.Add(roleClaim);
+                    }
+                }
+            }
+            return claims;
         }
     }
 }

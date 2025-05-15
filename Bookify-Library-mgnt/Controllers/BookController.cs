@@ -41,7 +41,6 @@ namespace Bookify_Library_mgnt.Controllers
                 return BadRequest(result.Errors);
             return Ok(result);
         }
-
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookDto bookDto)
         {
@@ -50,7 +49,6 @@ namespace Bookify_Library_mgnt.Controllers
                 return BadRequest(result.Errors);
             return CreatedAtAction(nameof(GetBookById), new { Id = result.Data.Id }, bookDto);
         }
-        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateBook([FromRoute] string id, [FromBody] UpdateBookDto bookDto)
         {
@@ -61,9 +59,9 @@ namespace Bookify_Library_mgnt.Controllers
 
 
         }
-        [Authorize(Roles = "Admin")]
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
             var result = await _bookService.DeleteBookAsync(id);

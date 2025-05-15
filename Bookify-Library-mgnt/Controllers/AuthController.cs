@@ -10,7 +10,7 @@ namespace Bookify_Library_mgnt.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -19,16 +19,14 @@ namespace Bookify_Library_mgnt.Controllers
         {
             _authService = authService;
         }
-        [HttpGet()]
-        [Authorize(Roles = "SuperAdmin")]
+        [HttpGet("users")]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
             return Ok(await _authService.GetUsersAsync(pageNumber, pageSize));
-            var userClaims = User.Claims.Select(c => $"{c.Type}: {c.Value}");
 
         }
 
-        [HttpGet("getUser/{id:guid}")]
+        [HttpGet("users/{id:guid}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
             var result = await _authService.GetUserByIdAsync(id);
@@ -37,7 +35,7 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
         }
         [AllowAnonymous]
-        [HttpPost("register")]
+        [HttpPost("users")]
         public async Task<IActionResult> Register([FromBody] CreateUserDto userDto)
         {
             var result = await _authService.CreateAsync(userDto);
@@ -46,7 +44,8 @@ namespace Bookify_Library_mgnt.Controllers
             return CreatedAtAction(nameof(GetUserById), new { Id = result.Data.Id }, userDto);
         }
 
-        [HttpPut("update/{id:guid}")]
+        [HttpPut("users/{id:guid}")]
+        [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto userDto)
         {
             var result = await _authService.UpdateUserAsync(id, userDto);
@@ -55,7 +54,8 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
 
         }
-        [HttpDelete("delete/{id:guid}")]
+        [HttpDelete("users/{id:guid}")]
+        [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
             var result = await _authService.DeleteUserAsync(id);
@@ -74,11 +74,7 @@ namespace Bookify_Library_mgnt.Controllers
             }
             return Ok(result.Data);
         }
-        //[HttpPost("logout")]
-        //public async Task<IActionResult> Logout()
-        //{
 
-        //}
 
     }
 }
