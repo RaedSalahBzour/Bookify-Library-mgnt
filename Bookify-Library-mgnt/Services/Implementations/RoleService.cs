@@ -51,7 +51,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                return Result<RoleDto>.Fail(ErrorMessages.NotFound(id));
+                return Result<RoleDto>.Fail(ErrorMessages.NotFoundById(id));
             }
             var roleDto = _mapper.Map<RoleDto>(role);
             return Result<RoleDto>.Ok(roleDto);
@@ -93,7 +93,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var role = await _roleManager.FindByIdAsync(id);
             if (role is null)
             {
-                return Result<IdentityRole>.Fail(ErrorMessages.NotFound(id));
+                return Result<IdentityRole>.Fail(ErrorMessages.NotFoundById(id));
             }
             var roleByName = await _roleManager.RoleExistsAsync(roleDto.RoleName);
             if (roleByName)
@@ -116,7 +116,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var role = await _roleManager.FindByIdAsync(id);
             if (role is null)
             {
-                return Result<IdentityRole>.Fail(ErrorMessages.NotFound(id));
+                return Result<IdentityRole>.Fail(ErrorMessages.NotFoundById(id));
             }
             var result = await _roleManager.DeleteAsync(role);
             if (!result.Succeeded)
@@ -134,7 +134,8 @@ namespace Bookify_Library_mgnt.Services.Implementations
 
             var role = await _roleManager.FindByNameAsync(roleName);
             if (user == null || role == null)
-                return Result<string>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
+                return Result<string>.Fail(user == null ?
+                    ErrorMessages.NotFoundById(userId) : ErrorMessages.NotFoundByName(roleName));
 
             var result = await _userManager.AddToRoleAsync(user, roleName);
             if (!result.Succeeded)
@@ -151,7 +152,8 @@ namespace Bookify_Library_mgnt.Services.Implementations
 
             var role = await _roleManager.FindByNameAsync(roleName);
             if (user == null || role == null)
-                return Result<string>.Fail(ErrorMessages.NotFound(user == null ? userId : roleName));
+                return Result<string>.Fail(user == null ?
+                    ErrorMessages.NotFoundById(userId) : ErrorMessages.NotFoundByName(roleName));
 
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
             if (!result.Succeeded)
@@ -166,7 +168,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return Result<IEnumerable<string>>.Fail(ErrorMessages.NotFound(email));
+                return Result<IEnumerable<string>>.Fail(ErrorMessages.NotFoundByName(email));
             var roles = await _userManager.GetRolesAsync(user);
             return Result<IEnumerable<string>>.Ok(roles);
         }

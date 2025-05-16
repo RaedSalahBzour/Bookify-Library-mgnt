@@ -42,7 +42,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<CategoryDto>> GetByIdAsync(string id)
         {
             var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null) { return Result<CategoryDto>.Fail(ErrorMessages.NotFound(id)); }
+            if (category == null) { return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id)); }
             var categoryDto = _mapper.Map<CategoryDto>(category);
             return Result<CategoryDto>.Ok(categoryDto);
         }
@@ -71,7 +71,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category is null)
             {
-                return Result<Category>.Fail(ErrorMessages.NotFound(id));
+                return Result<Category>.Fail(ErrorMessages.NotFoundById(id));
             }
             _mapper.Map(categoryDto, category);
             await _categoryRepository.UpdateCategoryAsync(category);
@@ -84,7 +84,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category is null)
             {
-                return Result<Category>.Fail(ErrorMessages.NotFound(id));
+                return Result<Category>.Fail(ErrorMessages.NotFoundById(id));
             }
             await _categoryRepository.DeleteCategoryAsync(category);
             await _categoryRepository.SaveChangesAsync();

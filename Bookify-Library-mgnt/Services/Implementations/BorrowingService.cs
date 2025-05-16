@@ -43,7 +43,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<BorrowingDto>> GetBorrowingByIdAsync(string id)
         {
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return Result<BorrowingDto>.Fail(ErrorMessages.NotFound(id)); }
+            if (borrowing == null) { return Result<BorrowingDto>.Fail(ErrorMessages.NotFoundById(id)); }
             var borrowingDto = _mapper.Map<BorrowingDto>(borrowing);
             return Result<BorrowingDto>.Ok(borrowingDto);
         }
@@ -84,7 +84,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 return Result<Borrowing>.Fail(errorMessages);
             }
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFound(id)); }
+            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFoundById(id)); }
             _mapper.Map(borrowingDto, borrowing);
             await _borrowingRepository.UpdateBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
@@ -94,7 +94,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<Borrowing>> DeleteBorrowingAsync(string id)
         {
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFound(id)); }
+            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFoundById(id)); }
             await _borrowingRepository.DeleteBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
             return Result<Borrowing>.Ok(borrowing);

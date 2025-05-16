@@ -12,6 +12,8 @@
         UnassignRole,
         CreateUser,
         UpdateUser,
-        DeleteUser
+        DeleteUser,
+        AddClaimToUser,
+        DeleteClaimToUser,
     }
 }

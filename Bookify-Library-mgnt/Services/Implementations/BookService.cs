@@ -75,7 +75,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<BookDto>> GetByIdAsync(string id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
-            if (book == null) return Result<BookDto>.Fail(ErrorMessages.NotFound(id));
+            if (book == null) return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
             var bookDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bookDto);
         }
@@ -94,7 +94,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 var categoryExists = await _bookRepository.IsCategoryExist(categoryId);
                 if (!categoryExists)
                 {
-                    return Result<Book>.Fail(ErrorMessages.NotFound(categoryId));
+                    return Result<Book>.Fail(ErrorMessages.NotFoundById(categoryId));
                 }
                 book.CategoryBooks.Add(new CategoryBook
                 {
@@ -118,7 +118,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var book = await _bookRepository.GetByIdAsync(id);
             if (book is null)
             {
-                return Result<Book>.Fail(ErrorMessages.NotFound(id));
+                return Result<Book>.Fail(ErrorMessages.NotFoundById(id));
             }
 
             _mapper.Map(bookDto, book);
@@ -136,7 +136,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
                 var categoryExists = await _bookRepository.IsCategoryExist(categoryId);
                 if (!categoryExists)
                 {
-                    return Result<Book>.Fail(ErrorMessages.NotFound(categoryId));
+                    return Result<Book>.Fail(ErrorMessages.NotFoundById(categoryId));
                 }
 
                 book.CategoryBooks.Add(new CategoryBook
@@ -157,7 +157,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var book = await _bookRepository.GetByIdAsync(id);
             if (book is null)
             {
-                return Result<Book>.Fail(ErrorMessages.NotFound(id));
+                return Result<Book>.Fail(ErrorMessages.NotFoundById(id));
             }
             await _bookRepository.DeleteBookAsync(book);
             await _bookRepository.SaveChangesAsync();

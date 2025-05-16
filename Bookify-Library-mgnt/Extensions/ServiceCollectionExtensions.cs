@@ -34,6 +34,7 @@ namespace Bookify_Library_mgnt.Extensions
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IClaimService, ClaimService>();
 
             return services;
         }

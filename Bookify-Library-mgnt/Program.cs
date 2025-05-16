@@ -77,6 +77,11 @@ builder.Services.AddAuthentication(options =>
     }
 
     );
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanDeleteBookPolicy", policy => policy.RequireClaim("CanDeleteBook", "true"));
+    options.AddPolicy("CanManageUserClaimsPolicy", policy => policy.RequireClaim("CanManageUserClaims", "true"));
+});
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddApplicationServices();

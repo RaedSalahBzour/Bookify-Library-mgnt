@@ -44,7 +44,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
             {
-                return Result<ReviewDto>.Fail(ErrorMessages.NotFound(id));
+                return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
             }
             var reviewDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Ok(reviewDto);
@@ -81,7 +81,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         {
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
-                return Result<Review>.Fail(ErrorMessages.NotFound(id));
+                return Result<Review>.Fail(ErrorMessages.NotFoundById(id));
             _mapper.Map(dto, review);
             await _reviewRepository.UpdateReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
@@ -92,7 +92,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         {
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
-                return Result<Review>.Fail(ErrorMessages.NotFound(id));
+                return Result<Review>.Fail(ErrorMessages.NotFoundById(id));
             await _reviewRepository.DeleteReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
             return Result<Review>.Ok(review);

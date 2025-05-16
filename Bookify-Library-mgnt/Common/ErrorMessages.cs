@@ -4,7 +4,8 @@ namespace Bookify_Library_mgnt.Common
 {
     public static class ErrorMessages
     {
-        public static string NotFound(string id) => $"Record with ID '{id}' was not found.";
+        public static string NotFoundById(string id) => $"Record with ID '{id}' was not found.";
+        public static string NotFoundByName(string name) => $"Record '{name}' was not found.";
         public static string EmailAlreadyExists(string email) => $"Email '{email}' is already registered.";
         public static string UsernameAlreadyExists(string username) => $"Username '{username}' is already taken.";
         public static string AlreadyExist(string id) => $"This record {id} already exsist";

@@ -55,7 +55,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<UserDto>> GetUserByIdAsync(string id)
         {
             var user = await _authRepository.GetUserByIdAsync(id);
-            if (user == null) { return Result<UserDto>.Fail(ErrorMessages.NotFound(id)); }
+            if (user == null) { return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id)); }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }
         public async Task<Result<User>> CreateAsync(CreateUserDto userDto)
@@ -86,7 +86,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<UserDto>> UpdateUserAsync(string id, UpdateUserDto userDto)
         {
             var user = await _authRepository.GetUserByIdAsync(id);
-            if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFound(id));
+            if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id));
             var validationResult = _updateValidator.Validate(userDto);
             if (!validationResult.IsValid)
             {
@@ -104,7 +104,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
         public async Task<Result<UserDto>> DeleteUserAsync(string id)
         {
             var user = await _authRepository.GetUserByIdAsync(id);
-            if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFound(id));
+            if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id));
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
