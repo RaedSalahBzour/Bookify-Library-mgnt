@@ -9,6 +9,8 @@ namespace Bookify_Library_mgnt.Models
         public List<Borrowing> Borrowings { get; set; }
         [JsonIgnore]
         public List<UserBook> UserBooks { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
 
 
     }

@@ -11,6 +11,7 @@ namespace Bookify_Library_mgnt.Common
         public static string AlreadyExist(string id) => $"This record {id} already exsist";
         //public static string NotExist(string id) => $"This record {id} is not exsist";
         public static string LoginFail() => "Invalid email or password.";
+        public static string InvalidRefreshToken() => "Invalid Refresh Token.";
         public static string OperationFailed(string? operation, List<string>? errors)
         {
             var errorsString = errors != null && errors.Any()

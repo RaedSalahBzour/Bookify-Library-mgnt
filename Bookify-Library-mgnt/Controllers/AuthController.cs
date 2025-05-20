@@ -1,4 +1,5 @@
 ﻿using Bookify_Library_mgnt.Dtos.Users;
+using Bookify_Library_mgnt.Dtos.Users.Token;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -69,6 +70,16 @@ namespace Bookify_Library_mgnt.Controllers
         {
             var result = await _authService.LoginAsync(login);
             if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
+        }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefrshToken([FromBody] RefreshTokenRequestDto requestDto)
+        {
+            var result = await _authService.RefreshTokenAsync(requestDto);
+            if (!result.IsSuccess || result.Data.RefreshToken is null || result.Data.AccessToken is null)
             {
                 return BadRequest(result.Errors);
             }

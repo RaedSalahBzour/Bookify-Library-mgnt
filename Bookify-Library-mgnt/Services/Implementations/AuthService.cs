@@ -2,12 +2,15 @@
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Dtos.Users;
+using Bookify_Library_mgnt.Dtos.Users.Token;
+using Bookify_Library_mgnt.Enums;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Repositpries.Interfaces;
 using Bookify_Library_mgnt.Services.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using NuGet.Common;
 
 namespace Bookify_Library_mgnt.Services.Implementations
 {
@@ -78,7 +81,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var result = await _userManager.CreateAsync(user, userDto.Password);
             if (!result.Succeeded)
             {
-                return Result<User>.Fail(ErrorMessages.OperationFailed("Create", null));
+                return Result<User>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateUser), null));
             }
             await _userManager.AddToRoleAsync(user, "user");
             return Result<User>.Ok(user);
@@ -97,7 +100,7 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Update", new List<string>()));
+                return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.UpdateUser), new List<string>()));
             }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }
@@ -108,35 +111,53 @@ namespace Bookify_Library_mgnt.Services.Implementations
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return Result<UserDto>.Fail(ErrorMessages.OperationFailed("Delete", new List<string>()));
+                return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.DeleteUser), new List<string>()));
             }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }
-        public async Task<Result<string?>> LoginAsync(LoginDto loginDto)
+        public async Task<Result<TokenResponseDto?>> LoginAsync(LoginDto loginDto)
         {
             var validationResult = await _loginValidator.ValidateAsync(loginDto);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<string?>.Fail(errorMessages);
+                return Result<TokenResponseDto?>.Fail(errorMessages);
             }
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null)
             {
-                return Result<string?>.Fail(ErrorMessages.LoginFail());
+                return Result<TokenResponseDto?>.Fail(ErrorMessages.LoginFail());
             }
             var userHashPassword = new PasswordHasher<User>().HashPassword(user, loginDto.Password);
             if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, loginDto.Password)
                 == PasswordVerificationResult.Failed)
             {
-                return Result<string?>.Fail(ErrorMessages.LoginFail());
+                return Result<TokenResponseDto?>.Fail(ErrorMessages.LoginFail());
             }
 
-            var token = await _tokenService.GenerateToken(user);
-
-            return Result<string?>.Ok(token);
-
+            var token = await _tokenService.GenerateTokenAsync(user);
+            return Result<TokenResponseDto?>.Ok(await CreateTokenResponse(user));
+        }
+        private async Task<TokenResponseDto> CreateTokenResponse(User user)
+        {
+            return new TokenResponseDto
+            {
+                AccessToken = await _tokenService.GenerateTokenAsync(user),
+                RefreshToken = await _tokenService.GenerateAndSaveRefreshTokenAsync(user)
+            };
         }
 
+        public async Task<Result<TokenResponseDto?>> RefreshTokenAsync(RefreshTokenRequestDto requestDto)
+        {
+            var user = await _tokenService
+                        .ValidateRefreshTokenAsync(requestDto.UserId, requestDto.RefreshToken);
+            if (user.Data is null)
+            {
+                return Result<TokenResponseDto?>.Fail(user.Errors);
+            }
+            var token = await CreateTokenResponse(user.Data);
+
+            return Result<TokenResponseDto?>.Ok(token);
+        }
     }
 }
