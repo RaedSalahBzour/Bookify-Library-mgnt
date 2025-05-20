@@ -79,7 +79,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> RefrshToken([FromBody] RefreshTokenRequestDto requestDto)
         {
             var result = await _authService.RefreshTokenAsync(requestDto);
-            if (!result.IsSuccess || result.Data.RefreshToken is null || result.Data.AccessToken is null)
+            if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
             }
