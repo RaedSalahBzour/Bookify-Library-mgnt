@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Presestence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositpries

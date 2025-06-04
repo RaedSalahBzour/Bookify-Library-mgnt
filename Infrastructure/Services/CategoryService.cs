@@ -1,5 +1,5 @@
-﻿using Application.Category.Dtos;
-using Application.Category.Services;
+﻿using Application.Categories.Dtos;
+using Application.Categories.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;

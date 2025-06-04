@@ -1,7 +1,7 @@
 ﻿using Application.Authorization.Dtos.Token;
 using Application.Authorization.Services;
-using Application.User.Dtos;
-using Application.User.Services;
+using Application.Users.Dtos;
+using Application.Users.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;

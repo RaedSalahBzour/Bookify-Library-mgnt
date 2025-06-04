@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using Bookify_Library_mgnt.Helper.Pagination;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Presestence;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositpries

@@ -1,9 +1,9 @@
-﻿
-using Bookify_Library_mgnt.Data;
-using Domain.Entities;
+﻿using Domain.Entities;
 using FluentValidation;
+using Infrastructure;
+using Infrastructure.Persistence;
+using Infrastructure.Persistence.Configurations;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

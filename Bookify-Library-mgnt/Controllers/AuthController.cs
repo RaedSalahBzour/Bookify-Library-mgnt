@@ -1,8 +1,6 @@
-﻿using Bookify_Library_mgnt.Dtos.Users;
-using Bookify_Library_mgnt.Dtos.Users.Token;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Application.Authorization.Dtos.Token;
+using Application.Users.Dtos;
+using Application.Users.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

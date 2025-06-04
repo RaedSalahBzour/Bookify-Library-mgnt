@@ -1,6 +1,5 @@
-﻿using Bookify_Library_mgnt.Dtos.Reviews;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
+﻿using Application.Reviews.Dtos;
+using Application.Reviews.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,5 +1,5 @@
-﻿using Application.Review.Dtos;
-using Application.Review.Services;
+﻿using Application.Reviews.Dtos;
+using Application.Reviews.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;

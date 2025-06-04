@@ -1,6 +1,5 @@
-﻿using Bookify_Library_mgnt.Dtos.Claims;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Services.Interfaces;
+﻿using Application.Authorization.Dtos.Claims;
+using Application.Authorization.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

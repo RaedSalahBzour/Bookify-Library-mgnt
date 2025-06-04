@@ -1,5 +1,5 @@
-﻿using Application.Books.Services;
-using Bookify_Library_mgnt.Dtos.Books;
+﻿using Application.Books.Dtos;
+using Application.Books.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

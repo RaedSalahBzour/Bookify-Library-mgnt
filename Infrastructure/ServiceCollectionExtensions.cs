@@ -1,9 +1,9 @@
 ﻿using Application.Authorization.Services;
-using Application.Book.Services;
-using Application.Borrowing.Services;
-using Application.Category.Services;
-using Application.Review.Services;
-using Application.User.Services;
+using Application.Books.Services;
+using Application.Borrowings.Services;
+using Application.Categories.Services;
+using Application.Reviews.Services;
+using Application.Users.Services;
 using Domain.Interfaces;
 using Infrastructure.Persistence.Repositpries;
 using Infrastructure.Services;

@@ -1,11 +1,8 @@
-﻿using Bookify_Library_mgnt.Dtos.Categories;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
+﻿using Application.Categories.Dtos;
+using Application.Categories.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Bookify_Library_mgnt.Controllers
 {
