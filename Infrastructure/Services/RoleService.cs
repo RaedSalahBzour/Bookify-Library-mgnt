@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+﻿using Application.Authorization.Dtos.Roles;
+using AutoMapper;
 using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Roles;
 using Bookify_Library_mgnt.Enums;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Models;
 using Bookify_Library_mgnt.Services.Interfaces;
+using Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
