@@ -1,9 +1,8 @@
-﻿using Bookify_Library_mgnt.Dtos.Borrowings;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
+﻿using Application.Borrowing.Services;
+using Bookify_Library_mgnt.Dtos.Borrowings;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace Bookify_Library_mgnt.Controllers
 {
@@ -11,7 +10,7 @@ namespace Bookify_Library_mgnt.Controllers
     [ApiController]
     public class BorrowingController : ControllerBase
     {
-        private readonly IBorrowingService _borrowingService;
+        private readonly BorrowingService _borrowingService;
 
         public BorrowingController(IBorrowingService borrowingService)
         {

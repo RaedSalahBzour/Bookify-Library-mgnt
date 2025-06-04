@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Bookify_Library_mgnt.Configurations
+namespace Infrastructure.Persistence.Configurations
 {
     public static class SwaggerConfiguration
     {

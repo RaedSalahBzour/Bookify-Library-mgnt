@@ -1,13 +1,13 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Claims;
-using Bookify_Library_mgnt.Enums;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Application.Authorization.Dtos.Claims;
+using Application.Authorization.Services;
+using Bookify_Library_mgnt.Common;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Shared;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class ClaimService : IClaimService
     {

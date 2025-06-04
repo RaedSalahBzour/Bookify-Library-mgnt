@@ -1,7 +1,7 @@
-﻿using Bookify_Library_mgnt.Dtos.Books;
+﻿using Application.Book.Dtos;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Validation.BookValidation
+namespace Application.Book.Validators
 {
     public class CreateBookDtoValidator : AbstractValidator<CreateBookDto>
     {

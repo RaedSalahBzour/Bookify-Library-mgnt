@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Dtos.Users
+﻿namespace Application.User.Dtos
 {
     public class LoginDto
     {

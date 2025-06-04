@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Dtos.Categories
+﻿namespace Application.Category.Dtos
 {
     public class UpdateCategoryDto
     {

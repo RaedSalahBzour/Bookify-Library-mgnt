@@ -1,7 +1,7 @@
 ﻿using Bookify_Library_mgnt.Common;
 using Domain.Entities;
 using System.Security.Claims;
-namespace Bookify_Library_mgnt.Services.Interfaces
+namespace Application.Authorization.Services
 {
     public interface ITokenService
     {

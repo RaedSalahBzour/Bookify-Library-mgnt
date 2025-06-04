@@ -1,7 +1,6 @@
-﻿using Bookify_Library_mgnt.Configurations;
+﻿
 using Bookify_Library_mgnt.Data;
-using Bookify_Library_mgnt.Extensions;
-using Bookify_Library_mgnt.Models;
+using Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

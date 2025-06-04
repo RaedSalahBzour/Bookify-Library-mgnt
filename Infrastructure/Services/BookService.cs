@@ -1,15 +1,14 @@
-﻿using Application.Book.Services;
+﻿using Application.Book.Dtos;
+using Application.Book.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Books;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
+using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Shared;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class BookService : IBookService
     {

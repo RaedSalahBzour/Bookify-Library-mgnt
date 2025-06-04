@@ -1,8 +1,7 @@
-﻿using Bookify_Library_mgnt.Dtos.Borrowings;
-using Bookify_Library_mgnt.Dtos.Reviews;
-using System.Text.Json.Serialization;
+﻿using Application.Borrowing.Dtos;
+using Application.Review.Dtos;
 
-namespace Bookify_Library_mgnt.Dtos.Users
+namespace Application.User.Dtos
 {
     public class UserDto
     {

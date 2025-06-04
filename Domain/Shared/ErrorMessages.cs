@@ -1,5 +1,5 @@
 ﻿
-namespace Bookify_Library_mgnt.Common
+namespace Domain.Shared
 {
     public static class ErrorMessages
     {

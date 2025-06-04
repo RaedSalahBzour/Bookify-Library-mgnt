@@ -1,8 +1,8 @@
-﻿using Bookify_Library_mgnt.Models;
+﻿using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookify_Library_mgnt.Data
+namespace Infrastructure.Persistence
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {

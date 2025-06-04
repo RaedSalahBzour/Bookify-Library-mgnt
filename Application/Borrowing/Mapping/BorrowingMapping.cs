@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Bookify_Library_mgnt.Dtos.Borrowings;
+﻿using Application.Borrowing.Dtos;
+using AutoMapper;
 using Domain.Entities;
 
-namespace Bookify_Library_mgnt.Mappings
+namespace Application.Borrowing.Mappings
 {
     public class BorrowingMapping : Profile
     {

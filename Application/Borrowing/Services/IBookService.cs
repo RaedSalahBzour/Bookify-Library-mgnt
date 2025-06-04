@@ -1,11 +1,10 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Books;
+﻿using Application.Book.Dtos;
+using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Domain.Entities;
 
-namespace Application.Interfaces
+namespace Application.Borrowing.Services
 {
-    public interface IBookService
+    public interface IBorrowingService
     {
         Task<PagedResult<BookDto>> GetBooksAsync(int pageNumber = 1, int pageSize = 10, string? title = null,
             string? category = null,

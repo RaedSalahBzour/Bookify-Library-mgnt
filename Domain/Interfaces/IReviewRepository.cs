@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 
 
-namespace Bookify_Library_mgnt.Repositpries.Interfaces
+namespace Domain.Interfaces
 {
     public interface IReviewRepository
     {

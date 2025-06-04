@@ -1,9 +1,8 @@
-﻿using Bookify_Library_mgnt.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Bookify_Library_mgnt.Configurations
+namespace Infrastructure.Persistence.Configurations
 {
     public static class DbContextConfiguration
     {

@@ -1,15 +1,9 @@
-﻿using AutoMapper;
-using Bookify_Library_mgnt.Data;
-using Bookify_Library_mgnt.Dtos.Borrowings;
-using Bookify_Library_mgnt.Dtos.Users;
-using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
+﻿using Domain.Entities;
+using Domain.Interfaces;
+using Infrastructure.Presestence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookify_Library_mgnt.Repositpries.Implementations
+namespace Infrastructure.Persistence.Repositpries
 {
     public class BorrowingRepository : IBorrowingRepository
     {

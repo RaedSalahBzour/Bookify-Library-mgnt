@@ -1,5 +1,5 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Roles;
+﻿
+using Application.Authorization.Dtos.Roles;
 using Bookify_Library_mgnt.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

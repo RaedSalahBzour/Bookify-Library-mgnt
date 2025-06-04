@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Dtos.Borrowings
+﻿namespace Application.Borrowing.Dtos
 {
     public class BorrowingDto
     {

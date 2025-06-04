@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Bookify_Library_mgnt.Migrations
+namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class addingPasswordToUserModel : Migration

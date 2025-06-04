@@ -1,7 +1,7 @@
-﻿using Bookify_Library_mgnt.Dtos.Users;
+﻿using Application.User.Dtos;
 using FluentValidation;
 
-namespace Application.User.Validator
+namespace Application.User.Validators
 {
     public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>
     {

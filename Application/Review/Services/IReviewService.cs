@@ -3,7 +3,7 @@ using Bookify_Library_mgnt.Dtos.Reviews;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
 
-namespace Bookify_Library_mgnt.Services.Interfaces
+namespace Application.Review.Services
 {
     public interface IReviewService
     {

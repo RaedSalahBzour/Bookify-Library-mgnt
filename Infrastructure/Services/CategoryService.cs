@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+﻿using Application.Category.Dtos;
+using Application.Category.Services;
+using AutoMapper;
 using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Borrowings;
-using Bookify_Library_mgnt.Dtos.Categories;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
+using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Shared;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class CategoryService : ICategoryService
     {

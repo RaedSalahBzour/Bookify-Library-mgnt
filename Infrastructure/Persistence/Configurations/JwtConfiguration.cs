@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Bookify_Library_mgnt.Configurations
+namespace Infrastructure.Persistence.Configurations
 {
     public static class JwtConfiguration
     {

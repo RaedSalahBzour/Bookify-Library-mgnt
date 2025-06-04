@@ -1,14 +1,13 @@
-﻿using AutoMapper;
+﻿using Application.Review.Dtos;
+using Application.Review.Services;
+using AutoMapper;
 using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Reviews;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
+using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Shared;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class ReviewService : IReviewService
     {

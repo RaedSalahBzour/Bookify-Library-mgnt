@@ -1,8 +1,8 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Books;
+﻿using Application.Book.Dtos;
+using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
-namespace Application.Books.Services
+namespace Application.Book.Services
 {
     public interface IBookService
     {

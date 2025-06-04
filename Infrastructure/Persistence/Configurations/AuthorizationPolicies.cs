@@ -1,4 +1,6 @@
-﻿namespace Bookify_Library_mgnt.Configurations
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Infrastructure.Persistence.Configurations
 {
     public static class AuthorizationPolicies
     {

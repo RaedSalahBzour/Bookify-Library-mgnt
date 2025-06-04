@@ -1,15 +1,16 @@
 ﻿using Application.Authorization.Dtos.Roles;
+using Application.Authorization.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Enums;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Services.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
+using Domain.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
 
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class RoleService : IRoleService
     {

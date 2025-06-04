@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Dtos.Reviews
+﻿namespace Application.Review.Dtos
 {
     public class UpdateReviewDto
     {

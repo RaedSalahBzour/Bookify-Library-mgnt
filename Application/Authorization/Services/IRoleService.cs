@@ -3,7 +3,7 @@ using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Microsoft.AspNetCore.Identity;
 
-namespace Bookify_Library_mgnt.Services.Interfaces
+namespace Application.Authorization.Services
 {
     public interface IRoleService
     {

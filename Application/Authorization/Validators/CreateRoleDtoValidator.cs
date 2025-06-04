@@ -1,7 +1,7 @@
 ﻿using Application.Authorization.Dtos.Roles;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Validation.RoleValidation
+namespace Application.Authorization.Validators
 {
     public class CreateRoleDtoValidator : AbstractValidator<CreateRoleDto>
     {

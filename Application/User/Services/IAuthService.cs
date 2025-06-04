@@ -1,10 +1,11 @@
 ﻿using Application.Authorization.Dtos.Token;
+using Application.User.Dtos;
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Dtos.Users;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
 
-namespace Bookify_Library_mgnt.Services.Interfaces
+namespace Application.User.Services
 {
     public interface IAuthService
     {

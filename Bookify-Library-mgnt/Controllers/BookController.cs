@@ -1,11 +1,7 @@
-﻿using Bookify_Library_mgnt.Common;
+﻿using Application.Books.Services;
 using Bookify_Library_mgnt.Dtos.Books;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 
 namespace Bookify_Library_mgnt.Controllers

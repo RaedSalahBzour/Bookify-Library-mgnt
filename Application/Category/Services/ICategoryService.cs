@@ -1,9 +1,9 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Categories;
+﻿using Application.Category.Dtos;
+using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
 
-namespace Bookify_Library_mgnt.Services.Interfaces
+namespace Application.Category.Services
 {
     public interface ICategoryService
     {

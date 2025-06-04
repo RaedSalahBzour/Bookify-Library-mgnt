@@ -2,7 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
-namespace Bookify_Library_mgnt.Mappings
+namespace Application.Authorization.Mapping
 {
     public class RoleMapping : Profile
     {

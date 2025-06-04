@@ -1,16 +1,18 @@
 ﻿using Application.Authorization.Dtos.Token;
+using Application.Authorization.Services;
+using Application.User.Dtos;
+using Application.User.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Users;
-using Bookify_Library_mgnt.Enums;
 using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
+using Domain.Interfaces;
+using Domain.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class AuthService : IAuthService
     {

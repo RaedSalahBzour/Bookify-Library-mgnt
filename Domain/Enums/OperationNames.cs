@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Enums
+﻿namespace Domain.Enums
 {
     public enum OperationNames
     {

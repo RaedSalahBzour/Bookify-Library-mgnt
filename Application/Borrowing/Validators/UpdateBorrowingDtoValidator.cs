@@ -1,7 +1,7 @@
 ﻿using Bookify_Library_mgnt.Dtos.Borrowings;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Validation.BorrowingValidation
+namespace Application.Borrowing.Validators
 {
     public class UpdateBorrowingDtoValidator : AbstractValidator<UpdateBorrowingDto>
     {

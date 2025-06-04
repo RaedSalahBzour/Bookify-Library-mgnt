@@ -1,14 +1,9 @@
-﻿using AutoMapper;
-using Bookify_Library_mgnt.Data;
-using Bookify_Library_mgnt.Dtos.Reviews;
-using Bookify_Library_mgnt.Helper.Pagination;
-using Bookify_Library_mgnt.Models;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Humanizer;
+﻿using Domain.Entities;
+using Domain.Interfaces;
+using Infrastructure.Presestence;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Bookify_Library_mgnt.Repositpries.Implementations
+namespace Infrastructure.Persistence.Repositpries
 {
     public class ReviewRepository : IReviewRepository
     {

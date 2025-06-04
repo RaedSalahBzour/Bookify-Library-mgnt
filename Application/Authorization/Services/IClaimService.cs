@@ -1,8 +1,8 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Dtos.Claims;
+﻿using Application.Authorization.Dtos.Claims;
+using Bookify_Library_mgnt.Common;
 using System.Security.Claims;
 
-namespace Bookify_Library_mgnt.Services.Interfaces
+namespace Application.Authorization.Services
 {
     public interface IClaimService
     {

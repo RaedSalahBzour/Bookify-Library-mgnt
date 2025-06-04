@@ -1,7 +1,7 @@
-﻿using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Services.Interfaces;
+﻿using Application.Authorization.Services;
+using Bookify_Library_mgnt.Common;
 using Domain.Entities;
-using Microsoft.AspNet.Identity.EntityFramework;
+using Domain.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Bookify_Library_mgnt.Services.Implementations
+namespace Infrastructure.Services
 {
     public class TokenService : ITokenService
     {

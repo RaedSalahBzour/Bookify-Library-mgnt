@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Bookify_Library_mgnt.Dtos.Categories;
+﻿using Application.Category.Dtos;
+using AutoMapper;
 using Domain.Entities;
 
-namespace Bookify_Library_mgnt.Mappings
+namespace Application.Category.Mapping
 {
     public class CategoryMapping : Profile
     {

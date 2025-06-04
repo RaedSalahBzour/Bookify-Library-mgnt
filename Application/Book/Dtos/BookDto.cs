@@ -3,7 +3,7 @@
 using Bookify_Library_mgnt.Dtos.Borrowings;
 using Bookify_Library_mgnt.Dtos.Reviews;
 
-namespace Bookify_Library_mgnt.Dtos.Books
+namespace Application.Book.Dtos
 {
     public class BookDto
     {

@@ -1,7 +1,7 @@
-﻿using Bookify_Library_mgnt.Dtos.Reviews;
+﻿using Application.Review.Dtos;
 using FluentValidation;
 
-namespace Bookify_Library_mgnt.Validation.ReviewValidation
+namespace Application.Review.Validators
 {
     public class UpdateReviewDtoValidator : AbstractValidator<UpdateReviewDto>
     {

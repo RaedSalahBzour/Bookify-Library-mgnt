@@ -1,11 +1,15 @@
-﻿using Application.Books.Services;
-using Bookify_Library_mgnt.Repositpries.Implementations;
-using Bookify_Library_mgnt.Repositpries.Interfaces;
-using Bookify_Library_mgnt.Services.Implementations;
-using Bookify_Library_mgnt.Services.Interfaces;
+﻿using Application.Authorization.Services;
+using Application.Book.Services;
+using Application.Borrowing.Services;
+using Application.Category.Services;
+using Application.Review.Services;
+using Application.User.Services;
+using Domain.Interfaces;
+using Infrastructure.Persistence.Repositpries;
+using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Bookify_Library_mgnt.Extensions
+namespace Infrastructure
 {
     public static class ServiceCollectionExtensions
     {

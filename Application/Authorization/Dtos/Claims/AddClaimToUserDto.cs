@@ -1,4 +1,4 @@
-﻿namespace Bookify_Library_mgnt.Dtos.Claims
+﻿namespace Application.Authorization.Dtos.Claims
 {
     public class AddClaimToUserDto
     {
