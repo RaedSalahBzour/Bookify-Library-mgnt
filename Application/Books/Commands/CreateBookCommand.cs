@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using Application.Books.Dtos;
+using Bookify_Library_mgnt.Common;
+using MediatR;
 
 namespace Application.Books.Commands
 {
@@ -10,6 +12,6 @@ namespace Application.Books.Commands
     string ISBN,
     DateTime PublishDate,
     List<string> CategoryIds
-) : IRequest<Guid>;
+) : IRequest<Result<BookDto>>;
 
 }

@@ -1,5 +1,8 @@
-﻿using Application.Books.Dtos;
+﻿using Application.Books.Commands;
+using Application.Books.Dtos;
+using Application.Books.Queries;
 using Application.Books.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +13,11 @@ namespace Bookify_Library_mgnt.Controllers
     [ApiController()]
     public class BookController : ControllerBase
     {
-        private readonly IBookService _bookService;
+        private readonly ISender _sender;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, ISender sender)
         {
-            _bookService = bookService;
+            _sender = sender;
         }
 
         [HttpGet]
@@ -25,7 +28,8 @@ namespace Bookify_Library_mgnt.Controllers
                    string? sortBy = null,
                    bool descending = false)
         {
-            var books = await _bookService.GetBooksAsync(pageNumber, pageSize, title, category, publishtDate, sortBy, descending);
+            var books = await _sender.Send(new GetBooksQuery(pageNumber, pageSize, title,
+                                                category, publishtDate, sortBy, descending));
             return Ok(books);
         }
 
@@ -33,27 +37,28 @@ namespace Bookify_Library_mgnt.Controllers
 
         public async Task<IActionResult> GetBookById([FromRoute] string id)
         {
-            var result = await _bookService.GetByIdAsync(id);
+            var result = await _sender.Send(new GetBookByIdQuery(id));
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
-            return Ok(result);
+            return Ok(result.Data);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromBody] CreateBookDto bookDto)
+        public async Task<IActionResult> CreateBook([FromBody] CreateBookCommand command)
         {
-            var result = await _bookService.CreateBookAsync(bookDto);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
-            return CreatedAtAction(nameof(GetBookById), new { Id = result.Data.Id }, bookDto);
+            return CreatedAtAction(nameof(GetBookById), new { Id = result.Data.Id }, command);
         }
         [HttpPut("{id:guid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateBook([FromRoute] string id, [FromBody] UpdateBookDto bookDto)
+        public async Task<IActionResult> UpdateBook([FromRoute] string id, [FromBody] UpdateBookCommand command)
         {
-            var result = await _bookService.UpdateBookAsync(id, bookDto);
+            command.Id = id;
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
-            return Ok(bookDto);
+            return Ok(result.Data);
 
 
         }
@@ -63,7 +68,7 @@ namespace Bookify_Library_mgnt.Controllers
 
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            var result = await _bookService.DeleteBookAsync(id);
+            var result = await _sender.Send(new DeleteBookCommand(id));
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
             return NoContent();

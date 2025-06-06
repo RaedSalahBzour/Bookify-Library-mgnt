@@ -15,6 +15,11 @@
         DeleteUser,
         AddClaimToUser,
         DeleteClaimToUser,
+        CreateBook,
+        UpdateBook,
+        DeleteBook,
+        GetBook,
+        GetBooks,
 
     }
 }
