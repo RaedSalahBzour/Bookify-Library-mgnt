@@ -1,4 +1,5 @@
-﻿using Application.Reviews.Dtos;
+﻿using Application.Categories.Dtos;
+using Application.Reviews.Dtos;
 using Application.Reviews.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
@@ -48,13 +49,13 @@ namespace Infrastructure.Services
             var reviewDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Ok(reviewDto);
         }
-        public async Task<Result<Review>> CreateReviewAsync(CreateReviewDto dto)
+        public async Task<Result<ReviewDto>> CreateReviewAsync(CreateReviewDto dto)
         {
             var validationResult = await _createValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<Review>.Fail(errorMessages);
+                return Result<ReviewDto>.Fail(errorMessages);
             }
 
             var review = _mapper.Map<Review>(dto);
@@ -70,31 +71,34 @@ namespace Infrastructure.Services
                 if (!bookExists)
                     errors.Add($"Book with ID {dto.BookId} not found");
 
-                return Result<Review>.Fail(string.Join(" | ", errors));
+                return Result<ReviewDto>.Fail(string.Join(" | ", errors));
             }
             await _reviewRepository.CreateReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
-            return Result<Review>.Ok(review);
+            var rDto = _mapper.Map<ReviewDto>(review);
+            return Result<ReviewDto>.Ok(rDto);
         }
-        public async Task<Result<Review>> UpdateReviewAsync(string id, UpdateReviewDto dto)
+        public async Task<Result<ReviewDto>> UpdateReviewAsync(string id, UpdateReviewDto dto)
         {
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
-                return Result<Review>.Fail(ErrorMessages.NotFoundById(id));
+                return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
             _mapper.Map(dto, review);
             await _reviewRepository.UpdateReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
-            return Result<Review>.Ok(review);
+            var rDto = _mapper.Map<ReviewDto>(review);
+            return Result<ReviewDto>.Ok(rDto);
 
         }
-        public async Task<Result<Review>> DeleteReviewAsync(string id)
+        public async Task<Result<ReviewDto>> DeleteReviewAsync(string id)
         {
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
-                return Result<Review>.Fail(ErrorMessages.NotFoundById(id));
+                return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
             await _reviewRepository.DeleteReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();
-            return Result<Review>.Ok(review);
+            var rDto = _mapper.Map<ReviewDto>(review);
+            return Result<ReviewDto>.Ok(rDto);
         }
 
 

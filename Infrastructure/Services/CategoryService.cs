@@ -1,4 +1,5 @@
-﻿using Application.Categories.Dtos;
+﻿using Application.Borrowings.Dtos;
+using Application.Categories.Dtos;
 using Application.Categories.Services;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
@@ -47,48 +48,51 @@ namespace Infrastructure.Services
             return Result<CategoryDto>.Ok(categoryDto);
         }
 
-        public async Task<Result<Category>> CreateCategoryAsync(CreateCategoryDto categoryDto)
+        public async Task<Result<CategoryDto>> CreateCategoryAsync(CreateCategoryDto categoryDto)
         {
             var validationResult = await _createCategoryValidator.ValidateAsync(categoryDto);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<Category>.Fail(errorMessages);
+                return Result<CategoryDto>.Fail(errorMessages);
             }
             var category = _mapper.Map<Category>(categoryDto);
             await _categoryRepository.CreateCategoryAsync(category);
             await _categoryRepository.SaveChangesAsync();
-            return Result<Category>.Ok(category);
+            var cDto = _mapper.Map<CategoryDto>(category);
+            return Result<CategoryDto>.Ok(cDto);
         }
-        public async Task<Result<Category>> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto)
+        public async Task<Result<CategoryDto>> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto)
         {
             var validationResult = await _updateCategoryValidator.ValidateAsync(categoryDto);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<Category>.Fail(errorMessages);
+                return Result<CategoryDto>.Fail(errorMessages);
             }
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category is null)
             {
-                return Result<Category>.Fail(ErrorMessages.NotFoundById(id));
+                return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id));
             }
             _mapper.Map(categoryDto, category);
             await _categoryRepository.UpdateCategoryAsync(category);
             await _categoryRepository.SaveChangesAsync();
-            return Result<Category>.Ok(category);
+            var cDto = _mapper.Map<CategoryDto>(category);
+            return Result<CategoryDto>.Ok(cDto);
         }
 
-        public async Task<Result<Category>> DeleteCategoryAsync(string id)
+        public async Task<Result<CategoryDto>> DeleteCategoryAsync(string id)
         {
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category is null)
             {
-                return Result<Category>.Fail(ErrorMessages.NotFoundById(id));
+                return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id));
             }
             await _categoryRepository.DeleteCategoryAsync(category);
             await _categoryRepository.SaveChangesAsync();
-            return Result<Category>.Ok(category);
+            var cDto = _mapper.Map<CategoryDto>(category);
+            return Result<CategoryDto>.Ok(cDto);
         }
 
     }

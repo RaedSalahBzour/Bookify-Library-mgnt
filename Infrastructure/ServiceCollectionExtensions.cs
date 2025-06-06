@@ -1,6 +1,7 @@
 ﻿using Application.Authorization.Dtos.Roles;
 using Application.Authorization.Services;
 using Application.Authorization.Validators;
+using Application.Books.Commands;
 using Application.Books.Dtos;
 using Application.Books.Services;
 using Application.Books.Validators;
@@ -73,6 +74,14 @@ namespace Infrastructure
 
             return services;
         }
+        public static IServiceCollection AddMediator(this IServiceCollection services)
+        {
+            services.AddMediatR(configurations =>
+            {
+                configurations.RegisterServicesFromAssembly(typeof(CreateBookCommand).Assembly);
+            });
+            return services;
+        }
         public static IServiceCollection AddValidators(this IServiceCollection services)
         {
             //user
@@ -108,6 +117,7 @@ namespace Infrastructure
             services.AddBorrowingServices();
             services.AddRoleServices();
             services.AddValidators();
+            services.AddMediator();
             return services;
         }
     }

@@ -9,8 +9,8 @@ namespace Application.Categories.Services
     {
         Task<PagedResult<CategoryDto>> GetCategoriesAsync(int pageNumber = 1, int pageSize = 10);
         Task<Result<CategoryDto>> GetByIdAsync(string id);
-        Task<Result<Category>> CreateCategoryAsync(CreateCategoryDto categoryDto);
-        Task<Result<Category>> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto);
-        Task<Result<Category>> DeleteCategoryAsync(string id);
+        Task<Result<CategoryDto>> CreateCategoryAsync(CreateCategoryDto categoryDto);
+        Task<Result<CategoryDto>> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto);
+        Task<Result<CategoryDto>> DeleteCategoryAsync(string id);
     }
 }

@@ -12,8 +12,8 @@ namespace Application.Books.Services
             string? sortBy = null,
             bool descending = false);
         Task<Result<BookDto>> GetByIdAsync(string id);
-        Task<Result<Book>> CreateBookAsync(CreateBookDto bookDto);
-        Task<Result<Book>> UpdateBookAsync(string id, UpdateBookDto bookDto);
-        Task<Result<Book>> DeleteBookAsync(string id);
+        Task<Result<BookDto>> CreateBookAsync(CreateBookDto bookDto);
+        Task<Result<BookDto>> UpdateBookAsync(string id, UpdateBookDto bookDto);
+        Task<Result<BookDto>> DeleteBookAsync(string id);
     }
 }

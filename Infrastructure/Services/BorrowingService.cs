@@ -1,5 +1,6 @@
 ﻿using Application.Borrowings.Dtos;
 using Application.Borrowings.Services;
+using Application.Users.Dtos;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;
@@ -39,30 +40,33 @@ namespace Infrastructure.Services
             return Result<BorrowingDto>.Ok(borrowingDto);
         }
 
-        public async Task<Result<Borrowing>> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
+        public async Task<Result<BorrowingDto>> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
         {
             var borrowing = _mapper.Map<Borrowing>(borrowingDto);
             await _borrowingRepository.CreateBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
-            return Result<Borrowing>.Ok(borrowing);
+            var bDto = _mapper.Map<BorrowingDto>(borrowing);
+            return Result<BorrowingDto>.Ok(bDto);
         }
-        public async Task<Result<Borrowing>> UpdateBorrowingAsync(string id, UpdateBorrowingDto borrowingDto)
+        public async Task<Result<BorrowingDto>> UpdateBorrowingAsync(string id, UpdateBorrowingDto borrowingDto)
         {
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
             if (borrowing == null) { Result<BorrowingDto>.Fail(ErrorMessages.NotFoundById(id)); }
             _mapper.Map(borrowingDto, borrowing);
             await _borrowingRepository.UpdateBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
-            return Result<Borrowing>.Ok(borrowing);
+            var bDto = _mapper.Map<BorrowingDto>(borrowing);
+            return Result<BorrowingDto>.Ok(bDto);
         }
 
-        public async Task<Result<Borrowing>> DeleteBorrowingAsync(string id)
+        public async Task<Result<BorrowingDto>> DeleteBorrowingAsync(string id)
         {
             var borrowing = await _borrowingRepository.GetBorrowingByIdAsync(id);
-            if (borrowing == null) { return Result<Borrowing>.Fail(ErrorMessages.NotFoundById(id)); }
+            if (borrowing == null) { return Result<BorrowingDto>.Fail(ErrorMessages.NotFoundById(id)); }
             await _borrowingRepository.DeleteBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
-            return Result<Borrowing>.Ok(borrowing);
+            var bDto = _mapper.Map<BorrowingDto>(borrowing);
+            return Result<BorrowingDto>.Ok(bDto);
         }
 
 

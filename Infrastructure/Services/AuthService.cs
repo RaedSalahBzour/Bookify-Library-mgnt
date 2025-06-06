@@ -61,30 +61,31 @@ namespace Infrastructure.Services
             if (user == null) { return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id)); }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }
-        public async Task<Result<User>> CreateAsync(CreateUserDto userDto)
+        public async Task<Result<UserDto>> CreateAsync(CreateUserDto userDto)
         {
             var validationResult = await _createValidator.ValidateAsync(userDto);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<User>.Fail(errorMessages);
+                return Result<UserDto>.Fail(errorMessages);
             }
             var existingUserByEmail = await _userManager.FindByEmailAsync(userDto.Email);
             if (existingUserByEmail != null)
-                return Result<User>.Fail(ErrorMessages.EmailAlreadyExists(userDto.Email));
+                return Result<UserDto>.Fail(ErrorMessages.EmailAlreadyExists(userDto.Email));
 
             var existingUserByUsername = await _userManager.FindByNameAsync(userDto.UserName);
             if (existingUserByUsername != null)
-                return Result<User>.Fail(ErrorMessages.UsernameAlreadyExists(userDto.UserName));
+                return Result<UserDto>.Fail(ErrorMessages.UsernameAlreadyExists(userDto.UserName));
 
             var user = _mapper.Map<User>(userDto);
             var result = await _userManager.CreateAsync(user, userDto.Password);
             if (!result.Succeeded)
             {
-                return Result<User>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateUser), null));
+                return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateUser), null));
             }
             await _userManager.AddToRoleAsync(user, "user");
-            return Result<User>.Ok(user);
+            var uDto = _mapper.Map<UserDto>(user);
+            return Result<UserDto>.Ok(uDto);
         }
         public async Task<Result<UserDto>> UpdateUserAsync(string id, UpdateUserDto userDto)
         {

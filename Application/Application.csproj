@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
@@ -16,6 +17,25 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authorization\Commands\" />
+    <Folder Include="Authorization\Handlers\" />
+    <Folder Include="Authorization\Queries\" />
+    <Folder Include="Books\Queries\" />
+    <Folder Include="Borrowings\Commands\" />
+    <Folder Include="Borrowings\Handlers\" />
+    <Folder Include="Borrowings\Queries\" />
+    <Folder Include="Categories\Commands\" />
+    <Folder Include="Categories\Handlers\" />
+    <Folder Include="Categories\Queries\" />
+    <Folder Include="Reviews\Commands\" />
+    <Folder Include="Reviews\Handlers\" />
+    <Folder Include="Reviews\Queries\" />
+    <Folder Include="Users\Commands\" />
+    <Folder Include="Users\Handlers\" />
+    <Folder Include="Users\Queries\" />
   </ItemGroup>
 
 </Project>

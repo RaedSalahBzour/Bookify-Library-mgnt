@@ -9,8 +9,8 @@ namespace Application.Reviews.Services
     {
         Task<PagedResult<ReviewDto>> GetReviewsAsync(int pageNumber = 1, int pageSize = 10);
         Task<Result<ReviewDto>> GetReviewByIdAsync(string id);
-        Task<Result<Review>> CreateReviewAsync(CreateReviewDto dto);
-        Task<Result<Review>> UpdateReviewAsync(string id, UpdateReviewDto dto);
-        Task<Result<Review>> DeleteReviewAsync(string id);
+        Task<Result<ReviewDto>> CreateReviewAsync(CreateReviewDto dto);
+        Task<Result<ReviewDto>> UpdateReviewAsync(string id, UpdateReviewDto dto);
+        Task<Result<ReviewDto>> DeleteReviewAsync(string id);
     }
 }
