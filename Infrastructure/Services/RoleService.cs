@@ -160,7 +160,7 @@ namespace Infrastructure.Services
                 return Result<string>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.RemoveUserFromRole), errors));
 
             }
-            return Result<string>.Ok("Removed");
+            return Result<string>.Ok(nameof(OperationNames.RoleRemoved));
         }
         public async Task<Result<IEnumerable<string>>> GetUserRoles(string email)
         {

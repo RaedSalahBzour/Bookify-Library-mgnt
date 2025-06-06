@@ -67,7 +67,7 @@ namespace Infrastructure.Services
                 return Result<string>.Fail(ErrorMessages
                     .OperationFailed(nameof(OperationNames.RemoveUserFromRole), errors));
             }
-            return Result<string>.Ok("Claim Removed");
+            return Result<string>.Ok(nameof(OperationNames.CLaimRemoved));
 
         }
 

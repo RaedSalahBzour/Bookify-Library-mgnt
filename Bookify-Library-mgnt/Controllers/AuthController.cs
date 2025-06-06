@@ -1,8 +1,11 @@
-﻿using Application.Authorization.Dtos.Token;
+﻿using Application.Authorization.Commands.Auth;
+using Application.Authorization.Dtos.Token;
 using Application.Users.Dtos;
 using Application.Users.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Bookify_Library_mgnt.Controllers
@@ -13,10 +16,12 @@ namespace Bookify_Library_mgnt.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ISender _sender;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ISender sender)
         {
             _authService = authService;
+            _sender = sender;
         }
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
@@ -64,9 +69,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto login)
+        public async Task<IActionResult> Login([FromBody] LoginCommand command)
         {
-            var result = await _authService.LoginAsync(login);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -74,9 +79,9 @@ namespace Bookify_Library_mgnt.Controllers
             return Ok(result.Data);
         }
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefrshToken([FromBody] RefreshTokenRequestDto requestDto)
+        public async Task<IActionResult> RefrshToken([FromBody] RefreshTokenCommand command)
         {
-            var result = await _authService.RefreshTokenAsync(requestDto);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);

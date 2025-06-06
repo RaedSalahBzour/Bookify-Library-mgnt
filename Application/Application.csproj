@@ -20,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Authorization\Commands\" />
-    <Folder Include="Authorization\Handlers\" />
-    <Folder Include="Authorization\Queries\" />
     <Folder Include="Borrowings\Commands\" />
     <Folder Include="Borrowings\Handlers\" />
     <Folder Include="Borrowings\Queries\" />

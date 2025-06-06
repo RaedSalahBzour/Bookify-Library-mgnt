@@ -1,5 +1,8 @@
-﻿using Application.Authorization.Dtos.Claims;
+﻿using Application.Authorization.Commands.Claims;
+using Application.Authorization.Dtos.Claims;
+using Application.Authorization.Queries.Claims;
 using Application.Authorization.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,17 +14,17 @@ namespace Bookify_Library_mgnt.Controllers
     [Authorize(policy: "CanManageUserClaimsPolicy")]
     public class ClaimController : ControllerBase
     {
-        private readonly IClaimService _claimService;
+        private readonly ISender _sender;
 
-        public ClaimController(IClaimService claimService)
+        public ClaimController(IClaimService claimService, ISender sender)
         {
-            _claimService = claimService;
+            _sender = sender;
         }
 
         [HttpGet("claims")]
         public async Task<IActionResult> GetClaims(string userId)
         {
-            var result = await _claimService.GetUserClaimsAsync(userId);
+            var result = await _sender.Send(new GetClaimsQuery(userId));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -30,9 +33,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPost("claims")]
-        public async Task<IActionResult> AddClaimToUser([FromBody] AddClaimToUserDto addClaimDto)
+        public async Task<IActionResult> AddClaimToUser([FromBody] AddClaimToUserCommand command)
         {
-            var result = await _claimService.AddClaimToUserAsync(addClaimDto);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -43,7 +46,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteClaimFromUser([FromRoute] string userId,
             [FromBody] string claimType)
         {
-            var result = await _claimService.RemoveClaimFromUserAsync(userId, claimType);
+            var result = await _sender.Send(new RemoveClaimFromUserCommand(userId, claimType));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);

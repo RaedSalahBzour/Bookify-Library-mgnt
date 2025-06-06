@@ -1,7 +1,11 @@
-﻿using Application.Authorization.Dtos.Roles;
+﻿using Application.Authorization.Commands.Roles;
+using Application.Authorization.Dtos.Roles;
+using Application.Authorization.Queries.Roles;
 using Application.Authorization.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Bookify_Library_mgnt.Controllers
 {
@@ -10,23 +14,23 @@ namespace Bookify_Library_mgnt.Controllers
     [Authorize(Roles = "admin")]
     public class RoleController : ControllerBase
     {
-        private readonly IRoleService _roleService;
+        private readonly ISender _sender;
 
-        public RoleController(IRoleService roleService)
+        public RoleController(IRoleService roleService, ISender sender)
         {
-            _roleService = roleService;
+            _sender = sender;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRoles(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _roleService.GetRolesAsync(pageNumber, pageSize));
+            return Ok(await _sender.Send(new GetRolesQuery(pageNumber, pageSize)));
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> Get([FromRoute] string id)
+        public async Task<IActionResult> GetById([FromRoute] string id)
         {
-            var result = await _roleService.GetRoleByIdAsync(id);
+            var result = await _sender.Send(new GetRoleByIdQuery(id));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -35,9 +39,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto roleDto)
+        public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommand command)
         {
-            var result = await _roleService.CreateRoleAsync(roleDto);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -46,9 +50,10 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateRole([FromRoute] string id, [FromBody] UpdateRoleDto roleDto)
+        public async Task<IActionResult> UpdateRole([FromRoute] string id, [FromBody] UpdateRoleCommand command)
         {
-            var result = await _roleService.UpdateRoleAsync(id, roleDto);
+            command.id = id;
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -60,7 +65,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteRole([FromRoute] string id)
         {
-            var result = await _roleService.DeleteRoleAsync(id);
+            var result = await _sender.Send(new DeleteRoleCommand(id));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -71,7 +76,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> AddToRole([FromRoute] string userId, [FromBody] string roleName)
         {
-            var result = await _roleService.AddUserToRoleAsync(userId, roleName);
+            var result = await _sender.Send(new AddToRoleCommand(userId, roleName));
             if (!result.IsSuccess)
             { return BadRequest(result.Errors); }
             return Ok(result.Data);
@@ -80,7 +85,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> RemoveFromRole([FromRoute] string userId, [FromBody] string roleName)
         {
-            var result = await _roleService.RemoveUserFromRoleAsync(userId, roleName);
+            var result = await _sender.Send(new RemoveFromRoleCommand(userId, roleName));
             if (!result.IsSuccess)
             { return BadRequest(result.Errors); }
             return Ok(result.Data);
@@ -90,7 +95,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> GetUserRoles(string email)
         {
-            var result = await _roleService.GetUserRoles(email);
+            var result = await _sender.Send(new GetUserRolesQuery(email));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);

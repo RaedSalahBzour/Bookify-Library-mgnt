@@ -20,6 +20,18 @@
         DeleteBook,
         GetBook,
         GetBooks,
+        CLaimRemoved,
+        RoleRemoved,
+        RemoveClaimFromUser,
+        GetUserClaims,
+        GetUserRoles,
+        GetRole,
+        Login,
+        RefreshToken,
+
+
+
+
 
     }
 }

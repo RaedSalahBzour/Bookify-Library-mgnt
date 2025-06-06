@@ -1,0 +1,14 @@
+﻿using Bookify_Library_mgnt.Common;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Authorization.Commands.Roles
+{
+    public record DeleteRoleCommand(string id) : IRequest<Result<IdentityRole>>;
+
+}
