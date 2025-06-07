@@ -1,6 +1,8 @@
 ﻿using Application.Authorization.Commands.Auth;
 using Application.Authorization.Dtos.Token;
+using Application.Users.Commands;
 using Application.Users.Dtos;
+using Application.Users.Queries;
 using Application.Users.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,44 +17,43 @@ namespace Bookify_Library_mgnt.Controllers
     [Authorize(Roles = "admin")]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
         private readonly ISender _sender;
 
-        public AuthController(IAuthService authService, ISender sender)
+        public AuthController(ISender sender)
         {
-            _authService = authService;
             _sender = sender;
         }
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _authService.GetUsersAsync(pageNumber, pageSize));
+            return Ok(await _sender.Send(new GetUsersQuery(pageNumber, pageSize)));
 
         }
 
         [HttpGet("users/{id:guid}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
-            var result = await _authService.GetUserByIdAsync(id);
+            var result = await _sender.Send(new GetUserByIdQuery(id));
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
             return Ok(result.Data);
         }
         [AllowAnonymous]
         [HttpPost("users")]
-        public async Task<IActionResult> Register([FromBody] CreateUserDto userDto)
+        public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
         {
-            var result = await _authService.CreateAsync(userDto);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
-            return CreatedAtAction(nameof(GetUserById), new { Id = result.Data.Id }, userDto);
+            return CreatedAtAction(nameof(GetUserById), new { Id = result.Data.Id }, result.Data);
         }
 
         [HttpPut("users/{id:guid}")]
         [Authorize(Roles = "superAdmin")]
-        public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto userDto)
+        public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserCommand command)
         {
-            var result = await _authService.UpdateUserAsync(id, userDto);
+            command.id = id;
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
             return Ok(result.Data);
@@ -62,7 +63,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
-            var result = await _authService.DeleteUserAsync(id);
+            var result = await _sender.Send(new DeleteUserCommand(id));
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
             return Ok(result.Data);
