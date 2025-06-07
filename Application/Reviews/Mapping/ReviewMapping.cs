@@ -1,4 +1,5 @@
-﻿using Application.Reviews.Dtos;
+﻿using Application.Reviews.Commands;
+using Application.Reviews.Dtos;
 using AutoMapper;
 using Domain.Entities;
 
@@ -10,7 +11,9 @@ namespace Application.Reviews.Mapping
         {
             CreateMap<Review, ReviewDto>().ReverseMap();
             CreateMap<Review, CreateReviewDto>().ReverseMap();
+            CreateMap<CreateReviewCommand, CreateReviewDto>().ReverseMap();
             CreateMap<Review, UpdateReviewDto>().ReverseMap();
+            CreateMap<UpdateReviewCommand, UpdateReviewDto>().ReverseMap();
         }
     }
 }

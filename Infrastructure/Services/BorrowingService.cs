@@ -12,11 +12,15 @@ namespace Infrastructure.Services
     public class BorrowingService : IBorrowingService
     {
         private readonly IBorrowingRepository _borrowingRepository;
+        private readonly IBookRepository _bookRepository;
+        private readonly IAuthRepository _authRepository;
         private readonly IMapper _mapper;
-        public BorrowingService(IBorrowingRepository borrowingRepository, IMapper mapper)
+        public BorrowingService(IBorrowingRepository borrowingRepository, IMapper mapper, IBookRepository bookRepository, IAuthRepository authRepository)
         {
             _borrowingRepository = borrowingRepository;
             _mapper = mapper;
+            _bookRepository = bookRepository;
+            _authRepository = authRepository;
         }
 
         public async Task<PagedResult<BorrowingDto>> GetBorrowingsAsync(int pageNumber = 1, int pageSize = 10)
@@ -43,6 +47,16 @@ namespace Infrastructure.Services
         public async Task<Result<BorrowingDto>> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
         {
             var borrowing = _mapper.Map<Borrowing>(borrowingDto);
+            var bookExist = await _bookRepository.GetByIdAsync(borrowingDto.BookId);
+            var userExist = await _authRepository.GetUserByIdAsync(borrowingDto.UserId);
+            if (bookExist is null)
+            {
+                return Result<BorrowingDto>.Fail(ErrorMessages.NotFoundById(borrowingDto.BookId));
+            }
+            if (userExist is null)
+            {
+                return Result<BorrowingDto>.Fail(ErrorMessages.NotFoundById(borrowingDto.UserId));
+            }
             await _borrowingRepository.CreateBorrowingAsync(borrowing);
             await _borrowingRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BorrowingDto>(borrowing);

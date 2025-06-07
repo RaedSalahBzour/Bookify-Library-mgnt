@@ -24,7 +24,7 @@ namespace Infrastructure.Persistence.Repositpries
         }
         public async Task<Category> GetByIdAsync(string id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Categories.Include(c => c.CategoryBooks).ThenInclude(cb => cb.Book).FirstOrDefaultAsync(c => c.Id == id);
         }
         public async Task<Category> CreateCategoryAsync(Category category)
         {

@@ -1,4 +1,5 @@
-﻿using Application.Categories.Dtos;
+﻿using Application.Borrowings.Dtos;
+using Application.Categories.Dtos;
 using Application.Reviews.Dtos;
 using Application.Reviews.Services;
 using AutoMapper;
@@ -24,6 +25,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
+
         }
         public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int pageNumber = 1, int pageSize = 10)
         {
@@ -83,6 +85,20 @@ namespace Infrastructure.Services
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review is null)
                 return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
+            var (userExists, bookExists) = await _reviewRepository.CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
+
+            if (!userExists || !bookExists)
+            {
+                var errors = new List<string>();
+
+                if (!userExists)
+                    errors.Add($"User with ID {dto.UserId} not found");
+
+                if (!bookExists)
+                    errors.Add($"Book with ID {dto.BookId} not found");
+
+                return Result<ReviewDto>.Fail(string.Join(" | ", errors));
+            }
             _mapper.Map(dto, review);
             await _reviewRepository.UpdateReviewAsync(review);
             await _reviewRepository.SaveChangesAsync();

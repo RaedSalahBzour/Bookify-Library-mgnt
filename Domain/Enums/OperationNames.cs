@@ -28,6 +28,25 @@
         GetRole,
         Login,
         RefreshToken,
+        UpdateBorrowing,
+        CreateBorrowing,
+        DeleteBorrowing,
+        GetBorrowings,
+        GetBorrowingById,
+        UpdateCategory,
+        CreateCategory,
+        DeleteCategory,
+        GetCategories,
+        GetCategoryById,
+        UpdateReview,
+        CreateReview,
+        DeleteReview,
+        GetReviews,
+        GetReviewById,
+        GetUsers,
+        GetUserById,
+
+
 
 
 

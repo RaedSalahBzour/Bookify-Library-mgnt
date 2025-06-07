@@ -1,5 +1,8 @@
-﻿using Application.Reviews.Dtos;
+﻿using Application.Reviews.Commands;
+using Application.Reviews.Dtos;
+using Application.Reviews.Queries;
 using Application.Reviews.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,50 +13,51 @@ namespace Bookify_Library_mgnt.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly IReviewService _reviewService;
+        private readonly ISender _sender;
 
-        public ReviewController(IReviewService reviewService)
+        public ReviewController(ISender sender)
         {
-            _reviewService = reviewService;
+            _sender = sender;
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetReviews(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _reviewService.GetReviewsAsync(pageNumber, pageSize));
+            return Ok(await _sender.Send(new GetReviewsQuery(pageNumber, pageSize)));
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetReviewById(string id)
         {
-            var result = await _reviewService.GetReviewByIdAsync(id);
+            var result = await _sender.Send(new GetReviewByIdQuery(id));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
             }
-            return Ok(result);
+            return Ok(result.Data);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto reviewDto)
+        public async Task<IActionResult> CreateReview([FromBody] CreateReviewCommand command)
         {
-            var result = await _reviewService.CreateReviewAsync(reviewDto);
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
             }
-            return CreatedAtAction(nameof(GetReviewById), new { id = result.Data.Id }, reviewDto);
+            return CreatedAtAction(nameof(GetReviewById), new { id = result.Data.Id }, result.Data);
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateReview([FromRoute] string id, [FromBody] UpdateReviewDto reviewDto)
+        public async Task<IActionResult> UpdateReview([FromRoute] string id, [FromBody] UpdateReviewCommand command)
         {
-
-            var result = await _reviewService.UpdateReviewAsync(id, reviewDto);
+            command.id = id;
+            var result = await _sender.Send(command);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
             }
-            return Ok(result);
+            return Ok(result.Data);
 
         }
 
@@ -61,12 +65,11 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteReview([FromRoute] string id)
         {
-            var result = await _reviewService.GetReviewByIdAsync(id);
+            var result = await _sender.Send(new DeleteReviewCommand(id));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
             }
-            await _reviewService.DeleteReviewAsync(id);
             return NoContent();
         }
     }
