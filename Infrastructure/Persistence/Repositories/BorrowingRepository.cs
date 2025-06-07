@@ -1,45 +1,16 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositpries
 {
-    public class BorrowingRepository : IBorrowingRepository
+    public class BorrowingRepository : GenericRepository<Borrowing>, IBorrowingRepository
     {
-        private readonly ApplicationDbContext _context;
-        public BorrowingRepository(ApplicationDbContext context)
+        public BorrowingRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
-        }
-        public IQueryable<Borrowing> GetBorrowingsAsync()
-        {
-            return _context.Borrowings.AsQueryable();
-        }
-        public async Task<Borrowing> GetBorrowingByIdAsync(string id)
-        {
-            return await _context.Borrowings.FirstOrDefaultAsync(x => x.Id == id);
-        }
-        public async Task<Borrowing> CreateBorrowingAsync(Borrowing borrowing)
-        {
-            await _context.Borrowings.AddAsync(borrowing);
-            return borrowing;
         }
 
-        public async Task<Borrowing> UpdateBorrowingAsync(Borrowing borrowing)
-        {
-            _context.Borrowings.Update(borrowing);
-            return borrowing;
-        }
-        public async Task<Borrowing> DeleteBorrowingAsync(Borrowing borrowing)
-        {
-            _context.Borrowings.Remove(borrowing);
-            return borrowing;
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
         public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
             string bookId)
         {

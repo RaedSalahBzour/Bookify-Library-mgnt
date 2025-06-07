@@ -25,11 +25,10 @@ namespace Infrastructure.Services
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
-
         }
         public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var queryReviews = _reviewRepository.GetReviewsAsync();
+            var queryReviews = _reviewRepository.GetAll();
             var paginatedReview = await queryReviews.ToPaginationForm(pageNumber, pageSize);
 
             var reviewsDto = _mapper.Map<IEnumerable<ReviewDto>>(paginatedReview.Items);
@@ -43,7 +42,7 @@ namespace Infrastructure.Services
         }
         public async Task<Result<ReviewDto>> GetReviewByIdAsync(string id)
         {
-            var review = await _reviewRepository.GetReviewByIdAsync(id);
+            var review = await _reviewRepository.GetByIdAsync(id);
             if (review is null)
             {
                 return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
@@ -75,14 +74,14 @@ namespace Infrastructure.Services
 
                 return Result<ReviewDto>.Fail(string.Join(" | ", errors));
             }
-            await _reviewRepository.CreateReviewAsync(review);
+            await _reviewRepository.AddAsync(review);
             await _reviewRepository.SaveChangesAsync();
             var rDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Ok(rDto);
         }
         public async Task<Result<ReviewDto>> UpdateReviewAsync(string id, UpdateReviewDto dto)
         {
-            var review = await _reviewRepository.GetReviewByIdAsync(id);
+            var review = await _reviewRepository.GetByIdAsync(id);
             if (review is null)
                 return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
             var (userExists, bookExists) = await _reviewRepository.CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
@@ -100,7 +99,7 @@ namespace Infrastructure.Services
                 return Result<ReviewDto>.Fail(string.Join(" | ", errors));
             }
             _mapper.Map(dto, review);
-            await _reviewRepository.UpdateReviewAsync(review);
+            await _reviewRepository.Update(review);
             await _reviewRepository.SaveChangesAsync();
             var rDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Ok(rDto);
@@ -108,10 +107,10 @@ namespace Infrastructure.Services
         }
         public async Task<Result<ReviewDto>> DeleteReviewAsync(string id)
         {
-            var review = await _reviewRepository.GetReviewByIdAsync(id);
+            var review = await _reviewRepository.GetByIdAsync(id);
             if (review is null)
                 return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
-            await _reviewRepository.DeleteReviewAsync(review);
+            await _reviewRepository.Delete(review);
             await _reviewRepository.SaveChangesAsync();
             var rDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Ok(rDto);

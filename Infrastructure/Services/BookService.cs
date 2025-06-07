@@ -73,7 +73,7 @@ namespace Infrastructure.Services
 
         public async Task<Result<BookDto>> GetByIdAsync(string id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetBookByIdAsync(id);
             if (book == null) return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
             var bookDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bookDto);
@@ -101,7 +101,7 @@ namespace Infrastructure.Services
                     CategoryId = categoryId
                 });
             }
-            await _bookRepository.CreateBookAsync(book);
+            await _bookRepository.AddAsync(book);
             await _bookRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bDto);
@@ -115,7 +115,7 @@ namespace Infrastructure.Services
                 return Result<BookDto>.Fail(errorMessages);
             }
 
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetBookByIdAsync(id);
             if (book is null)
             {
                 return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
@@ -145,7 +145,7 @@ namespace Infrastructure.Services
                     CategoryId = categoryId
                 });
             }
-            await _bookRepository.UpdateBookAsync(book);
+            await _bookRepository.Update(book);
             await _bookRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bDto);
@@ -158,7 +158,7 @@ namespace Infrastructure.Services
             {
                 return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
             }
-            await _bookRepository.DeleteBookAsync(book);
+            await _bookRepository.Delete(book);
             await _bookRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bDto);

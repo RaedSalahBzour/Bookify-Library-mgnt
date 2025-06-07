@@ -1,47 +1,17 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositpries
 {
-    public class ReviewRepository : IReviewRepository
+    public class ReviewRepository : GenericRepository<Review>, IReviewRepository
     {
-        private readonly ApplicationDbContext _context;
-        public ReviewRepository(ApplicationDbContext context)
+        public ReviewRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
-        public IQueryable<Review> GetReviewsAsync()
-        {
-            return _context.Reviews.AsQueryable();
-        }
-        public async Task<Review> GetReviewByIdAsync(string id)
-        {
-            return await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
-        }
 
-        public async Task<Review> CreateReviewAsync(Review review)
-        {
-            await _context.Reviews.AddAsync(review);
-            return review;
-        }
-        public async Task<Review> UpdateReviewAsync(Review review)
-        {
-            _context.Reviews.Update(review);
-            return review;
-        }
-
-        public async Task<Review> DeleteReviewAsync(Review review)
-        {
-            _context.Reviews.Remove(review);
-            return review;
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
         public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
             string bookId)
         {

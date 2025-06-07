@@ -2,13 +2,10 @@
 
 namespace Domain.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository : IGenericRepository<Category>
     {
-        IQueryable<Category> GetCategoriesAsync();
-        Task<Category> GetByIdAsync(string id);
-        Task<Category> CreateCategoryAsync(Category category);
-        Task<Category> UpdateCategoryAsync(Category category);
-        Task<Category> DeleteCategoryAsync(Category category);
-        Task SaveChangesAsync();
+        IQueryable<Category> GetCategories();
+        Task<Category> GetCategoryById(string id);
+
     }
 }

@@ -29,7 +29,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult<CategoryDto>> GetCategoriesAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var categories = _categoryRepository.GetCategoriesAsync();
+            var categories = _categoryRepository.GetCategories();
             var paginatedCategories = await categories.ToPaginationForm(pageNumber, pageSize);
             var categoriesDto = _mapper.Map<IEnumerable<CategoryDto>>(paginatedCategories.Items);
             return new PagedResult<CategoryDto>
@@ -42,7 +42,7 @@ namespace Infrastructure.Services
         }
         public async Task<Result<CategoryDto>> GetByIdAsync(string id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
+            var category = await _categoryRepository.GetCategoryById(id);
             if (category == null) { return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id)); }
             var categoryDto = _mapper.Map<CategoryDto>(category);
             return Result<CategoryDto>.Ok(categoryDto);
@@ -57,7 +57,7 @@ namespace Infrastructure.Services
                 return Result<CategoryDto>.Fail(errorMessages);
             }
             var category = _mapper.Map<Category>(categoryDto);
-            await _categoryRepository.CreateCategoryAsync(category);
+            await _categoryRepository.AddAsync(category);
             await _categoryRepository.SaveChangesAsync();
             var cDto = _mapper.Map<CategoryDto>(category);
             return Result<CategoryDto>.Ok(cDto);
@@ -76,7 +76,7 @@ namespace Infrastructure.Services
                 return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id));
             }
             _mapper.Map(categoryDto, category);
-            await _categoryRepository.UpdateCategoryAsync(category);
+            await _categoryRepository.Update(category);
             await _categoryRepository.SaveChangesAsync();
             var cDto = _mapper.Map<CategoryDto>(category);
             return Result<CategoryDto>.Ok(cDto);
@@ -89,7 +89,7 @@ namespace Infrastructure.Services
             {
                 return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id));
             }
-            await _categoryRepository.DeleteCategoryAsync(category);
+            await _categoryRepository.Delete(category);
             await _categoryRepository.SaveChangesAsync();
             var cDto = _mapper.Map<CategoryDto>(category);
             return Result<CategoryDto>.Ok(cDto);

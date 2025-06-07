@@ -25,7 +25,8 @@ namespace Bookify_Library_mgnt.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBorrowings(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(await _sender.Send(new GetBorrowingsQuery(pageNumber, pageSize)));
+            var result = await _sender.Send(new GetBorrowingsQuery(pageNumber, pageSize));
+            return Ok(result.Items);
         }
 
         [HttpGet("{id:guid}")]

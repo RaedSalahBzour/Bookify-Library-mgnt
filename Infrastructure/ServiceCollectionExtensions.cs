@@ -19,6 +19,7 @@ using Application.Users.Services;
 using Application.Users.Validators;
 using Domain.Interfaces;
 using FluentValidation;
+using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Repositpries;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,6 @@ namespace Infrastructure
         {
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IBookService, BookService>();
-
             return services;
         }
         public static IServiceCollection AddRoleServices(this IServiceCollection services)

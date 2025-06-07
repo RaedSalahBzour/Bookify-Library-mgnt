@@ -1,53 +1,33 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositpries
 {
-    public class BookRepository : IBookRepository
+    public class BookRepository : GenericRepository<Book>, IBookRepository
     {
-        private readonly ApplicationDbContext _context;
 
-        public BookRepository(ApplicationDbContext context)
+        public BookRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public IQueryable<Book> GetBooksAsync()
         {
-            var query = _context.Books.AsNoTracking()
-                 .Include(b => b.Reviews)
-                 .Include(b => b.Borrowings)
-                 .Include(b => b.CategoryBooks)
-                 .ThenInclude(cb => cb.Category)
-                 .AsQueryable();
-            return query;
+            return GetAll(query =>
+            query.Include(b => b.Reviews)
+             .Include(b => b.Borrowings)
+             .Include(b => b.CategoryBooks)
+             .ThenInclude(cb => cb.Category)
+    );
         }
 
-        public async Task<Book> GetByIdAsync(string id)
+        public async Task<Book> GetBookByIdAsync(string id)
         {
-            return await _context.Books.Include(b => b.CategoryBooks).FirstOrDefaultAsync(x => x.Id == id);
-        }
-        public async Task<Book> CreateBookAsync(Book book)
-        {
-            await _context.Books.AddAsync(book);
-            return book;
-        }
-
-        public async Task<Book> UpdateBookAsync(Book book)
-        {
-            _context.Books.Update(book);
-            return book;
-        }
-
-        public async Task<Book> DeleteBookAsync(Book book)
-        {
-            _context.Books.Remove(book);
-            return book;
-        }
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
+            return await _context.Books.Include(b => b.Reviews)
+             .Include(b => b.Borrowings)
+             .Include(b => b.CategoryBooks)
+             .ThenInclude(cb => cb.Category).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<bool> IsCategoryExist(string id)
