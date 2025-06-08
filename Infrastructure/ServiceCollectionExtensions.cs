@@ -41,6 +41,7 @@ namespace Infrastructure
         public static IServiceCollection AddRoleServices(this IServiceCollection services)
         {
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
             return services;
         }
@@ -57,10 +58,20 @@ namespace Infrastructure
         {
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<ITokenRepository, TokenRepository>();
-            services.AddScoped<IClaimService, ClaimService>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            return services;
+        }
+        public static IServiceCollection AddTokenServices(this IServiceCollection services)
+        {
+            services.AddScoped<ITokenService, TokenService>();
+
+            return services;
+        }
+        public static IServiceCollection AddClaimServices(this IServiceCollection services)
+        {
+            services.AddScoped<IClaimService, ClaimService>();
+            services.AddScoped<IClaimRepository, ClaimRepository>();
 
             return services;
         }
@@ -131,6 +142,8 @@ namespace Infrastructure
             services.AddValidators();
             services.AddMediator();
             services.AddCommonServices();
+            services.AddClaimServices();
+            services.AddTokenServices();
             return services;
         }
     }

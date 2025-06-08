@@ -14,7 +14,8 @@ namespace Application.Common.Interfaces
         IBorrowingRepository BorrowingRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IReviewRepository ReviewRepository { get; }
-        ITokenRepository TokenRepository { get; }
+        IClaimRepository ClaimRepository { get; }
+        IRoleRepository RoleRepository { get; }
         Task CompleteAsync();
 
     }

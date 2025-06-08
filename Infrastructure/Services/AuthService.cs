@@ -66,11 +66,11 @@ namespace Infrastructure.Services
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<UserDto>.Fail(errorMessages);
             }
-            var existingUserByEmail = await _unitOfWork.AuthRepository.GetByEmailAsync(userDto.Email);
+            var existingUserByEmail = await _unitOfWork.AuthRepository.GetUserByEmailAsync(userDto.Email);
             if (existingUserByEmail != null)
                 return Result<UserDto>.Fail(ErrorMessages.EmailAlreadyExists(userDto.Email));
 
-            var existingUserByUsername = await _unitOfWork.AuthRepository.GetByNameAsync(userDto.UserName);
+            var existingUserByUsername = await _unitOfWork.AuthRepository.GetUserByNameAsync(userDto.UserName);
             if (existingUserByUsername != null)
                 return Result<UserDto>.Fail(ErrorMessages.UsernameAlreadyExists(userDto.UserName));
 
@@ -121,7 +121,7 @@ namespace Infrastructure.Services
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<TokenResponseDto?>.Fail(errorMessages);
             }
-            var user = await _unitOfWork.AuthRepository.GetByEmailAsync(loginDto.Email);
+            var user = await _unitOfWork.AuthRepository.GetUserByEmailAsync(loginDto.Email);
             if (user is null)
             {
                 return Result<TokenResponseDto?>.Fail(ErrorMessages.LoginFail());

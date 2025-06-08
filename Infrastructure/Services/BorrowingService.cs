@@ -15,14 +15,10 @@ namespace Infrastructure.Services
     public class BorrowingService : IBorrowingService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IBookRepository _bookRepository;
-        private readonly IAuthRepository _authRepository;
         private readonly IMapper _mapper;
-        public BorrowingService(IMapper mapper, IBookRepository bookRepository, IAuthRepository authRepository, IUnitOfWork unitOfWork)
+        public BorrowingService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _bookRepository = bookRepository;
-            _authRepository = authRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -50,8 +46,8 @@ namespace Infrastructure.Services
         public async Task<Result<BorrowingDto>> CreateBorrowingAsync(CreateBorrowingDto borrowingDto)
         {
             var borrowing = _mapper.Map<Borrowing>(borrowingDto);
-            var bookExist = await _bookRepository.GetByIdAsync(borrowingDto.BookId);
-            var userExist = await _authRepository.GetUserByIdAsync(borrowingDto.UserId);
+            var bookExist = await _unitOfWork.BookRepository.GetByIdAsync(borrowingDto.BookId);
+            var userExist = await _unitOfWork.AuthRepository.GetUserByIdAsync(borrowingDto.UserId);
             if (bookExist is null)
             {
                 return Result<BorrowingDto>.Fail(ErrorMessages.NotFoundById(borrowingDto.BookId));

@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Infrastructure.Persistence.Repositpries
 {
@@ -27,7 +28,7 @@ namespace Infrastructure.Persistence.Repositpries
 
             return query;
         }
-        public async Task<User> GetUserByIdAsync(string id)
+        public async Task<User?> GetUserByIdAsync(string id)
         {
             var user = await _context.Users.Include(u => u.Borrowings)
                 .Include(u => u.Reviews)
@@ -35,35 +36,38 @@ namespace Infrastructure.Persistence.Repositpries
             return user;
         }
 
-        public Task<User?> GetByNameAsync(string username)
+        public async Task<User?> GetUserByNameAsync(string username)
         {
-            return _userManager.FindByNameAsync(username);
+            return await _userManager.FindByNameAsync(username);
         }
 
-        public Task<User?> GetByEmailAsync(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return _userManager.FindByEmailAsync(email);
+            return await _userManager.FindByEmailAsync(email);
         }
 
-        public Task<IdentityResult> CreateAsync(User user, string password)
+        public async Task<IdentityResult> CreateAsync(User user, string password)
         {
-            return _userManager.CreateAsync(user, password);
+            return await _userManager.CreateAsync(user, password);
         }
 
-        public Task<IdentityResult> UpdateAsync(User user)
+        public async Task<IdentityResult> UpdateAsync(User user)
         {
-            return _userManager.UpdateAsync(user);
+            return await _userManager.UpdateAsync(user);
         }
 
-        public Task<IdentityResult> DeleteAsync(User user)
+        public async Task<IdentityResult> DeleteAsync(User user)
         {
-            return _userManager.DeleteAsync(user);
+            return await _userManager.DeleteAsync(user);
+        }
+        public async Task<IList<Claim>> GetUserClaimsAsync(User user)
+        {
+            return await _userManager.GetClaimsAsync(user);
         }
 
-
-        public Task<IdentityResult> AddToRoleAsync(User user, string role)
+        public async Task<IdentityResult> AddToRoleAsync(User user, string role)
         {
-            return _userManager.AddToRoleAsync(user, role);
+            return await _userManager.AddToRoleAsync(user, role);
         }
 
         public bool VerifyPasswordAsync(User user, string password)
@@ -71,5 +75,7 @@ namespace Infrastructure.Persistence.Repositpries
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             return result != PasswordVerificationResult.Failed;
         }
+
+
     }
 }

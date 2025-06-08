@@ -46,13 +46,13 @@ namespace Infrastructure.Services
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            var result = await _unitOfWork.TokenRepository.UpdateUserAsync(user);
+            var result = await _unitOfWork.AuthRepository.UpdateAsync(user);
             return refreshToken;
 
         }
         public async Task<Result<User?>> ValidateRefreshTokenAsync(string userId, string RefreshToken)
         {
-            var user = await _unitOfWork.TokenRepository.FindUserByIdAsync(userId);
+            var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
             if (user is null)
             {
                 return Result<User?>.Fail(ErrorMessages.NotFoundById(userId));
@@ -79,17 +79,17 @@ namespace Infrastructure.Services
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
                 new Claim(ClaimTypes.Email,user.Email),
             };
-            var userClaims = await _unitOfWork.TokenRepository.GetUserClaimsAsync(user);
+            var userClaims = await _unitOfWork.AuthRepository.GetUserClaimsAsync(user);
             claims.AddRange(userClaims);
-            var userRoles = await _unitOfWork.TokenRepository.GetUserRolesAsync(user);
+            var userRoles = await _unitOfWork.RoleRepository.GetUserRolesAsync(user);
 
             foreach (var userRole in userRoles)
             {
-                var role = await _unitOfWork.TokenRepository.FindRoleByNameAsync(userRole);
+                var role = await _unitOfWork.RoleRepository.FindRoleByNameAsync(userRole);
                 if (role != null)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, userRole));
-                    var roleClaims = await _unitOfWork.TokenRepository.GetRoleClaimsAsync(role);
+                    var roleClaims = await _unitOfWork.RoleRepository.GetRoleClaimsAsync(role);
                     foreach (var roleClaim in roleClaims)
                     {
                         claims.Add(roleClaim);
