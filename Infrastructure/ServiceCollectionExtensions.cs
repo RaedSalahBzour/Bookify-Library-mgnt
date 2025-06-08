@@ -17,11 +17,13 @@ using Application.Reviews.Validators;
 using Application.Users.Dtos;
 using Application.Users.Services;
 using Application.Users.Validators;
+using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Repositpries;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
@@ -55,6 +57,7 @@ namespace Infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IClaimService, ClaimService>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
             return services;
         }

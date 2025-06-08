@@ -17,26 +17,22 @@ namespace Infrastructure.Services
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
-        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateUserDto> _createValidator;
         private readonly IValidator<UpdateUserDto> _updateValidator;
         private readonly IValidator<LoginDto> _loginValidator;
-        private readonly SignInManager<User> _signInManager;
         private readonly ITokenService _tokenService;
-        public AuthService(UserManager<User> userManager,
+        public AuthService(
             IAuthRepository authRepository, IMapper mapper,
             IValidator<CreateUserDto> createValidator,
             IValidator<UpdateUserDto> updateValidator,
-            IValidator<LoginDto> loginValidator, SignInManager<User> signInManager, ITokenService tokenService)
+            IValidator<LoginDto> loginValidator, ITokenService tokenService)
         {
-            _userManager = userManager;
             _authRepository = authRepository;
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _loginValidator = loginValidator;
-            _signInManager = signInManager;
             _tokenService = tokenService;
         }
 
@@ -69,21 +65,21 @@ namespace Infrastructure.Services
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<UserDto>.Fail(errorMessages);
             }
-            var existingUserByEmail = await _userManager.FindByEmailAsync(userDto.Email);
+            var existingUserByEmail = await _authRepository.GetByEmailAsync(userDto.Email);
             if (existingUserByEmail != null)
                 return Result<UserDto>.Fail(ErrorMessages.EmailAlreadyExists(userDto.Email));
 
-            var existingUserByUsername = await _userManager.FindByNameAsync(userDto.UserName);
+            var existingUserByUsername = await _authRepository.GetByNameAsync(userDto.UserName);
             if (existingUserByUsername != null)
                 return Result<UserDto>.Fail(ErrorMessages.UsernameAlreadyExists(userDto.UserName));
 
             var user = _mapper.Map<User>(userDto);
-            var result = await _userManager.CreateAsync(user, userDto.Password);
+            var result = await _authRepository.CreateAsync(user, userDto.Password);
             if (!result.Succeeded)
             {
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateUser), null));
             }
-            await _userManager.AddToRoleAsync(user, "user");
+            await _authRepository.AddToRoleAsync(user, "user");
             var uDto = _mapper.Map<UserDto>(user);
             return Result<UserDto>.Ok(uDto);
         }
@@ -98,7 +94,7 @@ namespace Infrastructure.Services
                 return Result<UserDto>.Fail(errorMessages);
             }
             _mapper.Map(userDto, user);
-            var result = await _userManager.UpdateAsync(user);
+            var result = await _authRepository.UpdateAsync(user);
             if (!result.Succeeded)
             {
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.UpdateUser), new List<string>()));
@@ -109,7 +105,7 @@ namespace Infrastructure.Services
         {
             var user = await _authRepository.GetUserByIdAsync(id);
             if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id));
-            var result = await _userManager.DeleteAsync(user);
+            var result = await _authRepository.DeleteAsync(user);
             if (!result.Succeeded)
             {
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.DeleteUser), new List<string>()));
@@ -124,14 +120,14 @@ namespace Infrastructure.Services
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<TokenResponseDto?>.Fail(errorMessages);
             }
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var user = await _authRepository.GetByEmailAsync(loginDto.Email);
             if (user is null)
             {
                 return Result<TokenResponseDto?>.Fail(ErrorMessages.LoginFail());
             }
-            var userHashPassword = new PasswordHasher<User>().HashPassword(user, loginDto.Password);
-            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, loginDto.Password)
-                == PasswordVerificationResult.Failed)
+            var isPasswordValid = _authRepository.VerifyPasswordAsync(user, loginDto.Password);
+
+            if (isPasswordValid == false)
             {
                 return Result<TokenResponseDto?>.Fail(ErrorMessages.LoginFail());
             }
