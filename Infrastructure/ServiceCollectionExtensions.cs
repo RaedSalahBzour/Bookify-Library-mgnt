@@ -11,6 +11,7 @@ using Application.Borrowings.Validators;
 using Application.Categories.Dtos;
 using Application.Categories.Services;
 using Application.Categories.Validators;
+using Application.Common.Interfaces;
 using Application.Reviews.Dtos;
 using Application.Reviews.Services;
 using Application.Reviews.Validators;
@@ -20,6 +21,7 @@ using Application.Users.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
+using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Repositpries;
 using Infrastructure.Services;
@@ -56,8 +58,15 @@ namespace Infrastructure
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IClaimService, ClaimService>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            return services;
+        }
+        public static IServiceCollection AddCommonServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
@@ -121,6 +130,7 @@ namespace Infrastructure
             services.AddRoleServices();
             services.AddValidators();
             services.AddMediator();
+            services.AddCommonServices();
             return services;
         }
     }

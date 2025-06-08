@@ -1,5 +1,6 @@
 ﻿using Application.Books.Dtos;
 using Application.Books.Services;
+using Application.Common.Interfaces;
 using AutoMapper;
 using Bookify_Library_mgnt.Common;
 using Bookify_Library_mgnt.Helper.Pagination;
@@ -12,16 +13,16 @@ namespace Infrastructure.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateBookDto> _createValidator;
         private readonly IValidator<UpdateBookDto> _UpdateValidator;
-        public BookService(IBookRepository bookRepository, IMapper mapper, IValidator<CreateBookDto> createValidator, IValidator<UpdateBookDto> updateValidator)
+        public BookService(IMapper mapper, IValidator<CreateBookDto> createValidator, IValidator<UpdateBookDto> updateValidator, IUnitOfWork unitOfWork)
         {
-            _bookRepository = bookRepository;
             _mapper = mapper;
             _createValidator = createValidator;
             _UpdateValidator = updateValidator;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -30,7 +31,7 @@ namespace Infrastructure.Services
             string? category = null, DateOnly? publishtDate = null,
             string? sortBy = null, bool descending = false)
         {
-            var query = _bookRepository.GetBooksAsync();
+            var query = _unitOfWork.BookRepository.GetBooksAsync();
             if (!string.IsNullOrEmpty(title))
             {
                 query = query.Where(b => b.Title.Contains(title));
@@ -73,7 +74,7 @@ namespace Infrastructure.Services
 
         public async Task<Result<BookDto>> GetByIdAsync(string id)
         {
-            var book = await _bookRepository.GetBookByIdAsync(id);
+            var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
             if (book == null) return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
             var bookDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bookDto);
@@ -90,7 +91,7 @@ namespace Infrastructure.Services
             book.CategoryBooks = new List<CategoryBook>();
             foreach (var categoryId in bookDto.CategoryIds)
             {
-                var categoryExists = await _bookRepository.IsCategoryExist(categoryId);
+                var categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
                 if (!categoryExists)
                 {
                     return Result<BookDto>.Fail(ErrorMessages.NotFoundById(categoryId));
@@ -101,8 +102,8 @@ namespace Infrastructure.Services
                     CategoryId = categoryId
                 });
             }
-            await _bookRepository.AddAsync(book);
-            await _bookRepository.SaveChangesAsync();
+            await _unitOfWork.BookRepository.AddAsync(book);
+            await _unitOfWork.BookRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bDto);
         }
@@ -115,7 +116,7 @@ namespace Infrastructure.Services
                 return Result<BookDto>.Fail(errorMessages);
             }
 
-            var book = await _bookRepository.GetBookByIdAsync(id);
+            var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
             if (book is null)
             {
                 return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
@@ -133,7 +134,7 @@ namespace Infrastructure.Services
 
             foreach (var categoryId in bookDto.CategoryIds)
             {
-                var categoryExists = await _bookRepository.IsCategoryExist(categoryId);
+                var categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
                 if (!categoryExists)
                 {
                     return Result<BookDto>.Fail(ErrorMessages.NotFoundById(categoryId));
@@ -145,21 +146,21 @@ namespace Infrastructure.Services
                     CategoryId = categoryId
                 });
             }
-            await _bookRepository.Update(book);
-            await _bookRepository.SaveChangesAsync();
+            await _unitOfWork.BookRepository.Update(book);
+            await _unitOfWork.BookRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bDto);
         }
 
         public async Task<Result<BookDto>> DeleteBookAsync(string id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
             if (book is null)
             {
                 return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
             }
-            await _bookRepository.Delete(book);
-            await _bookRepository.SaveChangesAsync();
+            await _unitOfWork.BookRepository.Delete(book);
+            await _unitOfWork.BookRepository.SaveChangesAsync();
             var bDto = _mapper.Map<BookDto>(book);
             return Result<BookDto>.Ok(bDto);
         }

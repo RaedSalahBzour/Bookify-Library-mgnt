@@ -1,4 +1,5 @@
 ﻿using Application.Authorization.Services;
+using Application.Common.Interfaces;
 using Bookify_Library_mgnt.Common;
 using Domain.Entities;
 using Domain.Shared;
@@ -15,14 +16,11 @@ namespace Infrastructure.Services
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public TokenService(IConfiguration configuration, UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager)
+        private readonly IUnitOfWork _unitOfWork;
+        public TokenService(IConfiguration configuration, IUnitOfWork unitOfWork)
         {
             _configuration = configuration;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<string> GenerateTokenAsync(User user)
@@ -48,13 +46,13 @@ namespace Infrastructure.Services
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            var result = await _userManager.UpdateAsync(user);
+            var result = await _unitOfWork.TokenRepository.UpdateUserAsync(user);
             return refreshToken;
 
         }
         public async Task<Result<User?>> ValidateRefreshTokenAsync(string userId, string RefreshToken)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _unitOfWork.TokenRepository.FindUserByIdAsync(userId);
             if (user is null)
             {
                 return Result<User?>.Fail(ErrorMessages.NotFoundById(userId));
@@ -81,17 +79,17 @@ namespace Infrastructure.Services
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
                 new Claim(ClaimTypes.Email,user.Email),
             };
-            var userClaims = await _userManager.GetClaimsAsync(user);
+            var userClaims = await _unitOfWork.TokenRepository.GetUserClaimsAsync(user);
             claims.AddRange(userClaims);
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles = await _unitOfWork.TokenRepository.GetUserRolesAsync(user);
 
             foreach (var userRole in userRoles)
             {
-                var role = await _roleManager.FindByNameAsync(userRole);
+                var role = await _unitOfWork.TokenRepository.FindRoleByNameAsync(userRole);
                 if (role != null)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, userRole));
-                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    var roleClaims = await _unitOfWork.TokenRepository.GetRoleClaimsAsync(role);
                     foreach (var roleClaim in roleClaims)
                     {
                         claims.Add(roleClaim);

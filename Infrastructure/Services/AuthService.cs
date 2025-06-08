@@ -1,5 +1,6 @@
 ﻿using Application.Authorization.Dtos.Token;
 using Application.Authorization.Services;
+using Application.Common.Interfaces;
 using Application.Users.Dtos;
 using Application.Users.Services;
 using AutoMapper;
@@ -16,30 +17,30 @@ namespace Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IAuthRepository _authRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateUserDto> _createValidator;
         private readonly IValidator<UpdateUserDto> _updateValidator;
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly ITokenService _tokenService;
-        public AuthService(
-            IAuthRepository authRepository, IMapper mapper,
+        public AuthService(IMapper mapper,
             IValidator<CreateUserDto> createValidator,
             IValidator<UpdateUserDto> updateValidator,
-            IValidator<LoginDto> loginValidator, ITokenService tokenService)
+            IValidator<LoginDto> loginValidator, ITokenService tokenService,
+            IUnitOfWork unitOfWork)
         {
-            _authRepository = authRepository;
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _loginValidator = loginValidator;
             _tokenService = tokenService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedResult<UserDto>> GetUsersAsync(int pageNumber = 1, int pageSize = 10)
         {
 
-            var users = _authRepository.GetUsersAsync();
+            var users = _unitOfWork.AuthRepository.GetUsersAsync();
             var paginatedUsers = await users.ToPaginationForm(pageNumber, pageSize);
             var usersDto = _mapper.Map<IEnumerable<UserDto>>(paginatedUsers.Items);
             return new PagedResult<UserDto>
@@ -53,7 +54,7 @@ namespace Infrastructure.Services
 
         public async Task<Result<UserDto>> GetUserByIdAsync(string id)
         {
-            var user = await _authRepository.GetUserByIdAsync(id);
+            var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
             if (user == null) { return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id)); }
             return Result<UserDto>.Ok(_mapper.Map<UserDto>(user));
         }
@@ -65,27 +66,27 @@ namespace Infrastructure.Services
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<UserDto>.Fail(errorMessages);
             }
-            var existingUserByEmail = await _authRepository.GetByEmailAsync(userDto.Email);
+            var existingUserByEmail = await _unitOfWork.AuthRepository.GetByEmailAsync(userDto.Email);
             if (existingUserByEmail != null)
                 return Result<UserDto>.Fail(ErrorMessages.EmailAlreadyExists(userDto.Email));
 
-            var existingUserByUsername = await _authRepository.GetByNameAsync(userDto.UserName);
+            var existingUserByUsername = await _unitOfWork.AuthRepository.GetByNameAsync(userDto.UserName);
             if (existingUserByUsername != null)
                 return Result<UserDto>.Fail(ErrorMessages.UsernameAlreadyExists(userDto.UserName));
 
             var user = _mapper.Map<User>(userDto);
-            var result = await _authRepository.CreateAsync(user, userDto.Password);
+            var result = await _unitOfWork.AuthRepository.CreateAsync(user, userDto.Password);
             if (!result.Succeeded)
             {
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateUser), null));
             }
-            await _authRepository.AddToRoleAsync(user, "user");
+            await _unitOfWork.AuthRepository.AddToRoleAsync(user, "user");
             var uDto = _mapper.Map<UserDto>(user);
             return Result<UserDto>.Ok(uDto);
         }
         public async Task<Result<UserDto>> UpdateUserAsync(string id, UpdateUserDto userDto)
         {
-            var user = await _authRepository.GetUserByIdAsync(id);
+            var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
             if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id));
             var validationResult = _updateValidator.Validate(userDto);
             if (!validationResult.IsValid)
@@ -94,7 +95,7 @@ namespace Infrastructure.Services
                 return Result<UserDto>.Fail(errorMessages);
             }
             _mapper.Map(userDto, user);
-            var result = await _authRepository.UpdateAsync(user);
+            var result = await _unitOfWork.AuthRepository.UpdateAsync(user);
             if (!result.Succeeded)
             {
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.UpdateUser), new List<string>()));
@@ -103,9 +104,9 @@ namespace Infrastructure.Services
         }
         public async Task<Result<UserDto>> DeleteUserAsync(string id)
         {
-            var user = await _authRepository.GetUserByIdAsync(id);
+            var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
             if (user == null) return Result<UserDto>.Fail(ErrorMessages.NotFoundById(id));
-            var result = await _authRepository.DeleteAsync(user);
+            var result = await _unitOfWork.AuthRepository.DeleteAsync(user);
             if (!result.Succeeded)
             {
                 return Result<UserDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.DeleteUser), new List<string>()));
@@ -120,12 +121,12 @@ namespace Infrastructure.Services
                 var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<TokenResponseDto?>.Fail(errorMessages);
             }
-            var user = await _authRepository.GetByEmailAsync(loginDto.Email);
+            var user = await _unitOfWork.AuthRepository.GetByEmailAsync(loginDto.Email);
             if (user is null)
             {
                 return Result<TokenResponseDto?>.Fail(ErrorMessages.LoginFail());
             }
-            var isPasswordValid = _authRepository.VerifyPasswordAsync(user, loginDto.Password);
+            var isPasswordValid = _unitOfWork.AuthRepository.VerifyPasswordAsync(user, loginDto.Password);
 
             if (isPasswordValid == false)
             {
