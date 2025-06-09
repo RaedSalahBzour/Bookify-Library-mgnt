@@ -46,6 +46,8 @@
         GetUsers,
         GetUserById,
         ClaimAdded,
+        UserAssignedToRole,
+        UserUnAssignedFromRole,
 
 
 

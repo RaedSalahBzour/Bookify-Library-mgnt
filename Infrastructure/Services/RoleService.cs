@@ -92,7 +92,7 @@ namespace Service.Services
             if (!result.Succeeded)
                 throw new InvalidOperationException(
               $"Operation '{OperationNames.AddUserToRole}' failed to complete.");
-            return "added";
+            return nameof(OperationNames.UserAssignedToRole);
         }
         public async Task<string> RemoveUserFromRoleAsync(string userId, string roleName)
         {
@@ -109,7 +109,7 @@ namespace Service.Services
                 throw new InvalidOperationException(
                          $"Operation '{OperationNames.RemoveUserFromRole}' failed to complete.");
 
-            return nameof(OperationNames.RoleRemoved);
+            return nameof(OperationNames.UserUnAssignedFromRole);
         }
         public async Task<IList<string>> GetUserRoles(string email)
         {
