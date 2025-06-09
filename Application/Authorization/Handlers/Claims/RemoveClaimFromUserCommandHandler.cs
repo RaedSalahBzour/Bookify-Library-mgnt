@@ -24,7 +24,7 @@ namespace Application.Authorization.Handlers.Claims
         public async Task<Result<string>> Handle(RemoveClaimFromUserCommand command, CancellationToken cancellationToken)
         {
             var result = await _claimService.
-                RemoveClaimFromUserAsync(command.userId, command.claimType);
+                RemoveClaimFromUserAsync(command.UserId, command.ClaimType);
             if (!result.IsSuccess)
                 return Result<string>.Fail(ErrorMessages.
                     OperationFailed(nameof(OperationNames.RemoveClaimFromUser), result.Errors));

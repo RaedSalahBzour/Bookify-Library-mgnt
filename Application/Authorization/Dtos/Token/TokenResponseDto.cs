@@ -1,4 +1,6 @@
-﻿namespace Application.Authorization.Dtos.Token
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.Authorization.Dtos.Token
 {
     public class TokenResponseDto
     {

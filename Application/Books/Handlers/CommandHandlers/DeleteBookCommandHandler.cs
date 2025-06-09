@@ -24,7 +24,7 @@ namespace Application.Books.Handlers.CommandHandlers
 
         public async Task<Result<BookDto>> Handle(DeleteBookCommand command, CancellationToken cancellationToken)
         {
-            var result = await _bookService.DeleteBookAsync(command.id);
+            var result = await _bookService.DeleteBookAsync(command.Id);
             if (!result.IsSuccess)
                 return Result<BookDto>.Fail(ErrorMessages.
                     OperationFailed(nameof(OperationNames.DeleteBook), result.Errors));

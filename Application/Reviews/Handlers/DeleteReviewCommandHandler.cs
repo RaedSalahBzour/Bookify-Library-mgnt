@@ -25,7 +25,7 @@ namespace Application.Reviews.Handlers
         }
         public async Task<Result<ReviewDto>> Handle(DeleteReviewCommand command, CancellationToken cancellationToken)
         {
-            var result = await _reviewService.DeleteReviewAsync(command.id);
+            var result = await _reviewService.DeleteReviewAsync(command.Id);
             if (!result.IsSuccess)
                 return Result<ReviewDto>.Fail
                     (ErrorMessages.OperationFailed(nameof(OperationNames.DeleteReview),

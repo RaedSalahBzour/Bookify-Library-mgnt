@@ -26,7 +26,7 @@ namespace Application.Borrowings.Handlers
         }
         public async Task<Result<BorrowingDto>> Handle(DeleteBorrowingCommand command, CancellationToken cancellationToken)
         {
-            var result = await _borrowingService.DeleteBorrowingAsync(command.id);
+            var result = await _borrowingService.DeleteBorrowingAsync(command.Id);
             if (!result.IsSuccess)
             {
                 return Result<BorrowingDto>.Fail(ErrorMessages

@@ -1,4 +1,6 @@
-﻿namespace Application.Authorization.Dtos.Roles
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.Authorization.Dtos.Roles
 {
     public class RoleDto
     {

@@ -161,8 +161,8 @@ namespace Infrastructure.Services
             }
             await _unitOfWork.BookRepository.Delete(book);
             await _unitOfWork.BookRepository.SaveChangesAsync();
-            var bDto = _mapper.Map<BookDto>(book);
-            return Result<BookDto>.Ok(bDto);
+            var bookDto = _mapper.Map<BookDto>(book);
+            return Result<BookDto>.Ok(bookDto);
         }
 
     }

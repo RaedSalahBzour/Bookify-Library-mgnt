@@ -1,8 +1,11 @@
-﻿namespace Application.Categories.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.Categories.Dtos
 {
     public class CreateCategoryDto
     {
-        public string Name { get; set; }
+        [Required(ErrorMessage = "Category Name is required")]
+        public string Name { get; init; }
         public string? Description { get; set; }
     }
 }

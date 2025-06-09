@@ -25,7 +25,7 @@ namespace Application.Users.Handlers
         }
         public async Task<Result<UserDto>> Handle(DeleteUserCommand command, CancellationToken cancellationToken)
         {
-            var result = await _authService.DeleteUserAsync(command.id);
+            var result = await _authService.DeleteUserAsync(command.Id);
             if (!result.IsSuccess)
                 return Result<UserDto>.Fail
                     (ErrorMessages.OperationFailed(nameof(OperationNames.DeleteUser),

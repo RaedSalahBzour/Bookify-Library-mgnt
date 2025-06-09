@@ -19,7 +19,7 @@ namespace Application.Categories.Handlers
 
         public async Task<Result<CategoryDto>> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
         {
-            var result = await _categoryService.DeleteCategoryAsync(command.id);
+            var result = await _categoryService.DeleteCategoryAsync(command.Id);
             if (!result.IsSuccess)
                 return Result<CategoryDto>.Fail(ErrorMessages
                     .OperationFailed(nameof(OperationNames.DeleteCategory), result.Errors));
