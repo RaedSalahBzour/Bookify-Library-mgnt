@@ -1,10 +1,10 @@
 ﻿using Application.Authorization.Dtos.Claims;
 using Application.Authorization.Services;
-using Data.Interfaces;
 using Data.Enums;
+using Data.Interfaces;
 using System.Security.Claims;
 
-namespace Infrastructure.Services
+namespace Service.Services
 {
     public class ClaimService : IClaimService
     {

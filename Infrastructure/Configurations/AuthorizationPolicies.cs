@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure.Persistence.Configurations
+namespace Service.Persistence.Configurations
 {
     public static class AuthorizationPolicies
     {

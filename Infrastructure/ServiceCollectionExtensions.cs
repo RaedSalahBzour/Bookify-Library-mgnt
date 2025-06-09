@@ -9,11 +9,11 @@ using Data.Entities;
 using Data.Helpers;
 using Data.Interfaces;
 using Data.Repositories;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Service.Services;
 
-namespace Infrastructure
+namespace Service
 {
     public static class ServiceCollectionExtensions
     {

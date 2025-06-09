@@ -2,7 +2,7 @@
 using Application.Borrowings.Dtos;
 using Application.Borrowings.Queries;
 using Application.Borrowings.Services;
-using Infrastructure.Services;
+using Service.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

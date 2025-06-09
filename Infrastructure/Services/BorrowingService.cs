@@ -1,9 +1,9 @@
 ﻿using Application.Borrowings.Dtos;
 using Application.Borrowings.Services;
-using Data.Interfaces;
 using AutoMapper;
 using Data.Entities;
-namespace Infrastructure.Services
+using Data.Interfaces;
+namespace Service.Services
 {
     public class BorrowingService : IBorrowingService
     {

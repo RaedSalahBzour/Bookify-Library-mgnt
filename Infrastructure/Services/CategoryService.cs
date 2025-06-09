@@ -1,10 +1,10 @@
 ﻿using Application.Categories.Dtos;
 using Application.Categories.Services;
-using Data.Interfaces;
 using AutoMapper;
 using Data.Entities;
+using Data.Interfaces;
 
-namespace Infrastructure.Services
+namespace Service.Services
 {
     public class CategoryService : ICategoryService
     {

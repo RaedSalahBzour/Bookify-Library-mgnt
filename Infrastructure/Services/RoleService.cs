@@ -1,11 +1,11 @@
 ﻿using Application.Authorization.Dtos.Roles;
 using Application.Authorization.Services;
-using Data.Interfaces;
 using AutoMapper;
 using Data.Enums;
+using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace Infrastructure.Services
+namespace Service.Services
 {
     public class RoleService : IRoleService
     {

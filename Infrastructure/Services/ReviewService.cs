@@ -1,9 +1,9 @@
-﻿using Data.Interfaces;
-using Application.Reviews.Dtos;
+﻿using Application.Reviews.Dtos;
 using Application.Reviews.Services;
 using AutoMapper;
 using Data.Entities;
-namespace Infrastructure.Services
+using Data.Interfaces;
+namespace Service.Services
 {
     public class ReviewService : IReviewService
     {

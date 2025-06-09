@@ -1,9 +1,9 @@
 ﻿using Data.Entities;
-using FluentValidation;
-using Infrastructure;
-using Infrastructure.Persistence.Configurations;
 using Data.Helpers;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Service;
+using Service.Persistence.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 

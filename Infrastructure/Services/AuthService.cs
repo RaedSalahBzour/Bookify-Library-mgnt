@@ -7,7 +7,7 @@ using Data.Entities;
 using Data.Enums;
 using Data.Interfaces;
 
-namespace Infrastructure.Services
+namespace Service.Services
 {
     public class AuthService : IAuthService
     {
