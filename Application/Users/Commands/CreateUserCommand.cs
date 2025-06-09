@@ -1,16 +1,10 @@
 ﻿using Application.Users.Dtos;
-using Bookify_Library_mgnt.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Users.Commands
 {
-    public class CreateUserCommand : IRequest<Result<UserDto>>
+    public class CreateUserCommand : IRequest<UserDto>
     {
         [Required(ErrorMessage = "User Name is required")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "User Name must be between 3 and 50 characters")]

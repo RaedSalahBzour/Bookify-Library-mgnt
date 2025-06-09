@@ -1,17 +1,11 @@
 ﻿using Application.Books.Dtos;
-using Bookify_Library_mgnt.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Application.Books.Commands
 {
-    public class UpdateBookCommand : IRequest<Result<BookDto>>
+    public class UpdateBookCommand : IRequest<BookDto>
     {
         [Required(ErrorMessage = "Title is required")]
         public string Title { get; set; }

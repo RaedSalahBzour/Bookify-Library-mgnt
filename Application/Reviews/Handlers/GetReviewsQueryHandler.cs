@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.Reviews.Handlers
 {
-    public class GetReviewsQueryHandler : IRequestHandler<GetReviewsQuery, PagedResult<ReviewDto>>
+    public class GetReviewsQueryHandler : IRequestHandler<GetReviewsQuery, List<ReviewDto>>
     {
         private readonly IReviewService _reviewService;
 
@@ -19,17 +19,10 @@ namespace Application.Reviews.Handlers
         {
             _reviewService = reviewService;
         }
-        public async Task<PagedResult<ReviewDto>> Handle(GetReviewsQuery query, CancellationToken cancellationToken)
+        public async Task<List<ReviewDto>> Handle(GetReviewsQuery query, CancellationToken cancellationToken)
         {
-            var result = await _reviewService.GetReviewsAsync(query.pageNumber, query.pageSize);
-            return new PagedResult<ReviewDto>
-            {
-                PageNumber = query.pageNumber,
-                PageSize = query.pageSize,
-                Items = result.Items,
-                TotalCount = result.TotalCount,
+            return await _reviewService.GetReviewsAsync();
 
-            };
         }
     }
 }

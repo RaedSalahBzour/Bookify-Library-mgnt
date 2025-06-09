@@ -1,26 +1,13 @@
-﻿using Application.Authorization.Dtos.Roles;
-using Application.Authorization.Services;
-using Application.Authorization.Validators;
+﻿using Application.Authorization.Services;
 using Application.Books.Commands;
-using Application.Books.Dtos;
 using Application.Books.Services;
-using Application.Books.Validators;
-using Application.Borrowings.Dtos;
 using Application.Borrowings.Services;
-using Application.Borrowings.Validators;
-using Application.Categories.Dtos;
 using Application.Categories.Services;
-using Application.Categories.Validators;
 using Application.Common.Interfaces;
-using Application.Reviews.Dtos;
 using Application.Reviews.Services;
-using Application.Reviews.Validators;
-using Application.Users.Dtos;
 using Application.Users.Services;
-using Application.Users.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
-using FluentValidation;
 using Infrastructure.Persistence.Data;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Repositpries;
@@ -105,31 +92,31 @@ namespace Infrastructure
             });
             return services;
         }
-        public static IServiceCollection AddValidators(this IServiceCollection services)
-        {
-            //user
-            services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
-            services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
-            //role
-            services.AddScoped<IValidator<CreateRoleDto>, CreateRoleDtoValidator>();
-            services.AddScoped<IValidator<UpdateRoleDto>, UpdateRoleDtoValidator>();
-            //book
-            services.AddScoped<IValidator<CreateBookDto>, CreateBookDtoValidator>();
-            services.AddScoped<IValidator<UpdateBookDto>, UpdateBookDtoValidator>();
-            //borrowing
-            services.AddScoped<IValidator<CreateBorrowingDto>, CreateBorrowingDtoValidator>();
-            services.AddScoped<IValidator<UpdateBorrowingDto>, UpdateBorrowingDtoValidator>();
-            //category
-            services.AddScoped<IValidator<CreateCategoryDto>, CreateCategoryDtoValidator>();
-            services.AddScoped<IValidator<UpdateCategoryDto>, UpdateCategoryDtoValidator>();
-            //Review
-            services.AddScoped<IValidator<CreateReviewDto>, CreateReviewDtoValidator>();
-            services.AddScoped<IValidator<UpdateReviewDto>, UpdateReviewDtoValidator>();
-            //login
-            services.AddScoped<IValidator<LoginDto>, LoginDtoValidation>();
+        //public static IServiceCollection AddValidators(this IServiceCollection services)
+        //{
+        //    //user
+        //    services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
+        //    services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
+        //    //role
+        //    services.AddScoped<IValidator<CreateRoleDto>, CreateRoleDtoValidator>();
+        //    services.AddScoped<IValidator<UpdateRoleDto>, UpdateRoleDtoValidator>();
+        //    //book
+        //    services.AddScoped<IValidator<CreateBookDto>, CreateBookDtoValidator>();
+        //    services.AddScoped<IValidator<UpdateBookDto>, UpdateBookDtoValidator>();
+        //    //borrowing
+        //    services.AddScoped<IValidator<CreateBorrowingDto>, CreateBorrowingDtoValidator>();
+        //    services.AddScoped<IValidator<UpdateBorrowingDto>, UpdateBorrowingDtoValidator>();
+        //    //category
+        //    services.AddScoped<IValidator<CreateCategoryDto>, CreateCategoryDtoValidator>();
+        //    services.AddScoped<IValidator<UpdateCategoryDto>, UpdateCategoryDtoValidator>();
+        //    //Review
+        //    services.AddScoped<IValidator<CreateReviewDto>, CreateReviewDtoValidator>();
+        //    services.AddScoped<IValidator<UpdateReviewDto>, UpdateReviewDtoValidator>();
+        //    //login
+        //    services.AddScoped<IValidator<LoginDto>, LoginDtoValidation>();
 
-            return services;
-        }
+        //    return services;
+        //}
 
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
@@ -139,7 +126,7 @@ namespace Infrastructure
             services.AddReviewServices();
             services.AddBorrowingServices();
             services.AddRoleServices();
-            services.AddValidators();
+            //services.AddValidators();
             services.AddMediator();
             services.AddCommonServices();
             services.AddClaimServices();

@@ -6,7 +6,5 @@
         public Book Book { get; set; }
         public string CategoryId { get; set; }
         public Category Category { get; set; }
-
-
     }
 }

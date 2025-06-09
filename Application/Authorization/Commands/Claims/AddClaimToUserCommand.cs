@@ -1,15 +1,9 @@
-﻿using Bookify_Library_mgnt.Common;
-using MediatR;
-using System;
-using System.Collections.Generic;
+﻿using MediatR;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Authorization.Commands.Claims
 {
-    public record AddClaimToUserCommand : IRequest<Result<string>>
+    public record AddClaimToUserCommand : IRequest<string>
     {
         [Required(ErrorMessage = "User ID is required")]
         public string UserId { get; init; }

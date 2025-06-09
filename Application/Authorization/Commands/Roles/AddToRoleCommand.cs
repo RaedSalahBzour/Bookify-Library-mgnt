@@ -1,12 +1,14 @@
-﻿using Bookify_Library_mgnt.Common;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.Authorization.Commands.Roles
 {
-    public record AddToRoleCommand(string userId, string roleName) : IRequest<Result<string>>;
+    public record AddToRoleCommand(string UserId, string RoleName) : IRequest<string>
+    {
+        [Required(ErrorMessage = "User ID is required.")]
+        public string UserId { get; init; }
+
+        [Required(ErrorMessage = "Role name is required.")]
+        public string RoleName { get; init; }
+    }
 }

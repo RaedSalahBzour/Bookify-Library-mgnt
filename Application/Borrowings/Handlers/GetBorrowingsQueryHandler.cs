@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Borrowings.Handlers
 {
-    public class GetBorrowingsQueryHandler : IRequestHandler<GetBorrowingsQuery, PagedResult<BorrowingDto>>
+    public class GetBorrowingsQueryHandler : IRequestHandler<GetBorrowingsQuery, List<BorrowingDto>>
     {
         private readonly IBorrowingService _borrowingService;
 
@@ -14,17 +14,9 @@ namespace Application.Borrowings.Handlers
         {
             _borrowingService = borrowingService;
         }
-        public async Task<PagedResult<BorrowingDto>> Handle(GetBorrowingsQuery query, CancellationToken cancellationToken)
+        public async Task<List<BorrowingDto>> Handle(GetBorrowingsQuery query, CancellationToken cancellationToken)
         {
-            var result = await _borrowingService.GetBorrowingsAsync(query.pageNumber, query.pageSize);
-
-            return new PagedResult<BorrowingDto>
-            {
-                PageNumber = query.pageNumber,
-                PageSize = query.pageSize,
-                Items = result.Items,
-                TotalCount = result.TotalCount
-            };
+            return await _borrowingService.GetBorrowingsAsync();
         }
     }
 }

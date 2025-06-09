@@ -23,8 +23,7 @@ namespace Infrastructure.Persistence.Repositpries
         {
             var query = _context.Users
                 .Include(u => u.Borrowings)
-                .Include(u => u.Reviews)
-                .AsQueryable();
+                .Include(u => u.Reviews).AsQueryable();
 
             return query;
         }

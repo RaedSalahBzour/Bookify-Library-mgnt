@@ -1,14 +1,12 @@
-﻿using Bookify_Library_mgnt.Common;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.Authorization.Commands.Roles
 {
-    public record DeleteRoleCommand(string id) : IRequest<Result<IdentityRole>>;
-
+    public record DeleteRoleCommand(string Id) : IRequest<IdentityRole>
+    {
+        [Required(ErrorMessage = "Role ID is required.")]
+        public string Id { get; init; }
+    }
 }

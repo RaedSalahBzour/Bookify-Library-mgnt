@@ -45,6 +45,8 @@
         GetReviewById,
         GetUsers,
         GetUserById,
+        ClaimAdded,
+
 
 
 

@@ -8,6 +8,7 @@ namespace Domain.Entities
         public string Name { get; set; }
         public string? Description { get; set; }
         public List<Book> Books { get; set; }
+
         [JsonIgnore]
         public List<CategoryBook> CategoryBooks { get; set; }
     }

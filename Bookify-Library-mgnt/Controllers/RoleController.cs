@@ -22,31 +22,23 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRoles(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetRoles()
         {
-            return Ok(await _sender.Send(new GetRolesQuery(pageNumber, pageSize)));
+            return Ok(await _sender.Send(new GetRolesQuery()));
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById([FromRoute] string id)
+        public async Task<IActionResult> GetRoleById([FromRoute] string id)
         {
             var result = await _sender.Send(new GetRoleByIdQuery(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return CreatedAtAction(nameof(GetRoleById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
@@ -54,11 +46,7 @@ namespace Bookify_Library_mgnt.Controllers
         {
             command.id = id;
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpDelete("{id:guid}")]
@@ -66,29 +54,21 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteRole([FromRoute] string id)
         {
             var result = await _sender.Send(new DeleteRoleCommand(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpPost("{userId:guid}/roles")]
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> AddToRole([FromRoute] string userId, [FromBody] string roleName)
         {
             var result = await _sender.Send(new AddToRoleCommand(userId, roleName));
-            if (!result.IsSuccess)
-            { return BadRequest(result.Errors); }
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpDelete("{userId:guid}/roles")]
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> RemoveFromRole([FromRoute] string userId, [FromBody] string roleName)
         {
             var result = await _sender.Send(new RemoveFromRoleCommand(userId, roleName));
-            if (!result.IsSuccess)
-            { return BadRequest(result.Errors); }
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpGet]
         [Route("UserRoles")]
@@ -96,11 +76,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> GetUserRoles(string email)
         {
             var result = await _sender.Send(new GetUserRolesQuery(email));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
     }
 }

@@ -1,14 +1,8 @@
-﻿using Application.Borrowings.Dtos;
-using Application.Categories.Dtos;
+﻿using Application.Categories.Dtos;
 using Application.Categories.Services;
 using Application.Common.Interfaces;
 using AutoMapper;
-using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Shared;
-using FluentValidation;
 
 namespace Infrastructure.Services
 {
@@ -16,84 +10,56 @@ namespace Infrastructure.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateCategoryDto> _createCategoryValidator;
-        private readonly IValidator<UpdateCategoryDto> _updateCategoryValidator;
-        public CategoryService(IMapper mapper,
-            IValidator<CreateCategoryDto> createCategoryValidator,
-            IValidator<UpdateCategoryDto> updateCategoryValidator, IUnitOfWork unitOfWork)
+
+        public CategoryService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _createCategoryValidator = createCategoryValidator;
-            _updateCategoryValidator = updateCategoryValidator;
+
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedResult<CategoryDto>> GetCategoriesAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<List<CategoryDto>> GetCategoriesAsync()
         {
             var categories = _unitOfWork.CategoryRepository.GetCategories();
-            var paginatedCategories = await categories.ToPaginationForm(pageNumber, pageSize);
-            var categoriesDto = _mapper.Map<IEnumerable<CategoryDto>>(paginatedCategories.Items);
-            return new PagedResult<CategoryDto>
-            {
-                TotalCount = paginatedCategories.TotalCount,
-                Items = categoriesDto,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
+            return _mapper.Map<List<CategoryDto>>(categories);
+
         }
-        public async Task<Result<CategoryDto>> GetByIdAsync(string id)
+        public async Task<CategoryDto> GetByIdAsync(string id)
         {
             var category = await _unitOfWork.CategoryRepository.GetCategoryById(id);
-            if (category == null) { return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id)); }
-            var categoryDto = _mapper.Map<CategoryDto>(category);
-            return Result<CategoryDto>.Ok(categoryDto);
+            if (category == null)
+                throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
+            return _mapper.Map<CategoryDto>(category);
+
         }
 
-        public async Task<Result<CategoryDto>> CreateCategoryAsync(CreateCategoryDto categoryDto)
+        public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto categoryDto)
         {
-            var validationResult = await _createCategoryValidator.ValidateAsync(categoryDto);
-            if (!validationResult.IsValid)
-            {
-                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<CategoryDto>.Fail(errorMessages);
-            }
             var category = _mapper.Map<Category>(categoryDto);
             await _unitOfWork.CategoryRepository.AddAsync(category);
             await _unitOfWork.CategoryRepository.SaveChangesAsync();
-            var cDto = _mapper.Map<CategoryDto>(category);
-            return Result<CategoryDto>.Ok(cDto);
+            return _mapper.Map<CategoryDto>(category);
         }
-        public async Task<Result<CategoryDto>> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto)
+        public async Task<CategoryDto> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto)
         {
-            var validationResult = await _updateCategoryValidator.ValidateAsync(categoryDto);
-            if (!validationResult.IsValid)
-            {
-                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<CategoryDto>.Fail(errorMessages);
-            }
             var category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
             if (category is null)
-            {
-                return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id));
-            }
+                throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
             _mapper.Map(categoryDto, category);
             await _unitOfWork.CategoryRepository.Update(category);
             await _unitOfWork.CategoryRepository.SaveChangesAsync();
-            var cDto = _mapper.Map<CategoryDto>(category);
-            return Result<CategoryDto>.Ok(cDto);
+            return _mapper.Map<CategoryDto>(category);
+
         }
 
-        public async Task<Result<CategoryDto>> DeleteCategoryAsync(string id)
+        public async Task<CategoryDto> DeleteCategoryAsync(string id)
         {
             var category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
             if (category is null)
-            {
-                return Result<CategoryDto>.Fail(ErrorMessages.NotFoundById(id));
-            }
+                throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
             await _unitOfWork.CategoryRepository.Delete(category);
             await _unitOfWork.CategoryRepository.SaveChangesAsync();
-            var cDto = _mapper.Map<CategoryDto>(category);
-            return Result<CategoryDto>.Ok(cDto);
+            return _mapper.Map<CategoryDto>(category);
         }
 
     }

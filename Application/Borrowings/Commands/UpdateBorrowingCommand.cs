@@ -1,17 +1,11 @@
 ﻿using Application.Borrowings.Dtos;
-using Bookify_Library_mgnt.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Application.Borrowings.Commands
 {
-    public class UpdateBorrowingCommand() : IRequest<Result<BorrowingDto>>
+    public class UpdateBorrowingCommand() : IRequest<BorrowingDto>
     {
         [Required(ErrorMessage = "BorrowedOn date is required")]
         [DataType(DataType.Date)]

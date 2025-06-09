@@ -24,9 +24,9 @@ namespace Bookify_Library_mgnt.Controllers
             _sender = sender;
         }
         [HttpGet("users")]
-        public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetUsers()
         {
-            return Ok(await _sender.Send(new GetUsersQuery(pageNumber, pageSize)));
+            return Ok(await _sender.Send(new GetUsersQuery()));
 
         }
 
@@ -34,18 +34,14 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
             var result = await _sender.Send(new GetUserByIdQuery(id));
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return Ok(result.Data);
+            return Ok(result);
         }
         [AllowAnonymous]
         [HttpPost("users")]
         public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return CreatedAtAction(nameof(GetUserById), new { Id = result.Data.Id }, result.Data);
+            return CreatedAtAction(nameof(GetUserById), new { Id = result.Id }, result);
         }
 
         [HttpPut("users/{id:guid}")]
@@ -54,9 +50,7 @@ namespace Bookify_Library_mgnt.Controllers
         {
             command.id = id;
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return Ok(result.Data);
+            return Ok(result);
 
         }
         [HttpDelete("users/{id:guid}")]
@@ -64,30 +58,20 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
             var result = await _sender.Send(new DeleteUserCommand(id));
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return Ok(result.Data);
+            return Ok(result);
         }
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefrshToken([FromBody] RefreshTokenCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
 

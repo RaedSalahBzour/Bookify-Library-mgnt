@@ -1,19 +1,12 @@
 ﻿using Application.Books.Dtos;
-using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Helper.Pagination;
-using Domain.Entities;
 namespace Application.Books.Services
 {
     public interface IBookService
     {
-        Task<PagedResult<BookDto>> GetBooksAsync(int pageNumber = 1, int pageSize = 10, string? title = null,
-            string? category = null,
-            DateOnly? publishtDate = null,
-            string? sortBy = null,
-            bool descending = false);
-        Task<Result<BookDto>> GetByIdAsync(string id);
-        Task<Result<BookDto>> CreateBookAsync(CreateBookDto bookDto);
-        Task<Result<BookDto>> UpdateBookAsync(string id, UpdateBookDto bookDto);
-        Task<Result<BookDto>> DeleteBookAsync(string id);
+        Task<List<BookDto>> GetBooksAsync();
+        Task<BookDto> GetByIdAsync(string id);
+        Task<BookDto> CreateBookAsync(CreateBookDto bookDto);
+        Task<BookDto> UpdateBookAsync(string id, UpdateBookDto bookDto);
+        Task<BookDto> DeleteBookAsync(string id);
     }
 }

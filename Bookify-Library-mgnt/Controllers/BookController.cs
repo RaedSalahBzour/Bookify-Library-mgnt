@@ -21,15 +21,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks(int pageNumber = 1, int pageSize = 10,
-                    string? title = null,
-                    string? category = null,
-                   DateOnly? publishtDate = null,
-                   string? sortBy = null,
-                   bool descending = false)
+        public async Task<IActionResult> GetAllBooks()
         {
-            var books = await _sender.Send(new GetBooksQuery(pageNumber, pageSize, title,
-                                                category, publishtDate, sortBy, descending));
+            var books = await _sender.Send(new GetBooksQuery());
             return Ok(books);
         }
 
@@ -38,17 +32,14 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> GetBookById([FromRoute] string id)
         {
             var result = await _sender.Send(new GetBookByIdQuery(id));
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return CreatedAtAction(nameof(GetBookById), new { Id = result.Data.Id }, command);
+
+            return CreatedAtAction(nameof(GetBookById), new { Id = result.Id }, result);
         }
         [HttpPut("{id:guid}")]
         [Authorize(Roles = "admin")]
@@ -56,9 +47,7 @@ namespace Bookify_Library_mgnt.Controllers
         {
             command.Id = id;
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return Ok(result.Data);
+            return Ok(result);
 
 
         }
@@ -69,9 +58,8 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
             var result = await _sender.Send(new DeleteBookCommand(id));
-            if (!result.IsSuccess)
-                return BadRequest(result.Errors);
-            return NoContent();
+
+            return Ok(result);
         }
     }
 }

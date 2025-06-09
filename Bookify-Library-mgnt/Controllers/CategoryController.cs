@@ -32,22 +32,14 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> GetCategoryById([FromRoute] string id)
         {
             var result = await _sender.Send(new GetCategoryByIdQuery(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return CreatedAtAction(nameof(GetCategoryById), new { Id = result.Data.Id }, result.Data);
+            return CreatedAtAction(nameof(GetCategoryById), new { Id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
@@ -55,11 +47,7 @@ namespace Bookify_Library_mgnt.Controllers
         {
             command.id = id;
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpDelete("{id:guid}")]
@@ -67,11 +55,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
             var result = await _sender.Send(new DeleteCategoryCommand(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return NoContent();
+            return Ok(result);
         }
     }
 }

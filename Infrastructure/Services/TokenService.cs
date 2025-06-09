@@ -1,9 +1,6 @@
 ﻿using Application.Authorization.Services;
 using Application.Common.Interfaces;
-using Bookify_Library_mgnt.Common;
 using Domain.Entities;
-using Domain.Shared;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -46,23 +43,20 @@ namespace Infrastructure.Services
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            var result = await _unitOfWork.AuthRepository.UpdateAsync(user);
+            await _unitOfWork.AuthRepository.UpdateAsync(user);
             return refreshToken;
 
         }
-        public async Task<Result<User?>> ValidateRefreshTokenAsync(string userId, string RefreshToken)
+        public async Task<User?> ValidateRefreshTokenAsync(string userId, string RefreshToken)
         {
             var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
             if (user is null)
-            {
-                return Result<User?>.Fail(ErrorMessages.NotFoundById(userId));
-            }
-            if (user.RefreshToken != RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
-            {
-                return Result<User?>.Fail(ErrorMessages.InvalidRefreshToken());
-            }
+                throw new KeyNotFoundException($"User with Email '{userId}' was not found.");
 
-            return Result<User?>.Ok(user);
+            if (user.RefreshToken != RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+                throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+
+            return user;
         }
         private string GenerateRefreshToken()
         {

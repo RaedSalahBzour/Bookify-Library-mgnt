@@ -19,8 +19,7 @@ namespace Infrastructure.Persistence.Repositpries
             query.Include(b => b.Reviews)
              .Include(b => b.Borrowings)
              .Include(b => b.CategoryBooks)
-             .ThenInclude(cb => cb.Category)
-    );
+             .ThenInclude(cb => cb.Category));
         }
 
         public async Task<Book> GetBookByIdAsync(string id)

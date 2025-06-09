@@ -9,6 +9,6 @@ using System.Threading.Tasks;
 
 namespace Application.Reviews.Queries
 {
-    public record GetReviewsQuery(int pageNumber, int pageSize) : IRequest<PagedResult<ReviewDto>>;
+    public record GetReviewsQuery() : IRequest<List<ReviewDto>>;
 
 }

@@ -25,33 +25,22 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> GetClaims(string userId)
         {
             var result = await _sender.Send(new GetClaimsQuery(userId));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpPost("claims")]
         public async Task<IActionResult> AddClaimToUser([FromBody] AddClaimToUserCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpDelete("{userId:guid}")]
         public async Task<IActionResult> DeleteClaimFromUser([FromRoute] string userId,
             [FromBody] string claimType)
         {
             var result = await _sender.Send(new RemoveClaimFromUserCommand(userId, claimType));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+
+            return Ok(result);
         }
     }
 }

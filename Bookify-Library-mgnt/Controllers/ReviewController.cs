@@ -22,30 +22,22 @@ namespace Bookify_Library_mgnt.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetReviews(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetReviews()
         {
-            return Ok(await _sender.Send(new GetReviewsQuery(pageNumber, pageSize)));
+            return Ok(await _sender.Send(new GetReviewsQuery()));
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetReviewById(string id)
         {
             var result = await _sender.Send(new GetReviewByIdQuery(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
         [HttpPost]
         public async Task<IActionResult> CreateReview([FromBody] CreateReviewCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return CreatedAtAction(nameof(GetReviewById), new { id = result.Data.Id }, result.Data);
+            return CreatedAtAction(nameof(GetReviewById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
@@ -53,11 +45,7 @@ namespace Bookify_Library_mgnt.Controllers
         {
             command.id = id;
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
 
         }
 
@@ -66,11 +54,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteReview([FromRoute] string id)
         {
             var result = await _sender.Send(new DeleteReviewCommand(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return NoContent();
+            return Ok(result);
         }
     }
 }

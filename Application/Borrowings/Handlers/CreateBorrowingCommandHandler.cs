@@ -1,16 +1,12 @@
 ﻿using Application.Borrowings.Commands;
 using Application.Borrowings.Dtos;
 using Application.Borrowings.Services;
-using Application.Categories.Dtos;
 using AutoMapper;
-using Bookify_Library_mgnt.Common;
-using Domain.Enums;
-using Domain.Shared;
 using MediatR;
 
 namespace Application.Borrowings.Handlers
 {
-    public class CreateBorrowingCommandHandler : IRequestHandler<CreateBorrowingCommand, Result<BorrowingDto>>
+    public class CreateBorrowingCommandHandler : IRequestHandler<CreateBorrowingCommand, BorrowingDto>
     {
         private readonly IBorrowingService _borrowingService;
         private readonly IMapper _mapper;
@@ -20,15 +16,11 @@ namespace Application.Borrowings.Handlers
             _borrowingService = borrowingService;
             _mapper = mapper;
         }
-        public async Task<Result<BorrowingDto>> Handle(CreateBorrowingCommand command, CancellationToken cancellationToken)
+        public async Task<BorrowingDto> Handle(CreateBorrowingCommand command, CancellationToken cancellationToken)
         {
             var CreateBorrowingDto = _mapper.Map<CreateBorrowingDto>(command);
-            var result = await _borrowingService.CreateBorrowingAsync(CreateBorrowingDto);
-            if (!result.IsSuccess)
-            {
-                return Result<BorrowingDto>.Fail(ErrorMessages.OperationFailed(nameof(OperationNames.CreateBorrowing), result.Errors));
-            }
-            return Result<BorrowingDto>.Ok(result.Data);
+            return await _borrowingService.CreateBorrowingAsync(CreateBorrowingDto);
+
         }
     }
 }

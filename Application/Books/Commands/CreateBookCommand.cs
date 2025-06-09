@@ -1,11 +1,10 @@
 ﻿using Application.Books.Dtos;
-using Bookify_Library_mgnt.Common;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
 namespace Application.Books.Commands
 {
-    public record CreateBookCommand : IRequest<Result<BookDto>>
+    public record CreateBookCommand : IRequest<BookDto>
     {
         [Required(ErrorMessage = "Author is required")]
         public string Author { get; init; }

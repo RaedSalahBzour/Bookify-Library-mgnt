@@ -1,120 +1,82 @@
-﻿using Application.Borrowings.Dtos;
-using Application.Categories.Dtos;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Reviews.Dtos;
 using Application.Reviews.Services;
 using AutoMapper;
-using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Shared;
-using FluentValidation;
 namespace Infrastructure.Services
 {
     public class ReviewService : IReviewService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateReviewDto> _createValidator;
-        private readonly IValidator<UpdateReviewDto> _updateValidator;
-        public ReviewService(IMapper mapper,
-            IValidator<CreateReviewDto> createValidator,
-            IValidator<UpdateReviewDto> updateValidator, IUnitOfWork unitOfWork)
+        public ReviewService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
             _unitOfWork = unitOfWork;
         }
-        public async Task<PagedResult<ReviewDto>> GetReviewsAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<List<ReviewDto>> GetReviewsAsync()
         {
-            var queryReviews = _unitOfWork.ReviewRepository.GetAll();
-            var paginatedReview = await queryReviews.ToPaginationForm(pageNumber, pageSize);
+            var reviews = _unitOfWork.ReviewRepository.GetAll();
 
-            var reviewsDto = _mapper.Map<IEnumerable<ReviewDto>>(paginatedReview.Items);
-            return new PagedResult<ReviewDto>
-            {
-                TotalCount = paginatedReview.TotalCount,
-                Items = reviewsDto,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-            };
+            return _mapper.Map<List<ReviewDto>>(reviews);
+
         }
-        public async Task<Result<ReviewDto>> GetReviewByIdAsync(string id)
+        public async Task<ReviewDto> GetReviewByIdAsync(string id)
         {
             var review = await _unitOfWork.ReviewRepository.GetByIdAsync(id);
             if (review is null)
-            {
-                return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
-            }
-            var reviewDto = _mapper.Map<ReviewDto>(review);
-            return Result<ReviewDto>.Ok(reviewDto);
+                throw new KeyNotFoundException($"Review With Id {id} Was Not Found");
+            return _mapper.Map<ReviewDto>(review);
+
         }
-        public async Task<Result<ReviewDto>> CreateReviewAsync(CreateReviewDto dto)
+        public async Task<ReviewDto> CreateReviewAsync(CreateReviewDto dto)
         {
-            var validationResult = await _createValidator.ValidateAsync(dto);
-            if (!validationResult.IsValid)
-            {
-                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<ReviewDto>.Fail(errorMessages);
-            }
 
             var review = _mapper.Map<Review>(dto);
             var (userExists, bookExists) = await _unitOfWork.ReviewRepository.CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
 
-            if (!userExists || !bookExists)
-            {
-                var errors = new List<string>();
+            if (!userExists)
+                throw new KeyNotFoundException($"User With Id {dto.UserId} Was Not Found");
 
-                if (!userExists)
-                    errors.Add($"User with ID {dto.UserId} not found");
+            if (!bookExists)
+                throw new KeyNotFoundException($"Book With Id {dto.BookId} Was Not Found");
 
-                if (!bookExists)
-                    errors.Add($"Book with ID {dto.BookId} not found");
-
-                return Result<ReviewDto>.Fail(string.Join(" | ", errors));
-            }
             await _unitOfWork.ReviewRepository.AddAsync(review);
             await _unitOfWork.ReviewRepository.SaveChangesAsync();
-            var rDto = _mapper.Map<ReviewDto>(review);
-            return Result<ReviewDto>.Ok(rDto);
+            return _mapper.Map<ReviewDto>(review);
+
         }
-        public async Task<Result<ReviewDto>> UpdateReviewAsync(string id, UpdateReviewDto dto)
+        public async Task<ReviewDto> UpdateReviewAsync(string id, UpdateReviewDto dto)
         {
             var review = await _unitOfWork.ReviewRepository.GetByIdAsync(id);
             if (review is null)
-                return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
-            var (userExists, bookExists) = await _unitOfWork.ReviewRepository.CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
+                throw new KeyNotFoundException($"Review With Id {id} Was Not Found");
+            var (userExists, bookExists) =
+                await _unitOfWork.ReviewRepository
+                .CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
 
-            if (!userExists || !bookExists)
-            {
-                var errors = new List<string>();
+            if (!userExists)
+                throw new KeyNotFoundException($"User With Id {dto.UserId} Was Not Found");
 
-                if (!userExists)
-                    errors.Add($"User with ID {dto.UserId} not found");
+            if (!bookExists)
+                throw new KeyNotFoundException($"Book With Id {dto.BookId} Was Not Found");
 
-                if (!bookExists)
-                    errors.Add($"Book with ID {dto.BookId} not found");
-
-                return Result<ReviewDto>.Fail(string.Join(" | ", errors));
-            }
             _mapper.Map(dto, review);
             await _unitOfWork.ReviewRepository.Update(review);
             await _unitOfWork.ReviewRepository.SaveChangesAsync();
-            var rDto = _mapper.Map<ReviewDto>(review);
-            return Result<ReviewDto>.Ok(rDto);
+            return _mapper.Map<ReviewDto>(review);
+
 
         }
-        public async Task<Result<ReviewDto>> DeleteReviewAsync(string id)
+        public async Task<ReviewDto> DeleteReviewAsync(string id)
         {
             var review = await _unitOfWork.ReviewRepository.GetByIdAsync(id);
             if (review is null)
-                return Result<ReviewDto>.Fail(ErrorMessages.NotFoundById(id));
+                throw new KeyNotFoundException($"Review With Id {id} Was Not Found");
             await _unitOfWork.ReviewRepository.Delete(review);
             await _unitOfWork.ReviewRepository.SaveChangesAsync();
-            var rDto = _mapper.Map<ReviewDto>(review);
-            return Result<ReviewDto>.Ok(rDto);
+            return _mapper.Map<ReviewDto>(review);
+
         }
 
 

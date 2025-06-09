@@ -2,12 +2,7 @@
 using Application.Books.Services;
 using Application.Common.Interfaces;
 using AutoMapper;
-using Bookify_Library_mgnt.Common;
-using Bookify_Library_mgnt.Helper.Pagination;
 using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Shared;
-using FluentValidation;
 
 namespace Infrastructure.Services
 {
@@ -15,78 +10,30 @@ namespace Infrastructure.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateBookDto> _createValidator;
-        private readonly IValidator<UpdateBookDto> _UpdateValidator;
-        public BookService(IMapper mapper, IValidator<CreateBookDto> createValidator, IValidator<UpdateBookDto> updateValidator, IUnitOfWork unitOfWork)
+
+        public BookService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _createValidator = createValidator;
-            _UpdateValidator = updateValidator;
+
             _unitOfWork = unitOfWork;
         }
 
 
-        public async Task<PagedResult<BookDto>> GetBooksAsync(int pageNumber = 1,
-            int pageSize = 10, string? title = null,
-            string? category = null, DateOnly? publishtDate = null,
-            string? sortBy = null, bool descending = false)
+        public async Task<List<BookDto>> GetBooksAsync()
         {
             var query = _unitOfWork.BookRepository.GetBooksAsync();
-            if (!string.IsNullOrEmpty(title))
-            {
-                query = query.Where(b => b.Title.Contains(title));
-            }
-
-            if (!string.IsNullOrEmpty(category))
-            {
-                query = query.Where(b => b.CategoryBooks
-                                          .Any(cb => cb.Category.Name == category));
-            }
-
-            if (publishtDate.HasValue)
-            {
-                query = query.Where(b => DateOnly.FromDateTime(b.PublishDate) == publishtDate.Value);
-            }
-            query = sortBy?.ToLower() switch
-            {
-                "rating" => descending
-                    ? query.OrderByDescending(b => b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0)
-                    : query.OrderBy(b => b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0),
-                "title" => descending
-                    ? query.OrderByDescending(b => b.Title)
-                    : query.OrderBy(b => b.Title),
-                "publishdate" => descending
-                ? query.OrderByDescending(b => b.PublishDate)
-                    : query.OrderBy(b => b.PublishDate),
-
-                _ => query.OrderBy(b => b.Title)
-            };
-            var books = await query.ToPaginationForm(pageNumber, pageSize);
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books.Items);
-            return new PagedResult<BookDto>
-            {
-                TotalCount = books.TotalCount,
-                Items = booksDto,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-            };
+            return _mapper.Map<List<BookDto>>(query);
         }
 
-        public async Task<Result<BookDto>> GetByIdAsync(string id)
+        public async Task<BookDto> GetByIdAsync(string id)
         {
             var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
-            if (book == null) return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
-            var bookDto = _mapper.Map<BookDto>(book);
-            return Result<BookDto>.Ok(bookDto);
+            if (book == null) throw new KeyNotFoundException($"Book With Id {id} Was Not Found");
+            return _mapper.Map<BookDto>(book);
+
         }
-        public async Task<Result<BookDto>> CreateBookAsync(CreateBookDto bookDto)
+        public async Task<BookDto> CreateBookAsync(CreateBookDto bookDto)
         {
-            var validationResult = await _createValidator.ValidateAsync(bookDto);
-            if (!validationResult.IsValid)
-            {
-                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<BookDto>.Fail(errorMessages);
-            }
             var book = _mapper.Map<Book>(bookDto);
             book.CategoryBooks = new List<CategoryBook>();
             foreach (var categoryId in bookDto.CategoryIds)
@@ -94,7 +41,7 @@ namespace Infrastructure.Services
                 var categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
                 if (!categoryExists)
                 {
-                    return Result<BookDto>.Fail(ErrorMessages.NotFoundById(categoryId));
+                    throw new KeyNotFoundException($"Category With Id {categoryId} Was Not Found");
                 }
                 book.CategoryBooks.Add(new CategoryBook
                 {
@@ -104,23 +51,14 @@ namespace Infrastructure.Services
             }
             await _unitOfWork.BookRepository.AddAsync(book);
             await _unitOfWork.BookRepository.SaveChangesAsync();
-            var bDto = _mapper.Map<BookDto>(book);
-            return Result<BookDto>.Ok(bDto);
-        }
-        public async Task<Result<BookDto>> UpdateBookAsync(string id, UpdateBookDto bookDto)
-        {
-            var validationResult = await _UpdateValidator.ValidateAsync(bookDto);
-            if (!validationResult.IsValid)
-            {
-                var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<BookDto>.Fail(errorMessages);
-            }
+            return _mapper.Map<BookDto>(book);
 
+        }
+        public async Task<BookDto> UpdateBookAsync(string id, UpdateBookDto bookDto)
+        {
             var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
             if (book is null)
-            {
-                return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
-            }
+                throw new KeyNotFoundException($"Book With Id {id} Was Not Found");
 
             _mapper.Map(bookDto, book);
 
@@ -137,7 +75,7 @@ namespace Infrastructure.Services
                 var categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
                 if (!categoryExists)
                 {
-                    return Result<BookDto>.Fail(ErrorMessages.NotFoundById(categoryId));
+                    throw new KeyNotFoundException($"Category With Id {categoryId} Was Not Found");
                 }
 
                 book.CategoryBooks.Add(new CategoryBook
@@ -148,21 +86,20 @@ namespace Infrastructure.Services
             }
             await _unitOfWork.BookRepository.Update(book);
             await _unitOfWork.BookRepository.SaveChangesAsync();
-            var bDto = _mapper.Map<BookDto>(book);
-            return Result<BookDto>.Ok(bDto);
+            return _mapper.Map<BookDto>(book);
+
         }
 
-        public async Task<Result<BookDto>> DeleteBookAsync(string id)
+        public async Task<BookDto> DeleteBookAsync(string id)
         {
             var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
             if (book is null)
-            {
-                return Result<BookDto>.Fail(ErrorMessages.NotFoundById(id));
-            }
+                throw new KeyNotFoundException($"Book With Id {id} Was Not Found");
+
             await _unitOfWork.BookRepository.Delete(book);
             await _unitOfWork.BookRepository.SaveChangesAsync();
-            var bookDto = _mapper.Map<BookDto>(book);
-            return Result<BookDto>.Ok(bookDto);
+            return _mapper.Map<BookDto>(book);
+            ;
         }
 
     }

@@ -23,32 +23,24 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBorrowings(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetBorrowings()
         {
-            var result = await _sender.Send(new GetBorrowingsQuery(pageNumber, pageSize));
-            return Ok(result.Items);
+            var result = await _sender.Send(new GetBorrowingsQuery());
+            return Ok(result);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetBorrowingById([FromRoute] string id)
         {
             var result = await _sender.Send(new GetBorrowingByIdQuery(id));
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBorrowing([FromBody] CreateBorrowingCommand command)
         {
             var result = await _sender.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Errors);
-            }
-            return CreatedAtAction(nameof(GetBorrowingById), new { Id = result.Data.Id }, result.Data);
+            return CreatedAtAction(nameof(GetBorrowingById), new { Id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
@@ -56,8 +48,7 @@ namespace Bookify_Library_mgnt.Controllers
         {
             command.Id = id;
             var result = await _sender.Send(command);
-            if (!result.IsSuccess) { return BadRequest(result.Errors); }
-            return Ok(result.Data);
+            return Ok(result);
         }
 
         [HttpDelete("{id:guid}")]
@@ -65,8 +56,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteBorrowing([FromRoute] string id)
         {
             var result = await _sender.Send(new DeleteBorrowingCommand(id));
-            if (!result.IsSuccess) { return BadRequest(result.Errors); }
-            return NoContent();
+            return Ok(result);
         }
     }
 }

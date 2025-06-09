@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Books.Handlers.QueryHandlers
 {
-    public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, PagedResult<BookDto>>
+    public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, List<BookDto>>
     {
         private readonly IBookService _bookService;
 
@@ -15,19 +15,10 @@ namespace Application.Books.Handlers.QueryHandlers
             _bookService = bookService;
         }
 
-        public async Task<PagedResult<BookDto>> Handle(GetBooksQuery request, CancellationToken cancellationToken)
+        public async Task<List<BookDto>> Handle(GetBooksQuery request, CancellationToken cancellationToken)
         {
-            var result = await _bookService.GetBooksAsync(
-                request.pageNumber, request.pageSize,
-                request.title, request.category,
-                request.publishtDate, request.sortBy, request.descending);
-            return new PagedResult<BookDto>
-            {
-                Items = result.Items,
-                PageNumber = request.pageNumber,
-                PageSize = request.pageSize,
-                TotalCount = result.TotalCount,
-            };
+            return await _bookService.GetBooksAsync();
+
         }
     }
 }
