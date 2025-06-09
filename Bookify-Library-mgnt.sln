@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookify-Library-mgnt", "Boo
 		{F2B4CA32-D380-449E-AF12-8938D94A9436} = {F2B4CA32-D380-449E-AF12-8938D94A9436}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{0A0D4B55-7ECD-4F4B-889D-0A8F9E6BFBB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Domain\Data.csproj", "{0A0D4B55-7ECD-4F4B-889D-0A8F9E6BFBB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{F2B4CA32-D380-449E-AF12-8938D94A9436}"
 	ProjectSection(ProjectDependencies) = postProject

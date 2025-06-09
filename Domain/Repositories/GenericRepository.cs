@@ -1,5 +1,5 @@
-﻿using Domain.Interfaces;
-using Infrastructure.Persistence.Data;
+﻿using Data.Helpers;
+using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Persistence.Repositories
+namespace Data.Repositories
 {
     public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
     {

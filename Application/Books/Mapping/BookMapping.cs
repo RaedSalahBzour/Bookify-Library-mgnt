@@ -1,7 +1,7 @@
 ﻿using Application.Books.Commands;
 using Application.Books.Dtos;
 using AutoMapper;
-using Domain.Entities;
+using Data.Entities;
 
 namespace Application.Books.Mappings
 {

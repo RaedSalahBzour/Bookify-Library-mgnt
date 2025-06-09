@@ -1,11 +1,11 @@
 ﻿using Application.Authorization.Dtos.Token;
 using Application.Authorization.Services;
-using Application.Common.Interfaces;
 using Application.Users.Dtos;
 using Application.Users.Services;
 using AutoMapper;
-using Domain.Entities;
-using Domain.Enums;
+using Data.Entities;
+using Data.Enums;
+using Data.Interfaces;
 
 namespace Infrastructure.Services
 {

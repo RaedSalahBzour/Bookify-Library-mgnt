@@ -1,11 +1,11 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Persistence.Data;
+﻿using Data.Entities;
+using Data.Helpers;
+using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace Infrastructure.Persistence.Repositpries
+namespace Data.Repositories
 {
     public class AuthRepository : IAuthRepository
     {

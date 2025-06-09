@@ -1,8 +1,8 @@
-﻿using Domain.Entities;
+﻿using Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Data
+namespace Data.Helpers
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {

@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Persistence.Data;
-using Infrastructure.Persistence.Repositories;
+﻿using Data.Entities;
+using Data.Helpers;
+using Data.Helpers;
+using Data.Interfaces;
+using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositpries
+namespace Data.Repositories
 {
     public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {

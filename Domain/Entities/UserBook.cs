@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities
+﻿namespace Data.Entities
 {
     public class UserBook
     {

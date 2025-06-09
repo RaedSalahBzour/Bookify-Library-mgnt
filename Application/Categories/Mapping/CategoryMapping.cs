@@ -1,7 +1,7 @@
 ﻿using Application.Categories.Commands;
 using Application.Categories.Dtos;
 using AutoMapper;
-using Domain.Entities;
+using Data.Entities;
 
 namespace Application.Categories.Mapping
 {

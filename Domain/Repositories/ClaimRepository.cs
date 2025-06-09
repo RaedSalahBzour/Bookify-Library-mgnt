@@ -1,5 +1,5 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Data.Entities;
+using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Persistence.Repositories
+namespace Data.Repositories
 {
     public class ClaimRepository : IClaimRepository
     {

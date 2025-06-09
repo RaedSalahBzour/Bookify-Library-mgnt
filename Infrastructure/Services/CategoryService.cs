@@ -1,8 +1,8 @@
 ﻿using Application.Categories.Dtos;
 using Application.Categories.Services;
-using Application.Common.Interfaces;
+using Data.Interfaces;
 using AutoMapper;
-using Domain.Entities;
+using Data.Entities;
 
 namespace Infrastructure.Services
 {

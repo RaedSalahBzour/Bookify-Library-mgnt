@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Migrations
+namespace Data.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration

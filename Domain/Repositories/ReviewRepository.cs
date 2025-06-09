@@ -1,16 +1,17 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Persistence.Data;
-using Infrastructure.Persistence.Repositories;
+﻿using Data.Entities;
+using Data.Helpers;
+using Data.Interfaces;
+using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositpries
+namespace Data.Repositories
 {
-    public class BorrowingRepository : GenericRepository<Borrowing>, IBorrowingRepository
+    public class ReviewRepository : GenericRepository<Review>, IReviewRepository
     {
-        public BorrowingRepository(ApplicationDbContext context) : base(context)
+        public ReviewRepository(ApplicationDbContext context) : base(context)
         {
         }
+
 
         public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
             string bookId)
@@ -19,7 +20,6 @@ namespace Infrastructure.Persistence.Repositpries
             var bookExists = await _context.Books.AnyAsync(b => b.Id == bookId);
             return (userExists, bookExists);
         }
+
     }
-
-
 }

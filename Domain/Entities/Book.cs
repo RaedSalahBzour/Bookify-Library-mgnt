@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-namespace Domain.Entities
+namespace Data.Entities
 {
     public class Book
     {

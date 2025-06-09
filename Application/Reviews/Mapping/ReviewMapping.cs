@@ -1,7 +1,7 @@
 ﻿using Application.Reviews.Commands;
 using Application.Reviews.Dtos;
 using AutoMapper;
-using Domain.Entities;
+using Data.Entities;
 
 namespace Application.Reviews.Mapping
 {

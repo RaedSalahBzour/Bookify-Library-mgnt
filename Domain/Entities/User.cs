@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 
-namespace Domain.Entities
+namespace Data.Entities
 {
     public class User : IdentityUser
     {

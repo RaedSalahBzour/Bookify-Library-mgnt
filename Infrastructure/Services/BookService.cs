@@ -1,8 +1,8 @@
 ﻿using Application.Books.Dtos;
 using Application.Books.Services;
-using Application.Common.Interfaces;
 using AutoMapper;
-using Domain.Entities;
+using Data.Entities;
+using Data.Interfaces;
 
 namespace Infrastructure.Services
 {

@@ -1,7 +1,7 @@
 ﻿using Application.Authorization.Dtos.Claims;
 using Application.Authorization.Services;
-using Application.Common.Interfaces;
-using Domain.Enums;
+using Data.Interfaces;
+using Data.Enums;
 using System.Security.Claims;
 
 namespace Infrastructure.Services

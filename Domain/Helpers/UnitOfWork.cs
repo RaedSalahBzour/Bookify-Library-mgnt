@@ -1,17 +1,9 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Persistence.Repositories;
-using Infrastructure.Persistence.Repositpries;
+﻿using Data.Entities;
+using Data.Interfaces;
+using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Persistence.Data
+namespace Data.Helpers
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {

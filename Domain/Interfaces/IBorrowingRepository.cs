@@ -1,7 +1,7 @@
 ﻿
-using Domain.Entities;
+using Data.Entities;
 
-namespace Domain.Interfaces
+namespace Data.Interfaces
 {
     public interface IBorrowingRepository : IGenericRepository<Borrowing>
     {

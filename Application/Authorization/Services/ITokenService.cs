@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Data.Entities;
 namespace Application.Authorization.Services
 {
     public interface ITokenService

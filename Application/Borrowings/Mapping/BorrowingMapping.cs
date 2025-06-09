@@ -1,7 +1,7 @@
 ﻿using Application.Borrowings.Commands;
 using Application.Borrowings.Dtos;
 using AutoMapper;
-using Domain.Entities;
+using Data.Entities;
 
 namespace Application.Borrowings.Mappings
 {

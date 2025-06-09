@@ -1,8 +1,8 @@
 ﻿using Application.Authorization.Dtos.Roles;
 using Application.Authorization.Services;
-using Application.Common.Interfaces;
+using Data.Interfaces;
 using AutoMapper;
-using Domain.Enums;
+using Data.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Services
