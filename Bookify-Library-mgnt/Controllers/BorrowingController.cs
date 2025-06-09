@@ -55,7 +55,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteBorrowing([FromRoute] string id)
         {
-            var result = await _sender.Send(new DeleteBorrowingCommand(id));
+            var result = await _sender.Send(new DeleteBorrowingCommand { Id = id });
             return Ok(result);
         }
     }

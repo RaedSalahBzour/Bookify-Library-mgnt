@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Reviews.Commands
 {
-    public record DeleteReviewCommand(string Id) : IRequest<ReviewDto>
+    public class DeleteReviewCommand : IRequest<ReviewDto>
     {
         [Required(ErrorMessage = "Review ID is required")]
         public string Id { get; init; }

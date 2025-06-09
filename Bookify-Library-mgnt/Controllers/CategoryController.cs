@@ -22,9 +22,9 @@ namespace Bookify_Library_mgnt.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetCategories()
         {
-            var categories = await _sender.Send(new GetCategoriesQuery(pageNumber, pageSize));
+            var categories = await _sender.Send(new GetCategoriesQuery());
             return Ok(categories);
         }
 
@@ -54,7 +54,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
-            var result = await _sender.Send(new DeleteCategoryCommand(id));
+            var result = await _sender.Send(new DeleteCategoryCommand { Id = id });
             return Ok(result);
         }
     }

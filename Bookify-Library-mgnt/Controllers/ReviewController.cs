@@ -53,7 +53,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteReview([FromRoute] string id)
         {
-            var result = await _sender.Send(new DeleteReviewCommand(id));
+            var result = await _sender.Send(new DeleteReviewCommand { Id = id });
             return Ok(result);
         }
     }

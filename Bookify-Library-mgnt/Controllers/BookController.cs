@@ -57,7 +57,7 @@ namespace Bookify_Library_mgnt.Controllers
 
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            var result = await _sender.Send(new DeleteBookCommand(id));
+            var result = await _sender.Send(new DeleteBookCommand { Id = id });
 
             return Ok(result);
         }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Authorization.Commands.Roles
 {
-    public record RemoveFromRoleCommand(string UserId, string RoleName) : IRequest<string>
+    public class RemoveFromRoleCommand : IRequest<string>
     {
         [Required(ErrorMessage = "User ID is required.")]
         public string UserId { get; init; }

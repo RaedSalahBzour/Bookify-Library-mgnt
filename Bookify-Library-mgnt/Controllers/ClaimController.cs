@@ -38,7 +38,7 @@ namespace Bookify_Library_mgnt.Controllers
         public async Task<IActionResult> DeleteClaimFromUser([FromRoute] string userId,
             [FromBody] string claimType)
         {
-            var result = await _sender.Send(new RemoveClaimFromUserCommand(userId, claimType));
+            var result = await _sender.Send(new RemoveClaimFromUserCommand { UserId = userId, ClaimType = claimType });
 
             return Ok(result);
         }

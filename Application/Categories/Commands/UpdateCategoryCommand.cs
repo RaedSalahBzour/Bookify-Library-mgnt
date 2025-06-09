@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Application.Categories.Commands
 {
-    public class UpdateCategoryCommand() : IRequest<CategoryDto>
+    public class UpdateCategoryCommand : IRequest<CategoryDto>
     {
         [Required(ErrorMessage = "Category Name is required")]
         public string Name { get; init; }

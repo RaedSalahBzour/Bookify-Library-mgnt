@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Application.Categories.Queries
 {
-    public record GetCategoriesQuery(int pageNumber, int pageSize) : IRequest<List<CategoryDto>>;
+    public record GetCategoriesQuery() : IRequest<List<CategoryDto>>;
 
 }

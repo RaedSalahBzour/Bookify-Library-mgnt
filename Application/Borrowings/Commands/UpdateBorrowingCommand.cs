@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Application.Borrowings.Commands
 {
-    public class UpdateBorrowingCommand() : IRequest<BorrowingDto>
+    public class UpdateBorrowingCommand : IRequest<BorrowingDto>
     {
         [Required(ErrorMessage = "BorrowedOn date is required")]
         [DataType(DataType.Date)]

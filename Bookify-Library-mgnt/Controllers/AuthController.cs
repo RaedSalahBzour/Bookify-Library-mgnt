@@ -57,7 +57,7 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
-            var result = await _sender.Send(new DeleteUserCommand(id));
+            var result = await _sender.Send(new DeleteUserCommand { Id = id });
             return Ok(result);
         }
         [AllowAnonymous]

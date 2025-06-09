@@ -53,21 +53,21 @@ namespace Bookify_Library_mgnt.Controllers
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> DeleteRole([FromRoute] string id)
         {
-            var result = await _sender.Send(new DeleteRoleCommand(id));
+            var result = await _sender.Send(new DeleteRoleCommand { Id = id });
             return Ok(result);
         }
         [HttpPost("{userId:guid}/roles")]
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> AddToRole([FromRoute] string userId, [FromBody] string roleName)
         {
-            var result = await _sender.Send(new AddToRoleCommand(userId, roleName));
+            var result = await _sender.Send(new AddToRoleCommand { UserId = userId, RoleName = roleName });
             return Ok(result);
         }
         [HttpDelete("{userId:guid}/roles")]
         [Authorize(Roles = "superAdmin")]
         public async Task<IActionResult> RemoveFromRole([FromRoute] string userId, [FromBody] string roleName)
         {
-            var result = await _sender.Send(new RemoveFromRoleCommand(userId, roleName));
+            var result = await _sender.Send(new RemoveFromRoleCommand { UserId = userId, RoleName = roleName });
             return Ok(result);
         }
         [HttpGet]

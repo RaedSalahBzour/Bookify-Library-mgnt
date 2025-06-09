@@ -55,7 +55,7 @@ namespace Infrastructure.Services
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException(
-                        $"Operation '{OperationNames.CreateUser}' failed to complete.");
+                        $"Operation '{OperationNames.CreateUser}' failed to complete. ");
             }
             await _unitOfWork.AuthRepository.AddToRoleAsync(user, "user");
             var Dto = _mapper.Map<UserDto>(user);
