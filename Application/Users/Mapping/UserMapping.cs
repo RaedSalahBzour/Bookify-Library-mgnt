@@ -3,17 +3,16 @@ using Application.Users.Dtos;
 using AutoMapper;
 using Data.Entities;
 
-namespace Application.Users.Mapping
+namespace Application.Users.Mapping;
+
+public class UserMapping : Profile
 {
-    public class UserMapping : Profile
+    public UserMapping()
     {
-        public UserMapping()
-        {
-            CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<User, CreateUserDto>().ReverseMap();
-            CreateMap<CreateUserCommand, CreateUserDto>().ReverseMap();
-            CreateMap<User, UpdateUserDto>().ReverseMap();
-            CreateMap<UpdateUserCommand, UpdateUserDto>().ReverseMap();
-        }
+        CreateMap<User, UserDto>().ReverseMap();
+        CreateMap<User, CreateUserDto>().ReverseMap();
+        CreateMap<CreateUserCommand, CreateUserDto>().ReverseMap();
+        CreateMap<User, UpdateUserDto>().ReverseMap();
+        CreateMap<UpdateUserCommand, UpdateUserDto>().ReverseMap();
     }
 }

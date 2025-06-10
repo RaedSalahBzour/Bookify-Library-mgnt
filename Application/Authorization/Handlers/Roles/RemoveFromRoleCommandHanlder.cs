@@ -2,21 +2,20 @@
 using Application.Authorization.Services;
 using MediatR;
 
-namespace Application.Authorization.Handlers.Roles
+namespace Application.Authorization.Handlers.Roles;
+
+public class RemoveFromRoleCommandHanlder : IRequestHandler<RemoveFromRoleCommand, string>
 {
-    public class RemoveFromRoleCommandHanlder : IRequestHandler<RemoveFromRoleCommand, string>
+    private readonly IRoleService _roleService;
+
+    public RemoveFromRoleCommandHanlder(IRoleService roleService)
     {
-        private readonly IRoleService _roleService;
+        _roleService = roleService;
 
-        public RemoveFromRoleCommandHanlder(IRoleService roleService)
-        {
-            _roleService = roleService;
+    }
+    public async Task<string> Handle(RemoveFromRoleCommand command, CancellationToken cancellationToken)
+    {
+        return await _roleService.RemoveUserFromRoleAsync(command.UserId, command.RoleName);
 
-        }
-        public async Task<string> Handle(RemoveFromRoleCommand command, CancellationToken cancellationToken)
-        {
-            return await _roleService.RemoveUserFromRoleAsync(command.UserId, command.RoleName);
-
-        }
     }
 }

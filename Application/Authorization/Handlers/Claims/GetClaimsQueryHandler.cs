@@ -3,21 +3,20 @@ using Application.Authorization.Services;
 using MediatR;
 using System.Security.Claims;
 
-namespace Application.Authorization.Handlers.Claims
+namespace Application.Authorization.Handlers.Claims;
+
+public class GetClaimsQueryHandler : IRequestHandler<GetClaimsQuery, IList<Claim>>
 {
-    public class GetClaimsQueryHandler : IRequestHandler<GetClaimsQuery, IList<Claim>>
+    private readonly IClaimService _claimService;
+
+    public GetClaimsQueryHandler(IClaimService claimService)
     {
-        private readonly IClaimService _claimService;
+        _claimService = claimService;
+    }
 
-        public GetClaimsQueryHandler(IClaimService claimService)
-        {
-            _claimService = claimService;
-        }
+    public async Task<IList<Claim>> Handle(GetClaimsQuery request, CancellationToken cancellationToken)
+    {
+        return await _claimService.GetUserClaimsAsync(request.id);
 
-        public async Task<IList<Claim>> Handle(GetClaimsQuery request, CancellationToken cancellationToken)
-        {
-            return await _claimService.GetUserClaimsAsync(request.id);
-
-        }
     }
 }

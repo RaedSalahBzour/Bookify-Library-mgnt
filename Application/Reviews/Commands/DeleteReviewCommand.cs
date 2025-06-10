@@ -2,11 +2,10 @@
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Reviews.Commands
+namespace Application.Reviews.Commands;
+
+public class DeleteReviewCommand : IRequest<ReviewDto>
 {
-    public class DeleteReviewCommand : IRequest<ReviewDto>
-    {
-        [Required(ErrorMessage = "Review ID is required")]
-        public string Id { get; init; }
-    }
+    [Required(ErrorMessage = "Review ID is required")]
+    public string Id { get; init; }
 }

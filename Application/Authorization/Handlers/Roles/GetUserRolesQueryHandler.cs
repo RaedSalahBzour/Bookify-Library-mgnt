@@ -2,23 +2,22 @@
 using Application.Authorization.Services;
 using MediatR;
 
-namespace Application.Authorization.Handlers.Roles
+namespace Application.Authorization.Handlers.Roles;
+
+
+public class GetUserRolesQueryHandler : IRequestHandler<GetUserRolesQuery, IList<string>>
 {
+    private readonly IRoleService _roleService;
 
-    public class GetUserRolesQueryHandler : IRequestHandler<GetUserRolesQuery, IList<string>>
+    public GetUserRolesQueryHandler(IRoleService roleService)
     {
-        private readonly IRoleService _roleService;
+        _roleService = roleService;
 
-        public GetUserRolesQueryHandler(IRoleService roleService)
-        {
-            _roleService = roleService;
+    }
+    public async Task<IList<string>> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
+    {
+        return await _roleService.GetUserRoles(request.email);
 
-        }
-        public async Task<IList<string>> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
-        {
-            return await _roleService.GetUserRoles(request.email);
-
-        }
     }
 }
 

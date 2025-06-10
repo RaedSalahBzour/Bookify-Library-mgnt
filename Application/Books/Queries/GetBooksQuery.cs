@@ -1,8 +1,6 @@
 ﻿using Application.Books.Dtos;
 using MediatR;
 
-namespace Application.Books.Queries
-{
-    public record GetBooksQuery() : IRequest<List<BookDto>>;
+namespace Application.Books.Queries;
 
-}
+public record GetBooksQuery() : IRequest<List<BookDto>>;

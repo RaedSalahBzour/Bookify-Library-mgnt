@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Authorization.Dtos.Token
+namespace Application.Authorization.Dtos.Token;
+
+public class RefreshTokenRequestDto
 {
-    public class RefreshTokenRequestDto
-    {
-        [Required(ErrorMessage = "User Id is required")]
-        public string UserId { get; set; }
-        [Required(ErrorMessage = "Refresh Token is required")]
-        public required string RefreshToken { get; set; }
-    }
+    [Required(ErrorMessage = "User Id is required")]
+    public string UserId { get; set; }
+    [Required(ErrorMessage = "Refresh Token is required")]
+    public required string RefreshToken { get; set; }
 }

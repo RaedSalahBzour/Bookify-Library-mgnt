@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Authorization.Dtos.Roles
+namespace Application.Authorization.Dtos.Roles;
+
+public class CreateRoleDto
 {
-    public class CreateRoleDto
-    {
-        [Required(ErrorMessage = "Role Name is required")]
-        [MinLength(3)]
-        public string RoleName { get; set; }
-    }
+    [Required(ErrorMessage = "Role Name is required")]
+    [MinLength(3)]
+    public string RoleName { get; set; }
 }

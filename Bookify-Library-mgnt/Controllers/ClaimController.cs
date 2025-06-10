@@ -7,40 +7,39 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace Bookify_Library_mgnt.Controllers
+namespace Bookify_Library_mgnt.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize(policy: "CanManageUserClaimsPolicy")]
+public class ClaimController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(policy: "CanManageUserClaimsPolicy")]
-    public class ClaimController : ControllerBase
+    private readonly ISender _sender;
+
+    public ClaimController(IClaimService claimService, ISender sender)
     {
-        private readonly ISender _sender;
+        _sender = sender;
+    }
 
-        public ClaimController(IClaimService claimService, ISender sender)
-        {
-            _sender = sender;
-        }
+    [HttpGet("claims")]
+    public async Task<IActionResult> GetClaims(string userId)
+    {
+        var result = await _sender.Send(new GetClaimsQuery(userId));
+        return Ok(result);
+    }
 
-        [HttpGet("claims")]
-        public async Task<IActionResult> GetClaims(string userId)
-        {
-            var result = await _sender.Send(new GetClaimsQuery(userId));
-            return Ok(result);
-        }
+    [HttpPost("claims")]
+    public async Task<IActionResult> AddClaimToUser([FromBody] AddClaimToUserCommand command)
+    {
+        var result = await _sender.Send(command);
+        return Ok(result);
+    }
+    [HttpDelete("{userId:guid}")]
+    public async Task<IActionResult> DeleteClaimFromUser([FromRoute] string userId,
+        [FromBody] string claimType)
+    {
+        var result = await _sender.Send(new RemoveClaimFromUserCommand { UserId = userId, ClaimType = claimType });
 
-        [HttpPost("claims")]
-        public async Task<IActionResult> AddClaimToUser([FromBody] AddClaimToUserCommand command)
-        {
-            var result = await _sender.Send(command);
-            return Ok(result);
-        }
-        [HttpDelete("{userId:guid}")]
-        public async Task<IActionResult> DeleteClaimFromUser([FromRoute] string userId,
-            [FromBody] string claimType)
-        {
-            var result = await _sender.Send(new RemoveClaimFromUserCommand { UserId = userId, ClaimType = claimType });
-
-            return Ok(result);
-        }
+        return Ok(result);
     }
 }

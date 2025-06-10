@@ -4,24 +4,23 @@ using Application.Borrowings.Services;
 using AutoMapper;
 using MediatR;
 
-namespace Application.Borrowings.Handlers
+namespace Application.Borrowings.Handlers;
+
+public class CreateBorrowingCommandHandler : IRequestHandler<CreateBorrowingCommand, BorrowingDto>
 {
-    public class CreateBorrowingCommandHandler : IRequestHandler<CreateBorrowingCommand, BorrowingDto>
+    private readonly IBorrowingService _borrowingService;
+    private readonly IMapper _mapper;
+
+    public CreateBorrowingCommandHandler(IBorrowingService borrowingService, IMapper mapper)
     {
-        private readonly IBorrowingService _borrowingService;
-        private readonly IMapper _mapper;
+        _borrowingService = borrowingService;
+        _mapper = mapper;
+    }
+    public async Task<BorrowingDto> Handle(CreateBorrowingCommand command, CancellationToken cancellationToken)
+    {
+        var CreateBorrowingDto = _mapper.Map<CreateBorrowingDto>(command);
+        return await _borrowingService.CreateBorrowingAsync(CreateBorrowingDto);
 
-        public CreateBorrowingCommandHandler(IBorrowingService borrowingService, IMapper mapper)
-        {
-            _borrowingService = borrowingService;
-            _mapper = mapper;
-        }
-        public async Task<BorrowingDto> Handle(CreateBorrowingCommand command, CancellationToken cancellationToken)
-        {
-            var CreateBorrowingDto = _mapper.Map<CreateBorrowingDto>(command);
-            return await _borrowingService.CreateBorrowingAsync(CreateBorrowingDto);
-
-        }
     }
 }
 

@@ -4,24 +4,23 @@ using Application.Reviews.Services;
 using AutoMapper;
 using MediatR;
 
-namespace Application.Reviews.Handlers
+namespace Application.Reviews.Handlers;
+
+public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, ReviewDto>
 {
-    public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, ReviewDto>
+    private readonly IReviewService _reviewService;
+    private readonly IMapper _mapper;
+
+    public CreateReviewCommandHandler(IReviewService reviewService, IMapper mapper)
     {
-        private readonly IReviewService _reviewService;
-        private readonly IMapper _mapper;
+        _reviewService = reviewService;
+        _mapper = mapper;
+    }
 
-        public CreateReviewCommandHandler(IReviewService reviewService, IMapper mapper)
-        {
-            _reviewService = reviewService;
-            _mapper = mapper;
-        }
+    public async Task<ReviewDto> Handle(CreateReviewCommand command, CancellationToken cancellationToken)
+    {
+        var dto = _mapper.Map<CreateReviewDto>(command);
+        return await _reviewService.CreateReviewAsync(dto);
 
-        public async Task<ReviewDto> Handle(CreateReviewCommand command, CancellationToken cancellationToken)
-        {
-            var dto = _mapper.Map<CreateReviewDto>(command);
-            return await _reviewService.CreateReviewAsync(dto);
-
-        }
     }
 }

@@ -3,20 +3,19 @@ using Application.Users.Queries;
 using Application.Users.Services;
 using MediatR;
 
-namespace Application.Users.Handlers
+namespace Application.Users.Handlers;
+
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
 {
-    public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
+    private readonly IAuthService _authService;
+
+    public GetUserByIdQueryHandler(IAuthService authService)
     {
-        private readonly IAuthService _authService;
+        _authService = authService;
+    }
+    public async Task<UserDto> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
+    {
+        return await _authService.GetUserByIdAsync(query.id);
 
-        public GetUserByIdQueryHandler(IAuthService authService)
-        {
-            _authService = authService;
-        }
-        public async Task<UserDto> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
-        {
-            return await _authService.GetUserByIdAsync(query.id);
-
-        }
     }
 }

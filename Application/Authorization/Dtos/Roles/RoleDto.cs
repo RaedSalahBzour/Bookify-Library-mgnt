@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Authorization.Dtos.Roles
+namespace Application.Authorization.Dtos.Roles;
+
+public class RoleDto
 {
-    public class RoleDto
-    {
-        public string RoleName { get; set; }
-    }
+    public string RoleName { get; set; }
 }

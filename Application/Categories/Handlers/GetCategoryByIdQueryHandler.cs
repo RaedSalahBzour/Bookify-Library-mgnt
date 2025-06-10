@@ -3,20 +3,19 @@ using Application.Categories.Queries;
 using Application.Categories.Services;
 using MediatR;
 
-namespace Application.Categories.Handlers
+namespace Application.Categories.Handlers;
+
+public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryDto>
 {
-    public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryDto>
+    private readonly ICategoryService _categoryService;
+
+    public GetCategoryByIdQueryHandler(ICategoryService categoryService)
     {
-        private readonly ICategoryService _categoryService;
+        _categoryService = categoryService;
+    }
+    public async Task<CategoryDto> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken)
+    {
+        return await _categoryService.GetByIdAsync(query.id);
 
-        public GetCategoryByIdQueryHandler(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
-        public async Task<CategoryDto> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken)
-        {
-            return await _categoryService.GetByIdAsync(query.id);
-
-        }
     }
 }
