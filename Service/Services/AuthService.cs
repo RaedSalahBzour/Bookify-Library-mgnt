@@ -6,6 +6,7 @@ using AutoMapper;
 using Data.Entities;
 using Data.Enums;
 using Data.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Service.Services;
 
@@ -20,60 +21,62 @@ public class AuthService(
 
     public async Task<List<UserDto>> GetUsersAsync()
     {
-        var users = _unitOfWork.AuthRepository.GetUsersAsync();
-        var usersDto = _mapper.Map<List<UserDto>>(users);
-        return usersDto;
+        List<User> users = _unitOfWork.AuthRepository.GetUsersAsync();
+        List<UserDto> userDtos = _mapper.Map<List<UserDto>>(users);
+        return userDtos;
     }
 
     public async Task<UserDto> GetUserByIdAsync(string id)
     {
-        var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
+        User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
         if (user == null) throw new KeyNotFoundException($"User with id '{id}' was not found.");
-        return _mapper.Map<UserDto>(user);
+        UserDto userDto = _mapper.Map<UserDto>(user);
+        return userDto;
     }
-    public async Task<UserDto> CreateAsync(CreateUserDto userDto)
+    public async Task<UserDto> CreateAsync(CreateUserDto createUserDto)
     {
-        var existingUserByEmail = await _unitOfWork.AuthRepository
-            .GetUserByEmailAsync(userDto.Email);
+        User? existingUserByEmail = await _unitOfWork.AuthRepository
+            .GetUserByEmailAsync(createUserDto.Email);
         if (existingUserByEmail != null)
             throw new InvalidOperationException(
-                $"Email '{userDto.Email}' already exists.");
+                $"Email '{createUserDto.Email}' already exists.");
 
-        var existingUserByUsername = await _unitOfWork.AuthRepository
-            .GetUserByNameAsync(userDto.UserName);
+        User? existingUserByUsername = await _unitOfWork.AuthRepository
+            .GetUserByNameAsync(createUserDto.UserName);
         if (existingUserByUsername != null)
             throw new InvalidOperationException(
-                $"User Name '{userDto.UserName}' already exists.");
+                $"User Name '{createUserDto.UserName}' already exists.");
 
-        var user = _mapper.Map<User>(userDto);
-        var result = await _unitOfWork.AuthRepository.CreateAsync(user, userDto.Password);
-        if (!result.Succeeded)
+        User? user = _mapper.Map<User>(createUserDto);
+        IdentityResult identityResult = await _unitOfWork.AuthRepository.CreateAsync(user, createUserDto.Password);
+        if (!identityResult.Succeeded)
         {
             throw new InvalidOperationException(
                     $"Operation '{OperationNames.CreateUser}' failed to complete. ");
         }
         await _unitOfWork.AuthRepository.AddToRoleAsync(user, "user");
-        var Dto = _mapper.Map<UserDto>(user);
-        return Dto;
+        UserDto? userDto = _mapper.Map<UserDto>(user);
+        return userDto;
     }
-    public async Task<UserDto> UpdateUserAsync(string id, UpdateUserDto userDto)
+    public async Task<UserDto> UpdateUserAsync(string id, UpdateUserDto UpdateUserDto)
     {
         var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
         if (user == null) throw new InvalidOperationException(
                 $"User with Id '{id}' Was Not Found.");
 
-        _mapper.Map(userDto, user);
+        _mapper.Map(UpdateUserDto, user);
         var result = await _unitOfWork.AuthRepository.UpdateAsync(user);
         if (!result.Succeeded)
         {
             throw new InvalidOperationException(
                                   $"Operation '{OperationNames.UpdateUser}' failed to complete.");
         }
-        return _mapper.Map<UserDto>(user);
+        UserDto uesrDto = _mapper.Map<UserDto>(user);
+        return uesrDto;
     }
     public async Task<UserDto> DeleteUserAsync(string id)
     {
-        var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
+        User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(id);
         if (user == null) throw new InvalidOperationException(
                 $"User with Id '{id}' Was Not Found.");
         var result = await _unitOfWork.AuthRepository.DeleteAsync(user);
@@ -82,23 +85,24 @@ public class AuthService(
             throw new InvalidOperationException(
                 $"Operation '{OperationNames.DeleteUser}' failed to complete.");
         }
-        return _mapper.Map<UserDto>(user);
+        UserDto userDto = _mapper.Map<UserDto>(user);
+        return userDto;
     }
     public async Task<TokenResponseDto> LoginAsync(LoginDto loginDto)
     {
 
 
-        var user = await _unitOfWork.AuthRepository.GetUserByEmailAsync(loginDto.Email);
+        User? user = await _unitOfWork.AuthRepository.GetUserByEmailAsync(loginDto.Email);
         if (user is null)
             throw new InvalidOperationException(
                       $"Operation '{OperationNames.Login}' failed to complete. Incorrect Password Or Email");
-        var isPasswordValid = _unitOfWork.AuthRepository.VerifyPasswordAsync(user, loginDto.Password);
+        bool isPasswordValid = _unitOfWork.AuthRepository.VerifyPasswordAsync(user, loginDto.Password);
 
         if (isPasswordValid == false)
             throw new InvalidOperationException(
                       $"Operation '{OperationNames.Login}' failed to complete. Incorrect Password Or Email");
 
-        var token = await _tokenService.GenerateTokenAsync(user);
+        string token = await _tokenService.GenerateTokenAsync(user);
         return await CreateTokenResponse(user);
     }
     private async Task<TokenResponseDto> CreateTokenResponse(User user)
@@ -112,7 +116,7 @@ public class AuthService(
 
     public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto requestDto)
     {
-        var user = await _tokenService
+        User? user = await _tokenService
                     .ValidateRefreshTokenAsync(requestDto.UserId, requestDto.RefreshToken);
 
         return await CreateTokenResponse(user);

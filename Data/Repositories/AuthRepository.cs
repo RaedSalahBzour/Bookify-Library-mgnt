@@ -17,15 +17,15 @@ public class AuthRepository(ApplicationDbContext context,
 
     public List<User> GetUsersAsync()
     {
-        var query = _context.Users
+        List<User> users = _context.Users
             .Include(u => u.Borrowings)
             .Include(u => u.Reviews).ToList();
 
-        return query;
+        return users;
     }
     public async Task<User?> GetUserByIdAsync(string id)
     {
-        var user = await _context.Users.Include(u => u.Borrowings)
+        User? user = await _context.Users.Include(u => u.Borrowings)
             .Include(u => u.Reviews)
             .FirstOrDefaultAsync(x => x.Id == id);
         return user;
@@ -33,41 +33,48 @@ public class AuthRepository(ApplicationDbContext context,
 
     public async Task<User?> GetUserByNameAsync(string username)
     {
-        return await _userManager.FindByNameAsync(username);
+        User? user = await _userManager.FindByNameAsync(username);
+        return user;
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        return await _userManager.FindByEmailAsync(email);
+        User? user = await _userManager.FindByEmailAsync(email);
+        return user;
     }
 
     public async Task<IdentityResult> CreateAsync(User user, string password)
     {
-        return await _userManager.CreateAsync(user, password);
+        IdentityResult identityResult = await _userManager.CreateAsync(user, password);
+        return identityResult;
     }
 
     public async Task<IdentityResult> UpdateAsync(User user)
     {
-        return await _userManager.UpdateAsync(user);
+        IdentityResult identityResult = await _userManager.UpdateAsync(user);
+        return identityResult;
     }
 
     public async Task<IdentityResult> DeleteAsync(User user)
     {
-        return await _userManager.DeleteAsync(user);
+        IdentityResult identityResult = await _userManager.DeleteAsync(user);
+        return identityResult;
     }
     public async Task<IList<Claim>> GetUserClaimsAsync(User user)
     {
-        return await _userManager.GetClaimsAsync(user);
+        IList<Claim> claims = await _userManager.GetClaimsAsync(user);
+        return claims;
     }
 
     public async Task<IdentityResult> AddToRoleAsync(User user, string role)
     {
-        return await _userManager.AddToRoleAsync(user, role);
+        IdentityResult identityResult = await _userManager.AddToRoleAsync(user, role);
+        return identityResult;
     }
 
     public bool VerifyPasswordAsync(User user, string password)
     {
-        var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+        PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
         return result != PasswordVerificationResult.Failed;
     }
 

@@ -12,8 +12,8 @@ public class LoginCommandHandler(IAuthService authService, IMapper mapper)
 {
     public async Task<TokenResponseDto> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
-        var dto = mapper.Map<LoginDto>(command);
-        return await authService.LoginAsync(dto);
+        LoginDto loginDto = mapper.Map<LoginDto>(command);
+        return await authService.LoginAsync(loginDto);
 
     }
 }

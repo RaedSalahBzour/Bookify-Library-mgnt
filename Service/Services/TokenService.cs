@@ -1,6 +1,7 @@
 ﻿using Application.Authorization.Services;
 using Data.Entities;
 using Data.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,13 +18,13 @@ public class TokenService(IConfiguration configuration, IUnitOfWork unitOfWork) 
 
     public async Task<string> GenerateTokenAsync(User user)
     {
-        var claims = await GetAllValidClaimsAsync(user);
-        var key = new SymmetricSecurityKey(Encoding.UTF8.
+        List<Claim> claims = await GetAllValidClaimsAsync(user);
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.
             GetBytes(_configuration.GetValue<string>("JWT:Key")!));
 
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var tokenDescriptor = new JwtSecurityToken(
+        JwtSecurityToken tokenDescriptor = new JwtSecurityToken(
             issuer: _configuration.GetValue<string>("JWT:Issuer"),
             audience: _configuration.GetValue<string>("JWT:Audience"),
             claims: claims,
@@ -31,11 +32,12 @@ public class TokenService(IConfiguration configuration, IUnitOfWork unitOfWork) 
             signingCredentials: credentials
             );
 
-        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        string token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        return token;
     }
     public async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
     {
-        var refreshToken = GenerateRefreshToken();
+        string refreshToken = GenerateRefreshToken();
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await _unitOfWork.AuthRepository.UpdateAsync(user);
@@ -44,7 +46,7 @@ public class TokenService(IConfiguration configuration, IUnitOfWork unitOfWork) 
     }
     public async Task<User?> ValidateRefreshTokenAsync(string userId, string RefreshToken)
     {
-        var user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
+        User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
         if (user is null)
             throw new KeyNotFoundException($"User with Email '{userId}' was not found.");
 
@@ -55,30 +57,31 @@ public class TokenService(IConfiguration configuration, IUnitOfWork unitOfWork) 
     }
     private string GenerateRefreshToken()
     {
-        var randomNumber = new Byte[32];
-        using var rng = RandomNumberGenerator.Create();
+        byte[] randomNumber = new Byte[32];
+        using RandomNumberGenerator rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
+        string refreshToken = Convert.ToBase64String(randomNumber);
+        return refreshToken;
     }
     private async Task<List<Claim>> GetAllValidClaimsAsync(User user)
     {
-        var claims = new List<Claim>
+        List<Claim> claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name,user.UserName),
             new Claim(ClaimTypes.NameIdentifier,user.Id),
             new Claim(ClaimTypes.Email,user.Email),
         };
-        var userClaims = await _unitOfWork.AuthRepository.GetUserClaimsAsync(user);
+        IList<Claim> userClaims = await _unitOfWork.AuthRepository.GetUserClaimsAsync(user);
         claims.AddRange(userClaims);
-        var userRoles = await _unitOfWork.RoleRepository.GetUserRolesAsync(user);
+        IList<string> userRoles = await _unitOfWork.RoleRepository.GetUserRolesAsync(user);
 
         foreach (var userRole in userRoles)
         {
-            var role = await _unitOfWork.RoleRepository.FindRoleByNameAsync(userRole);
+            IdentityRole role = await _unitOfWork.RoleRepository.FindRoleByNameAsync(userRole);
             if (role != null)
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
-                var roleClaims = await _unitOfWork.RoleRepository.GetRoleClaimsAsync(role);
+                IList<Claim> roleClaims = await _unitOfWork.RoleRepository.GetRoleClaimsAsync(role);
                 foreach (var roleClaim in roleClaims)
                 {
                     claims.Add(roleClaim);

@@ -12,46 +12,49 @@ public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategory
     private readonly IMapper _mapper = mapper;
     public async Task<List<CategoryDto>> GetCategoriesAsync()
     {
-        var categories = _unitOfWork.CategoryRepository.GetCategories();
-        return _mapper.Map<List<CategoryDto>>(categories);
+        List<Category> categories = _unitOfWork.CategoryRepository.GetCategories();
+        List<CategoryDto> categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
+        return categoryDtos;
 
     }
     public async Task<CategoryDto> GetByIdAsync(string id)
     {
-        var category = await _unitOfWork.CategoryRepository.GetCategoryById(id);
+        Category? category = await _unitOfWork.CategoryRepository.GetCategoryById(id);
         if (category == null)
             throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
-        return _mapper.Map<CategoryDto>(category);
-
+        CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
+        return categoryDto;
     }
 
-    public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto categoryDto)
+    public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto CreateCategoryDto)
     {
-        var category = _mapper.Map<Category>(categoryDto);
+        Category? category = _mapper.Map<Category>(CreateCategoryDto);
         await _unitOfWork.CategoryRepository.AddAsync(category);
         await _unitOfWork.CategoryRepository.SaveChangesAsync();
-        return _mapper.Map<CategoryDto>(category);
+        CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
+        return categoryDto;
     }
-    public async Task<CategoryDto> UpdateCategoryAsync(string id, UpdateCategoryDto categoryDto)
+    public async Task<CategoryDto> UpdateCategoryAsync(string id, UpdateCategoryDto UpdateCategoryDto)
     {
-        var category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
+        Category? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
         if (category is null)
             throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
-        _mapper.Map(categoryDto, category);
+        _mapper.Map(UpdateCategoryDto, category);
         await _unitOfWork.CategoryRepository.Update(category);
         await _unitOfWork.CategoryRepository.SaveChangesAsync();
-        return _mapper.Map<CategoryDto>(category);
-
+        CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
+        return categoryDto;
     }
 
     public async Task<CategoryDto> DeleteCategoryAsync(string id)
     {
-        var category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
+        Category? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
         if (category is null)
             throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
         await _unitOfWork.CategoryRepository.Delete(category);
         await _unitOfWork.CategoryRepository.SaveChangesAsync();
-        return _mapper.Map<CategoryDto>(category);
+        CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
+        return categoryDto;
     }
 
 }

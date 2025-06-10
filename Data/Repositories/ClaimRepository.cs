@@ -18,11 +18,14 @@ public class ClaimRepository(UserManager<User> userManager) : IClaimRepository
 
     public async Task<IdentityResult> AddClaimToUser(User user, Claim claim)
     {
-        return await _userManager.AddClaimAsync(user, claim);
+        IdentityResult identityResult = await _userManager.AddClaimAsync(user, claim);
+        return identityResult;
     }
 
-    public Task<IdentityResult> RemoveClaimFromUser(User user, Claim claim)
+    public async Task<IdentityResult> RemoveClaimFromUser(User user, Claim claim)
     {
-        return _userManager.RemoveClaimAsync(user, claim);
+        IdentityResult identityResult = await _userManager.RemoveClaimAsync(user, claim);
+        return identityResult;
+
     }
 }

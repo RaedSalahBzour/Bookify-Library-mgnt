@@ -11,8 +11,8 @@ public class AddClaimToUserCommandHandler(IClaimService claimService, IMapper ma
 {
     public async Task<string> Handle(AddClaimToUserCommand command, CancellationToken cancellationToken)
     {
-        var dto = mapper.Map<AddClaimToUserDto>(command);
-        return await claimService.AddClaimToUserAsync(dto);
+        AddClaimToUserDto addClaimToUserDto = mapper.Map<AddClaimToUserDto>(command);
+        return await claimService.AddClaimToUserAsync(addClaimToUserDto);
 
     }
 }

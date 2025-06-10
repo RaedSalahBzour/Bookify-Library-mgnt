@@ -14,14 +14,17 @@ public class CategoryRepository(ApplicationDbContext context)
 
     public List<Category> GetCategories()
     {
-        return GetAll(query => query.Include(c => c.CategoryBooks)
+        List<Category> categories = GetAll(query => query.Include(c => c.CategoryBooks)
                                 .ThenInclude(cb => cb.Book)).ToList();
+        return categories;
 
 
     }
     public async Task<Category> GetCategoryById(string id)
     {
-        return await _context.Categories.Include(c => c.CategoryBooks).ThenInclude(cb => cb.Book).FirstOrDefaultAsync(c => c.Id == id);
+        Category category = await _context.Categories.Include(c => c.CategoryBooks)
+            .ThenInclude(cb => cb.Book).FirstOrDefaultAsync(c => c.Id == id);
+        return category;
     }
 
 }

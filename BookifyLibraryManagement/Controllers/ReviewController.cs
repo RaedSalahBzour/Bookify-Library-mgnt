@@ -18,19 +18,20 @@ public class ReviewController(ISender sender) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetReviews()
     {
-        return Ok(await _sender.Send(new GetReviewsQuery()));
+        List<ReviewDto> result = await _sender.Send(new GetReviewsQuery());
+        return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetReviewById(string id)
     {
-        var result = await _sender.Send(new GetReviewByIdQuery(id));
+        ReviewDto result = await _sender.Send(new GetReviewByIdQuery(id));
         return Ok(result);
     }
     [HttpPost]
     public async Task<IActionResult> CreateReview([FromBody] CreateReviewCommand command)
     {
-        var result = await _sender.Send(command);
+        ReviewDto result = await _sender.Send(command);
         return CreatedAtAction(nameof(GetReviewById), new { id = result.Id }, result);
     }
 
@@ -38,7 +39,7 @@ public class ReviewController(ISender sender) : ControllerBase
     public async Task<IActionResult> UpdateReview([FromRoute] string id, [FromBody] UpdateReviewCommand command)
     {
         command.id = id;
-        var result = await _sender.Send(command);
+        ReviewDto result = await _sender.Send(command);
         return Ok(result);
 
     }
@@ -47,7 +48,7 @@ public class ReviewController(ISender sender) : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteReview([FromRoute] string id)
     {
-        var result = await _sender.Send(new DeleteReviewCommand { Id = id });
+        ReviewDto result = await _sender.Send(new DeleteReviewCommand { Id = id });
         return Ok(result);
     }
 }

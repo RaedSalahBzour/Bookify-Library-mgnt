@@ -11,7 +11,7 @@ public class CreateBookCommandHandler(IBookService bookService, IMapper mapper)
 {
     public async Task<BookDto> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
-        var createBookDto = mapper.Map<CreateBookDto>(request);
+        CreateBookDto createBookDto = mapper.Map<CreateBookDto>(request);
         return await bookService.CreateBookAsync(createBookDto);
 
     }

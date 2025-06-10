@@ -29,14 +29,14 @@ public class AuthController(ISender sender) : ControllerBase
     [HttpGet("users/{id:guid}")]
     public async Task<IActionResult> GetUserById([FromRoute] string id)
     {
-        var result = await _sender.Send(new GetUserByIdQuery(id));
+        UserDto result = await _sender.Send(new GetUserByIdQuery(id));
         return Ok(result);
     }
     [AllowAnonymous]
     [HttpPost("users")]
     public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
     {
-        var result = await _sender.Send(command);
+        UserDto result = await _sender.Send(command);
         return CreatedAtAction(nameof(GetUserById), new { Id = result.Id }, result);
     }
 
@@ -45,7 +45,7 @@ public class AuthController(ISender sender) : ControllerBase
     public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserCommand command)
     {
         command.id = id;
-        var result = await _sender.Send(command);
+        UserDto result = await _sender.Send(command);
         return Ok(result);
 
     }
@@ -53,20 +53,20 @@ public class AuthController(ISender sender) : ControllerBase
     [Authorize(Roles = "superAdmin")]
     public async Task<IActionResult> DeleteUser([FromRoute] string id)
     {
-        var result = await _sender.Send(new DeleteUserCommand { Id = id });
+        UserDto result = await _sender.Send(new DeleteUserCommand { Id = id });
         return Ok(result);
     }
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
-        var result = await _sender.Send(command);
+        TokenResponseDto result = await _sender.Send(command);
         return Ok(result);
     }
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefrshToken([FromBody] RefreshTokenCommand command)
     {
-        var result = await _sender.Send(command);
+        TokenResponseDto result = await _sender.Send(command);
         return Ok(result);
     }
 

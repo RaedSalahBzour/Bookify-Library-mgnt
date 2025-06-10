@@ -12,7 +12,7 @@ public class UpdateBookCommandHandler(IBookService bookService, IMapper mapper)
 
     public async Task<BookDto> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
     {
-        var updateBookDto = mapper.Map<UpdateBookDto>(request);
+        UpdateBookDto updateBookDto = mapper.Map<UpdateBookDto>(request);
         return await bookService.UpdateBookAsync(request.Id, updateBookDto);
 
     }

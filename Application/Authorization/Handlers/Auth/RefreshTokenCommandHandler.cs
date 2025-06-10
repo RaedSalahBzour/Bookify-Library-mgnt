@@ -11,8 +11,8 @@ public class RefreshTokenCommandHandler(IAuthService authService, IMapper mapper
 {
     public async Task<TokenResponseDto> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
     {
-        var dto = mapper.Map<RefreshTokenRequestDto>(command);
-        return await authService.RefreshTokenAsync(dto);
+        RefreshTokenRequestDto refreshTokenRequestDto = mapper.Map<RefreshTokenRequestDto>(command);
+        return await authService.RefreshTokenAsync(refreshTokenRequestDto);
 
     }
 }

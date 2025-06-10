@@ -15,8 +15,8 @@ public class ReviewRepository(ApplicationDbContext context)
     public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
         string bookId)
     {
-        var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
-        var bookExists = await _context.Books.AnyAsync(b => b.Id == bookId);
+        bool userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+        bool bookExists = await _context.Books.AnyAsync(b => b.Id == bookId);
         return (userExists, bookExists);
     }
 

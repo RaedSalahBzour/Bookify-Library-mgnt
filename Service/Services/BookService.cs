@@ -12,24 +12,26 @@ public class BookService(IMapper mapper, IUnitOfWork unitOfWork) : IBookService
     private readonly IMapper _mapper = mapper;
     public async Task<List<BookDto>> GetBooksAsync()
     {
-        var query = _unitOfWork.BookRepository.GetBooksAsync();
-        return _mapper.Map<List<BookDto>>(query);
+        List<Book> books = _unitOfWork.BookRepository.GetBooksAsync();
+        List<BookDto> bookDtos = _mapper.Map<List<BookDto>>(books);
+        return bookDtos;
     }
 
     public async Task<BookDto> GetByIdAsync(string id)
     {
-        var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
+        Book? book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
         if (book == null) throw new KeyNotFoundException($"Book With Id {id} Was Not Found");
-        return _mapper.Map<BookDto>(book);
+        BookDto bookDto = _mapper.Map<BookDto>(book);
+        return bookDto;
 
     }
-    public async Task<BookDto> CreateBookAsync(CreateBookDto bookDto)
+    public async Task<BookDto> CreateBookAsync(CreateBookDto CreateBookDto)
     {
-        var book = _mapper.Map<Book>(bookDto);
+        Book book = _mapper.Map<Book>(CreateBookDto);
         book.CategoryBooks = new List<CategoryBook>();
-        foreach (var categoryId in bookDto.CategoryIds)
+        foreach (string categoryId in CreateBookDto.CategoryIds)
         {
-            var categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
+            bool categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
             if (!categoryExists)
             {
                 throw new KeyNotFoundException($"Category With Id {categoryId} Was Not Found");
@@ -42,28 +44,29 @@ public class BookService(IMapper mapper, IUnitOfWork unitOfWork) : IBookService
         }
         await _unitOfWork.BookRepository.AddAsync(book);
         await _unitOfWork.BookRepository.SaveChangesAsync();
-        return _mapper.Map<BookDto>(book);
+        BookDto bookDto = _mapper.Map<BookDto>(book);
+        return bookDto;
 
     }
-    public async Task<BookDto> UpdateBookAsync(string id, UpdateBookDto bookDto)
+    public async Task<BookDto> UpdateBookAsync(string id, UpdateBookDto UpdateBookDto)
     {
-        var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
+        Book? book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
         if (book is null)
             throw new KeyNotFoundException($"Book With Id {id} Was Not Found");
 
-        _mapper.Map(bookDto, book);
+        _mapper.Map(UpdateBookDto, book);
 
-        var currentCategoryIds = book.CategoryBooks?
+        List<string> currentCategoryIds = book.CategoryBooks?
             .Select(cb => cb.CategoryId).ToList() ?? new List<string>();
 
-        foreach (var categoryToRemove in currentCategoryIds)
+        foreach (string categoryToRemove in currentCategoryIds)
         {
-            bookDto.CategoryIds.Remove(categoryToRemove);
+            UpdateBookDto.CategoryIds.Remove(categoryToRemove);
         }
 
-        foreach (var categoryId in bookDto.CategoryIds)
+        foreach (string categoryId in UpdateBookDto.CategoryIds)
         {
-            var categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
+            bool categoryExists = await _unitOfWork.BookRepository.IsCategoryExist(categoryId);
             if (!categoryExists)
             {
                 throw new KeyNotFoundException($"Category With Id {categoryId} Was Not Found");
@@ -77,20 +80,21 @@ public class BookService(IMapper mapper, IUnitOfWork unitOfWork) : IBookService
         }
         await _unitOfWork.BookRepository.Update(book);
         await _unitOfWork.BookRepository.SaveChangesAsync();
-        return _mapper.Map<BookDto>(book);
+        BookDto bookDto = _mapper.Map<BookDto>(book);
+        return bookDto;
 
     }
 
     public async Task<BookDto> DeleteBookAsync(string id)
     {
-        var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
+        Book? book = await _unitOfWork.BookRepository.GetByIdAsync(id);
         if (book is null)
             throw new KeyNotFoundException($"Book With Id {id} Was Not Found");
 
         await _unitOfWork.BookRepository.Delete(book);
         await _unitOfWork.BookRepository.SaveChangesAsync();
-        return _mapper.Map<BookDto>(book);
-        ;
+        BookDto bookDto = _mapper.Map<BookDto>(book);
+        return bookDto;
     }
 
 }

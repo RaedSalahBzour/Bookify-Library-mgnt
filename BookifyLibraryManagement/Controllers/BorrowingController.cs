@@ -18,21 +18,21 @@ public class BorrowingController(ISender sender) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetBorrowings()
     {
-        var result = await _sender.Send(new GetBorrowingsQuery());
+        List<BorrowingDto> result = await _sender.Send(new GetBorrowingsQuery());
         return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetBorrowingById([FromRoute] string id)
     {
-        var result = await _sender.Send(new GetBorrowingByIdQuery(id));
+        BorrowingDto result = await _sender.Send(new GetBorrowingByIdQuery(id));
         return Ok(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateBorrowing([FromBody] CreateBorrowingCommand command)
     {
-        var result = await _sender.Send(command);
+        BorrowingDto result = await _sender.Send(command);
         return CreatedAtAction(nameof(GetBorrowingById), new { Id = result.Id }, result);
     }
 
@@ -40,7 +40,7 @@ public class BorrowingController(ISender sender) : ControllerBase
     public async Task<IActionResult> UpdateBorrowing([FromRoute] string id, [FromBody] UpdateBorrowingCommand command)
     {
         command.Id = id;
-        var result = await _sender.Send(command);
+        BorrowingDto result = await _sender.Send(command);
         return Ok(result);
     }
 
@@ -48,7 +48,7 @@ public class BorrowingController(ISender sender) : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteBorrowing([FromRoute] string id)
     {
-        var result = await _sender.Send(new DeleteBorrowingCommand { Id = id });
+        BorrowingDto result = await _sender.Send(new DeleteBorrowingCommand { Id = id });
         return Ok(result);
     }
 }
