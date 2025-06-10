@@ -12,14 +12,9 @@ namespace Bookify_Library_mgnt.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize(Roles = "admin")]
-public class RoleController : ControllerBase
+public class RoleController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public RoleController(IRoleService roleService, ISender sender)
-    {
-        _sender = sender;
-    }
+    private readonly ISender _sender = sender;
 
     [HttpGet]
     public async Task<IActionResult> GetRoles()

@@ -5,20 +5,14 @@ using MediatR;
 
 namespace Application.Authorization.Handlers.Roles;
 
-internal class GetRoleByIdQueryHandler : IRequestHandler<GetRoleByIdQuery, RoleDto>
+public class GetRoleByIdQueryHandler(IRoleService roleService)
+    : IRequestHandler<GetRoleByIdQuery, RoleDto>
 {
-    private readonly IRoleService _roleService;
-
-    public GetRoleByIdQueryHandler(IRoleService roleService)
-    {
-        _roleService = roleService;
-
-    }
 
     public async Task<RoleDto> Handle(GetRoleByIdQuery request, CancellationToken cancellationToken)
     {
 
-        return await _roleService.GetRoleByIdAsync(request.id);
+        return await roleService.GetRoleByIdAsync(request.id);
 
     }
 }

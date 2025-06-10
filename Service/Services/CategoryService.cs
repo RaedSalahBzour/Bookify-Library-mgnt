@@ -6,18 +6,10 @@ using Data.Interfaces;
 
 namespace Service.Services;
 
-public class CategoryService : ICategoryService
+public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategoryService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-
-    public CategoryService(IMapper mapper, IUnitOfWork unitOfWork)
-    {
-        _mapper = mapper;
-
-        _unitOfWork = unitOfWork;
-    }
-
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
     public async Task<List<CategoryDto>> GetCategoriesAsync()
     {
         var categories = _unitOfWork.CategoryRepository.GetCategories();

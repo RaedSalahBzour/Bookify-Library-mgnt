@@ -12,14 +12,9 @@ namespace Bookify_Library_mgnt.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize(policy: "CanManageUserClaimsPolicy")]
-public class ClaimController : ControllerBase
+public class ClaimController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public ClaimController(IClaimService claimService, ISender sender)
-    {
-        _sender = sender;
-    }
+    private readonly ISender _sender = sender;
 
     [HttpGet("claims")]
     public async Task<IActionResult> GetClaims(string userId)

@@ -11,15 +11,9 @@ namespace Bookify_Library_mgnt.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ReviewController : ControllerBase
+public class ReviewController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public ReviewController(ISender sender)
-    {
-        _sender = sender;
-    }
-
+    private readonly ISender _sender = sender;
 
     [HttpGet]
     public async Task<IActionResult> GetReviews()

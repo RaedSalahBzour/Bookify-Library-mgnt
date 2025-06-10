@@ -4,18 +4,12 @@ using MediatR;
 
 namespace Application.Authorization.Handlers.Claims;
 
-public class RemoveClaimFromUserCommandHandler : IRequestHandler<RemoveClaimFromUserCommand, string>
+public class RemoveClaimFromUserCommandHandler(IClaimService claimService)
+    : IRequestHandler<RemoveClaimFromUserCommand, string>
 {
-    private readonly IClaimService _claimService;
-
-    public RemoveClaimFromUserCommandHandler(IClaimService claimService)
-    {
-        _claimService = claimService;
-    }
-
     public async Task<string> Handle(RemoveClaimFromUserCommand command, CancellationToken cancellationToken)
     {
-        return await _claimService.
+        return await claimService.
             RemoveClaimFromUserAsync(command.UserId, command.ClaimType);
 
     }

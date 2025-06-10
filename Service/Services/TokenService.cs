@@ -10,15 +10,10 @@ using System.Text;
 
 namespace Service.Services;
 
-public class TokenService : ITokenService
+public class TokenService(IConfiguration configuration, IUnitOfWork unitOfWork) : ITokenService
 {
-    private readonly IConfiguration _configuration;
-    private readonly IUnitOfWork _unitOfWork;
-    public TokenService(IConfiguration configuration, IUnitOfWork unitOfWork)
-    {
-        _configuration = configuration;
-        _unitOfWork = unitOfWork;
-    }
+    private readonly IConfiguration _configuration = configuration;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<string> GenerateTokenAsync(User user)
     {

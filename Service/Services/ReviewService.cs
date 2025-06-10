@@ -5,15 +5,11 @@ using Data.Entities;
 using Data.Interfaces;
 namespace Service.Services;
 
-public class ReviewService : IReviewService
+public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    public ReviewService(IMapper mapper, IUnitOfWork unitOfWork)
-    {
-        _mapper = mapper;
-        _unitOfWork = unitOfWork;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
+
     public async Task<List<ReviewDto>> GetReviewsAsync()
     {
         var reviews = _unitOfWork.ReviewRepository.GetAll();

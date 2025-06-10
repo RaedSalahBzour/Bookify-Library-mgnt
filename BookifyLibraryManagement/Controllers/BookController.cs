@@ -11,14 +11,9 @@ namespace Bookify_Library_mgnt.Controllers;
 
 [Route("api/[controller]")]
 [ApiController()]
-public class BookController : ControllerBase
+public class BookController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public BookController(IBookService bookService, ISender sender)
-    {
-        _sender = sender;
-    }
+    private readonly ISender _sender = sender;
 
     [HttpGet]
     public async Task<IActionResult> GetAllBooks()

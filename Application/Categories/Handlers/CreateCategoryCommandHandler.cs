@@ -6,20 +6,13 @@ using MediatR;
 
 namespace Application.Categories.Handlers;
 
-public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
+public class CreateCategoryCommandHandler(ICategoryService categoryService, IMapper mapper)
+    : IRequestHandler<CreateCategoryCommand, CategoryDto>
 {
-    private readonly ICategoryService _categoryService;
-    private readonly IMapper _mapper;
-
-    public CreateCategoryCommandHandler(ICategoryService categoryService, IMapper mapper)
-    {
-        _categoryService = categoryService;
-        _mapper = mapper;
-    }
     public async Task<CategoryDto> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
     {
-        var dto = _mapper.Map<CreateCategoryDto>(command);
-        return await _categoryService.CreateCategoryAsync(dto);
+        var dto = mapper.Map<CreateCategoryDto>(command);
+        return await categoryService.CreateCategoryAsync(dto);
 
     }
 }

@@ -5,18 +5,13 @@ using MediatR;
 
 namespace Application.Categories.Handlers;
 
-public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, CategoryDto>
+public class DeleteCategoryCommandHandler(ICategoryService categoryService)
+    : IRequestHandler<DeleteCategoryCommand, CategoryDto>
 {
-    private readonly ICategoryService _categoryService;
-
-    public DeleteCategoryCommandHandler(ICategoryService categoryService)
-    {
-        _categoryService = categoryService;
-    }
 
     public async Task<CategoryDto> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
     {
-        return await _categoryService.DeleteCategoryAsync(command.Id);
+        return await categoryService.DeleteCategoryAsync(command.Id);
 
     }
 }

@@ -6,20 +6,13 @@ using MediatR;
 
 namespace Application.Users.Handlers;
 
-public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserDto>
+public class UpdateUserCommandHandler(IAuthService authService, IMapper mapper)
+    : IRequestHandler<UpdateUserCommand, UserDto>
 {
-    private readonly IAuthService _authService;
-    private readonly IMapper _mapper;
-
-    public UpdateUserCommandHandler(IAuthService authService, IMapper mapper)
-    {
-        _authService = authService;
-        _mapper = mapper;
-    }
     public async Task<UserDto> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
     {
-        var dto = _mapper.Map<UpdateUserDto>(command);
-        return await _authService.UpdateUserAsync(command.id, dto);
+        var dto = mapper.Map<UpdateUserDto>(command);
+        return await authService.UpdateUserAsync(command.id, dto);
 
     }
 }

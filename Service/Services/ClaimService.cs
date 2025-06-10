@@ -6,14 +6,9 @@ using System.Security.Claims;
 
 namespace Service.Services;
 
-public class ClaimService : IClaimService
+public class ClaimService(IUnitOfWork unitOfWork) : IClaimService
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public ClaimService(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<IList<Claim>> GetUserClaimsAsync(string userId)
     {

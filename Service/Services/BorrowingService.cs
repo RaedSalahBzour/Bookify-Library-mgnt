@@ -5,15 +5,10 @@ using Data.Entities;
 using Data.Interfaces;
 namespace Service.Services;
 
-public class BorrowingService : IBorrowingService
+public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowingService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    public BorrowingService(IMapper mapper, IUnitOfWork unitOfWork)
-    {
-        _mapper = mapper;
-        _unitOfWork = unitOfWork;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<List<BorrowingDto>> GetBorrowingsAsync()
     {

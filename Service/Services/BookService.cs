@@ -6,19 +6,10 @@ using Data.Interfaces;
 
 namespace Service.Services;
 
-public class BookService : IBookService
+public class BookService(IMapper mapper, IUnitOfWork unitOfWork) : IBookService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-
-    public BookService(IMapper mapper, IUnitOfWork unitOfWork)
-    {
-        _mapper = mapper;
-
-        _unitOfWork = unitOfWork;
-    }
-
-
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
     public async Task<List<BookDto>> GetBooksAsync()
     {
         var query = _unitOfWork.BookRepository.GetBooksAsync();

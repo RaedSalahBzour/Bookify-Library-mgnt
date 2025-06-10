@@ -5,46 +5,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Data.Helpers;
 
-public class UnitOfWork : IUnitOfWork, IDisposable
+public class UnitOfWork(
+    ApplicationDbContext _context,
+    IAuthRepository _authRepository,
+    IBookRepository _bookRepository,
+    IBorrowingRepository _borrowingRepository,
+    ICategoryRepository _categoryRepository,
+    IReviewRepository _reviewRepository,
+    UserManager<User> _userManager,
+    IPasswordHasher<User> _passwordHasher,
+    RoleManager<IdentityRole> _roleManager,
+    IClaimRepository _claimRepository,
+    IRoleRepository _roleRepository) : IUnitOfWork, IDisposable
 {
-    private readonly ApplicationDbContext _context;
-
-    private IAuthRepository _authRepository;
-    private IBookRepository _bookRepository;
-    private IBorrowingRepository _borrowingRepository;
-    private ICategoryRepository _categoryRepository;
-    private IReviewRepository _reviewRepository;
-    private IClaimRepository _claimRepository;
-    private IRoleRepository _roleRepository;
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly IPasswordHasher<User> _passwordHasher;
-
-    public UnitOfWork(ApplicationDbContext context,
-        IAuthRepository authRepository,
-        IBookRepository bookRepository,
-        IBorrowingRepository borrowingRepository,
-        ICategoryRepository categoryRepository,
-        IReviewRepository reviewRepository,
-        UserManager<User> userManager,
-        IPasswordHasher<User> passwordHasher,
-        RoleManager<IdentityRole> roleManager,
-        IClaimRepository claimRepository,
-        IRoleRepository roleRepository)
-    {
-        _context = context;
-        _authRepository = authRepository;
-        _bookRepository = bookRepository;
-        _borrowingRepository = borrowingRepository;
-        _categoryRepository = categoryRepository;
-        _reviewRepository = reviewRepository;
-        _userManager = userManager;
-        _passwordHasher = passwordHasher;
-        _roleManager = roleManager;
-        _claimRepository = claimRepository;
-        _roleRepository = roleRepository;
-    }
-
     public IAuthRepository AuthRepository =>
         _authRepository ??= new AuthRepository(_context, _userManager, _passwordHasher);
     public IBookRepository BookRepository =>

@@ -5,17 +5,12 @@ using MediatR;
 
 namespace Application.Users.Handlers;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
+public class GetUserByIdQueryHandler(IAuthService authService)
+    : IRequestHandler<GetUserByIdQuery, UserDto>
 {
-    private readonly IAuthService _authService;
-
-    public GetUserByIdQueryHandler(IAuthService authService)
-    {
-        _authService = authService;
-    }
     public async Task<UserDto> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
     {
-        return await _authService.GetUserByIdAsync(query.id);
+        return await authService.GetUserByIdAsync(query.id);
 
     }
 }

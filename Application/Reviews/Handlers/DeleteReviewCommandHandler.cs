@@ -5,17 +5,12 @@ using MediatR;
 
 namespace Application.Reviews.Handlers;
 
-public class DeleteReviewCommandHandler : IRequestHandler<DeleteReviewCommand, ReviewDto>
+public class DeleteReviewCommandHandler(IReviewService reviewService)
+    : IRequestHandler<DeleteReviewCommand, ReviewDto>
 {
-    private readonly IReviewService _reviewService;
-
-    public DeleteReviewCommandHandler(IReviewService reviewService)
-    {
-        _reviewService = reviewService;
-    }
     public async Task<ReviewDto> Handle(DeleteReviewCommand command, CancellationToken cancellationToken)
     {
-        return await _reviewService.DeleteReviewAsync(command.Id);
+        return await reviewService.DeleteReviewAsync(command.Id);
 
     }
 }

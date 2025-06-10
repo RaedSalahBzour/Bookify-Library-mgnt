@@ -15,14 +15,10 @@ namespace Bookify_Library_mgnt.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize(Roles = "admin")]
-public class AuthController : ControllerBase
+public class AuthController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
+    private readonly ISender _sender = sender;
 
-    public AuthController(ISender sender)
-    {
-        _sender = sender;
-    }
     [HttpGet("users")]
     public async Task<IActionResult> GetUsers()
     {

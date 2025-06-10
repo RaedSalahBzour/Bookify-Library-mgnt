@@ -5,17 +5,11 @@ using MediatR;
 
 namespace Application.Borrowings.Handlers;
 
-public class GetBorrowingByIdQueryHandler : IRequestHandler<GetBorrowingByIdQuery, BorrowingDto>
+public class GetBorrowingByIdQueryHandler(IBorrowingService borrowingService) : IRequestHandler<GetBorrowingByIdQuery, BorrowingDto>
 {
-    private readonly IBorrowingService _borrowingService;
-
-    public GetBorrowingByIdQueryHandler(IBorrowingService borrowingService)
-    {
-        _borrowingService = borrowingService;
-    }
     public async Task<BorrowingDto> Handle(GetBorrowingByIdQuery query, CancellationToken cancellationToken)
     {
-        return await _borrowingService.GetBorrowingByIdAsync(query.id);
+        return await borrowingService.GetBorrowingByIdAsync(query.id);
 
     }
 }

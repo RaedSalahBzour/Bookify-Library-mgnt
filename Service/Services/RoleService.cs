@@ -7,18 +7,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Service.Services;
 
-public class RoleService : IRoleService
+public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
 {
-    private readonly IMapper _mapper;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public RoleService(
-        IMapper mapper, IUnitOfWork unitOfWork)
-    {
-        _mapper = mapper;
-        _unitOfWork = unitOfWork;
-    }
-
+    private readonly IMapper _mapper = mapper;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     public async Task<List<RoleDto>> GetRolesAsync()
     {
         var roles = _unitOfWork.RoleRepository.GetRoles();

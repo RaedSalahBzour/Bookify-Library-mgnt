@@ -6,21 +6,13 @@ using MediatR;
 
 namespace Application.Authorization.Handlers.Claims;
 
-public class AddClaimToUserCommandHandler : IRequestHandler<AddClaimToUserCommand, string>
+public class AddClaimToUserCommandHandler(IClaimService claimService, IMapper mapper)
+    : IRequestHandler<AddClaimToUserCommand, string>
 {
-    private readonly IClaimService _claimService;
-    private readonly IMapper _mapper;
-
-    public AddClaimToUserCommandHandler(IClaimService claimService, IMapper mapper)
-    {
-        _claimService = claimService;
-        _mapper = mapper;
-    }
-
     public async Task<string> Handle(AddClaimToUserCommand command, CancellationToken cancellationToken)
     {
-        var dto = _mapper.Map<AddClaimToUserDto>(command);
-        return await _claimService.AddClaimToUserAsync(dto);
+        var dto = mapper.Map<AddClaimToUserDto>(command);
+        return await claimService.AddClaimToUserAsync(dto);
 
     }
 }

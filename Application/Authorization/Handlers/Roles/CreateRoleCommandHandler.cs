@@ -7,21 +7,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authorization.Handlers.Roles;
 
-public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, IdentityRole>
+public class CreateRoleCommandHandler(IRoleService roleService, IMapper mapper)
+    : IRequestHandler<CreateRoleCommand, IdentityRole>
 {
-    private readonly IRoleService _roleService;
-    private readonly IMapper _mapper;
-
-    public CreateRoleCommandHandler(IRoleService roleService, IMapper mapper)
-    {
-        _roleService = roleService;
-        _mapper = mapper;
-    }
-
     public async Task<IdentityRole> Handle(CreateRoleCommand command, CancellationToken cancellationToken)
     {
-        var dto = _mapper.Map<CreateRoleDto>(command);
-        return await _roleService.CreateRoleAsync(dto);
+        var dto = mapper.Map<CreateRoleDto>(command);
+        return await roleService.CreateRoleAsync(dto);
 
     }
 }

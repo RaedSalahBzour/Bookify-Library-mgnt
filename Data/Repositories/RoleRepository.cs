@@ -5,15 +5,11 @@ using System.Security.Claims;
 
 namespace Data.Repositories;
 
-public class RoleRepository : IRoleRepository
+public class RoleRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+    : IRoleRepository
 {
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    public RoleRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-    }
+    private readonly UserManager<User> _userManager = userManager;
+    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
     public async Task<IdentityResult> AddUserToRoleAsync(User user, string roleName)
     {

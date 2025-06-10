@@ -7,17 +7,13 @@ using System.Security.Claims;
 
 namespace Data.Repositories;
 
-public class AuthRepository : IAuthRepository
+public class AuthRepository(ApplicationDbContext context,
+    UserManager<User> userManager, IPasswordHasher<User> passwordHasher) : IAuthRepository
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<User> _userManager;
-    private readonly IPasswordHasher<User> _passwordHasher;
-    public AuthRepository(ApplicationDbContext context, UserManager<User> userManager, IPasswordHasher<User> passwordHasher)
-    {
-        _context = context;
-        _userManager = userManager;
-        _passwordHasher = passwordHasher;
-    }
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<User> _userManager = userManager;
+    private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
+
 
     public List<User> GetUsersAsync()
     {

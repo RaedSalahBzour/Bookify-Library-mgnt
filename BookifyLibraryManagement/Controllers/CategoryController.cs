@@ -12,14 +12,9 @@ namespace Bookify_Library_mgnt.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize(Roles = "admin")]
-public class CategoryController : ControllerBase
+public class CategoryController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public CategoryController(ISender sender)
-    {
-        _sender = sender;
-    }
+    private readonly ISender _sender = sender;
 
     [HttpGet]
     public async Task<IActionResult> GetCategories()

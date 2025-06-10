@@ -6,12 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public class BookRepository : GenericRepository<Book>, IBookRepository
+public class BookRepository(ApplicationDbContext context)
+    : GenericRepository<Book>(context), IBookRepository
 {
 
-    public BookRepository(ApplicationDbContext context) : base(context)
-    {
-    }
+
 
     public List<Book> GetBooksAsync()
     {

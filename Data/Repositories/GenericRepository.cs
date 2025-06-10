@@ -1,25 +1,15 @@
 ﻿using Data.Helpers;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data.Repositories;
 
-public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+public abstract class GenericRepository<T>(ApplicationDbContext context)
+    : IGenericRepository<T> where T : class
 {
-    protected readonly ApplicationDbContext _context;
-    protected readonly DbSet<T> _dbSet;
+    protected readonly ApplicationDbContext _context = context;
+    protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-    public GenericRepository(ApplicationDbContext context)
-    {
-        _context = context;
-        _dbSet = _context.Set<T>();
-    }
 
     public List<T> GetAll(Func<IQueryable<T>, IQueryable<T>> include = null)
     {

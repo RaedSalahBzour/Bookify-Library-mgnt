@@ -5,17 +5,11 @@ using MediatR;
 
 namespace Application.Borrowings.Handlers;
 
-public class DeleteBorrowingCommandHandler : IRequestHandler<DeleteBorrowingCommand, BorrowingDto>
+public class DeleteBorrowingCommandHandler(IBorrowingService borrowingService) : IRequestHandler<DeleteBorrowingCommand, BorrowingDto>
 {
-    private readonly IBorrowingService _borrowingService;
-
-    public DeleteBorrowingCommandHandler(IBorrowingService borrowingService)
-    {
-        _borrowingService = borrowingService;
-    }
     public async Task<BorrowingDto> Handle(DeleteBorrowingCommand command, CancellationToken cancellationToken)
     {
-        return await _borrowingService.DeleteBorrowingAsync(command.Id);
+        return await borrowingService.DeleteBorrowingAsync(command.Id);
 
     }
 }

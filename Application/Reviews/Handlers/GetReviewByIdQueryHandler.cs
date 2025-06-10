@@ -5,17 +5,12 @@ using MediatR;
 
 namespace Application.Reviews.Handlers
 {
-    public class GetReviewByIdQueryHandler : IRequestHandler<GetReviewByIdQuery, ReviewDto>
+    public class GetReviewByIdQueryHandler(IReviewService reviewService)
+        : IRequestHandler<GetReviewByIdQuery, ReviewDto>
     {
-        private readonly IReviewService _reviewService;
-
-        public GetReviewByIdQueryHandler(IReviewService reviewService)
-        {
-            _reviewService = reviewService;
-        }
         public async Task<ReviewDto> Handle(GetReviewByIdQuery query, CancellationToken cancellationToken)
         {
-            return await _reviewService.GetReviewByIdAsync(query.id);
+            return await reviewService.GetReviewByIdAsync(query.id);
 
         }
     }

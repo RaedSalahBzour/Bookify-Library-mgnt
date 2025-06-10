@@ -9,19 +9,14 @@ using Data.Interfaces;
 
 namespace Service.Services;
 
-public class AuthService : IAuthService
-{
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    private readonly ITokenService _tokenService;
-    public AuthService(IMapper mapper,
+public class AuthService(
+        IMapper mapper,
         ITokenService tokenService,
-        IUnitOfWork unitOfWork)
-    {
-        _mapper = mapper;
-        _tokenService = tokenService;
-        _unitOfWork = unitOfWork;
-    }
+        IUnitOfWork unitOfWork) : IAuthService
+{
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
+    private readonly ITokenService _tokenService = tokenService;
 
     public async Task<List<UserDto>> GetUsersAsync()
     {

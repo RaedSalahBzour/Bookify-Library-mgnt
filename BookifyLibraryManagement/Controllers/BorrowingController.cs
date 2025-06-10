@@ -11,16 +11,9 @@ namespace Bookify_Library_mgnt.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BorrowingController : ControllerBase
+public class BorrowingController(ISender sender) : ControllerBase
 {
-    private readonly IBorrowingService _borrowingService;
-    private readonly ISender _sender;
-
-    public BorrowingController(IBorrowingService borrowingService, ISender sender)
-    {
-        _borrowingService = borrowingService;
-        _sender = sender;
-    }
+    private readonly ISender _sender = sender;
 
     [HttpGet]
     public async Task<IActionResult> GetBorrowings()

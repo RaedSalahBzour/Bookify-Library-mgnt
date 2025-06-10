@@ -6,11 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public class BorrowingRepository : GenericRepository<Borrowing>, IBorrowingRepository
+public class BorrowingRepository(ApplicationDbContext context)
+    : GenericRepository<Borrowing>(context), IBorrowingRepository
 {
-    public BorrowingRepository(ApplicationDbContext context) : base(context)
-    {
-    }
+
 
     public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
         string bookId)

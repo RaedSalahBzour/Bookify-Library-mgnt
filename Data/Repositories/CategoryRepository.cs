@@ -7,11 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
+public class CategoryRepository(ApplicationDbContext context)
+    : GenericRepository<Category>(context), ICategoryRepository
 {
-    public CategoryRepository(ApplicationDbContext context) : base(context)
-    {
-    }
 
 
     public List<Category> GetCategories()

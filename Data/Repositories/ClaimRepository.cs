@@ -10,14 +10,11 @@ using System.Threading.Tasks;
 
 namespace Data.Repositories;
 
-public class ClaimRepository : IClaimRepository
+public class ClaimRepository(UserManager<User> userManager) : IClaimRepository
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<User> _userManager = userManager;
 
-    public ClaimRepository(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
+
 
     public async Task<IdentityResult> AddClaimToUser(User user, Claim claim)
     {
