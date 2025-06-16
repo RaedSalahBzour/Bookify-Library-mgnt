@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace Bookify_Library_mgnt.Middlewares;
 public class GlobalExceptionMiddleware : IMiddleware
@@ -40,7 +37,7 @@ public class GlobalExceptionMiddleware : IMiddleware
             _ => (500, "Internal Server Error")
         };
 
-        var problem = _problemDetailsFactory.CreateProblemDetails(
+        ProblemDetails problem = _problemDetailsFactory.CreateProblemDetails(
             httpContext,
             statusCode: statusCode,
             title: title,
