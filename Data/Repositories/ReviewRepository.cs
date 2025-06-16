@@ -9,9 +9,6 @@ namespace Data.Repositories;
 public class ReviewRepository(ApplicationDbContext context)
     : GenericRepository<Review>(context), IReviewRepository
 {
-
-
-
     public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
         string bookId)
     {

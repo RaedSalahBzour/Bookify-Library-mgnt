@@ -43,13 +43,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
         return services;
     }
     public static IServiceCollection AddTokenServices(this IServiceCollection services)
     {
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddTransient<ITokenService, TokenService>();
 
         return services;
     }
