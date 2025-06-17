@@ -11,14 +11,14 @@ public abstract class GenericRepository<T>(ApplicationDbContext context)
     protected readonly DbSet<T> _dbSet = context.Set<T>();
 
 
-    public List<T> GetAll(Func<IQueryable<T>, IQueryable<T>> include = null)
+    public Task<List<T>> GetAll(Func<IQueryable<T>, IQueryable<T>> include = null)
     {
         IQueryable<T> query = _dbSet;
 
         if (include != null)
             query = include(query);
 
-        return query.ToList();
+        return query.ToListAsync();
     }
 
     public async Task<T?> GetByIdAsync(string id)

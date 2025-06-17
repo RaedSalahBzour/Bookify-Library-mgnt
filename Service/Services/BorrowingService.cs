@@ -3,6 +3,7 @@ using Application.Borrowings.Services;
 using AutoMapper;
 using Data.Entities;
 using Data.Interfaces;
+using Service.Exceptions;
 namespace Service.Services;
 
 public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowingService
@@ -12,7 +13,7 @@ public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowi
 
     public async Task<List<BorrowingDto>> GetBorrowingsAsync()
     {
-        List<Borrowing> borrowings = _unitOfWork.BorrowingRepository.GetAll();
+        List<Borrowing> borrowings = await _unitOfWork.BorrowingRepository.GetAll();
         List<BorrowingDto> borrowingDtos = _mapper.Map<List<BorrowingDto>>(borrowings);
         return borrowingDtos;
     }
@@ -20,7 +21,8 @@ public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowi
     {
         Borrowing? borrowing = await _unitOfWork.BorrowingRepository.GetByIdAsync(id);
         if (borrowing == null)
-            throw new KeyNotFoundException($"Borrowing With Id {id} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("Borrowing Not Found", $"Borrowing With Id {id} Was Not Found");
         BorrowingDto borrowingDto = _mapper.Map<BorrowingDto>(borrowing);
         return borrowingDto;
     }
@@ -31,11 +33,12 @@ public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowi
         Book? bookExist = await _unitOfWork.BookRepository.GetByIdAsync(CreateBorrowingDto.BookId);
         User? userExist = await _unitOfWork.AuthRepository.GetUserByIdAsync(CreateBorrowingDto.UserId);
         if (bookExist is null)
-
-            throw new KeyNotFoundException($"Book With Id {CreateBorrowingDto.BookId} Was Not Found");
+            throw ExceptionManager
+               .ReturnNotFound("Book Not Found", $"Book with ID '{CreateBorrowingDto.BookId}' not found.");
 
         if (userExist is null)
-            throw new KeyNotFoundException($"User With Id {CreateBorrowingDto.UserId} Was Not Found");
+            throw ExceptionManager
+               .ReturnNotFound("User Not Found", $"User with ID '{CreateBorrowingDto.UserId}' not found.");
 
         await _unitOfWork.BorrowingRepository.AddAsync(borrowing);
         await _unitOfWork.BorrowingRepository.SaveChangesAsync();
@@ -46,7 +49,8 @@ public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowi
     {
         Borrowing? borrowing = await _unitOfWork.BorrowingRepository.GetByIdAsync(id);
         if (borrowing == null)
-            throw new KeyNotFoundException($"Borrowing With Id {id} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("Borrowing Not Found", $"Borrowing With Id {id} Was Not Found");
 
         _mapper.Map(UpdateBorrowingDto, borrowing);
         var (userExists, bookExists) =
@@ -55,10 +59,12 @@ public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowi
 
 
         if (!userExists)
-            throw new KeyNotFoundException($"User with ID '{UpdateBorrowingDto.UserId}' not found.");
+            throw ExceptionManager
+                .ReturnNotFound("User Not Found", $"User with ID '{UpdateBorrowingDto.UserId}' not found.");
 
         if (!bookExists)
-            throw new KeyNotFoundException($"Book with ID '{UpdateBorrowingDto.BookId}' not found.");
+            throw ExceptionManager
+                .ReturnNotFound("Book Not Found", $"Book with ID '{UpdateBorrowingDto.BookId}' not found.");
 
         await _unitOfWork.BorrowingRepository.Update(borrowing);
         await _unitOfWork.BorrowingRepository.SaveChangesAsync();
@@ -70,7 +76,8 @@ public class BorrowingService(IMapper mapper, IUnitOfWork unitOfWork) : IBorrowi
     {
         Borrowing? borrowing = await _unitOfWork.BorrowingRepository.GetByIdAsync(id);
         if (borrowing == null)
-            throw new KeyNotFoundException($"Borrowing With Id {id} Was Not Found");
+            throw ExceptionManager
+               .ReturnNotFound("Borrowing Not Found", $"Borrowing With Id {id} Was Not Found");
 
         await _unitOfWork.BorrowingRepository.Delete(borrowing);
         await _unitOfWork.BorrowingRepository.SaveChangesAsync();

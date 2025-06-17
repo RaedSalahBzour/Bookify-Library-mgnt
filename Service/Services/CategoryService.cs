@@ -3,6 +3,7 @@ using Application.Categories.Services;
 using AutoMapper;
 using Data.Entities;
 using Data.Interfaces;
+using Service.Exceptions;
 
 namespace Service.Services;
 
@@ -12,7 +13,7 @@ public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategory
     private readonly IMapper _mapper = mapper;
     public async Task<List<CategoryDto>> GetCategoriesAsync()
     {
-        List<Category> categories = _unitOfWork.CategoryRepository.GetCategories();
+        List<Category> categories = await _unitOfWork.CategoryRepository.GetCategories();
         List<CategoryDto> categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
         return categoryDtos;
 
@@ -21,7 +22,8 @@ public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategory
     {
         Category? category = await _unitOfWork.CategoryRepository.GetCategoryById(id);
         if (category == null)
-            throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("Category Not Found", $"Category With Id {id} Was Not Found");
         CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
         return categoryDto;
     }
@@ -29,6 +31,11 @@ public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategory
     public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto CreateCategoryDto)
     {
         Category? category = _mapper.Map<Category>(CreateCategoryDto);
+        bool exists = await _unitOfWork.CategoryRepository.ExistsByNameAsync(CreateCategoryDto.Name);
+        if (exists)
+            throw ExceptionManager.ReturnConflict(
+                "Category Exists",
+                $"A category with name '{CreateCategoryDto.Name}' already exists.");
         await _unitOfWork.CategoryRepository.AddAsync(category);
         await _unitOfWork.CategoryRepository.SaveChangesAsync();
         CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
@@ -38,7 +45,8 @@ public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategory
     {
         Category? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
         if (category is null)
-            throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
+            throw ExceptionManager
+                 .ReturnNotFound("Category Not Found", $"Category With Id {id} Was Not Found");
         _mapper.Map(UpdateCategoryDto, category);
         await _unitOfWork.CategoryRepository.Update(category);
         await _unitOfWork.CategoryRepository.SaveChangesAsync();
@@ -50,7 +58,8 @@ public class CategoryService(IMapper mapper, IUnitOfWork unitOfWork) : ICategory
     {
         Category? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
         if (category is null)
-            throw new KeyNotFoundException($"Category With Id {id} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("Category Not Found", $"Category With Id {id} Was Not Found");
         await _unitOfWork.CategoryRepository.Delete(category);
         await _unitOfWork.CategoryRepository.SaveChangesAsync();
         CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);

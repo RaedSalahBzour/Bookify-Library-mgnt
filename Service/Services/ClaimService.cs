@@ -4,6 +4,7 @@ using Data.Entities;
 using Data.Enums;
 using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Service.Exceptions;
 using System.Security.Claims;
 
 namespace Service.Services;
@@ -16,7 +17,8 @@ public class ClaimService(IUnitOfWork unitOfWork) : IClaimService
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User With Id {userId} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("User Not Found", $"User With Id {userId} Was Not Found");
         IList<Claim> userClaims = await _unitOfWork.AuthRepository.GetUserClaimsAsync(user);
         return userClaims;
     }
@@ -24,12 +26,15 @@ public class ClaimService(IUnitOfWork unitOfWork) : IClaimService
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(addClaimDto.userId);
         if (user == null)
-            throw new KeyNotFoundException($"User With Id {addClaimDto.userId} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("User Not Found", $"User With Id {addClaimDto.userId} Was Not Found");
         Claim? claim = new Claim(addClaimDto.claimType, addClaimDto.claimValue);
         IdentityResult identityResult = await _unitOfWork.ClaimRepository.AddClaimToUser(user, claim);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-              $"Operation '{OperationNames.AddClaimToUser}' failed to complete.");
+            throw ExceptionManager.ReturnInternalServerError(
+        $"'{OperationNames.AddClaimToUser}' failed to complete.",
+        $"Something went wrong while trying to '{OperationNames.AddClaimToUser}' Please try again later."
+           );
 
         string added = nameof(OperationNames.ClaimAdded);
         return added;
@@ -39,19 +44,22 @@ public class ClaimService(IUnitOfWork unitOfWork) : IClaimService
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User With Id {userId} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("User Not Found", $"User With Id {userId} Was Not Found");
 
         IList<Claim> claims = await _unitOfWork.AuthRepository.GetUserClaimsAsync(user);
         Claim? claimToRemove = claims.FirstOrDefault(c => c.Type == claimType);
 
         if (claimToRemove == null)
-            throw new KeyNotFoundException($"Claim With Type {claimType} Was Not Found");
-
+            throw ExceptionManager
+                .ReturnNotFound("Claim Not Found", $"Claim With Type {claimType} Was Not Found");
         IdentityResult identityResult = await _unitOfWork.ClaimRepository.RemoveClaimFromUser(user, claimToRemove);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-                   $"Operation '{OperationNames.RemoveClaimFromUser}' failed to complete.");
-        string removed = nameof(OperationNames.CLaimRemoved);
+            throw ExceptionManager.ReturnInternalServerError(
+        $"'{OperationNames.RemoveClaimFromUser}' failed to complete.",
+        $"Something went wrong while trying to '{OperationNames.RemoveClaimFromUser}' Please try again later."
+           );
+        string removed = nameof(OperationNames.ClaimRemoved);
         return removed;
 
     }

@@ -4,6 +4,7 @@ using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Service.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -48,10 +49,13 @@ public class TokenService(IConfiguration configuration, IUnitOfWork unitOfWork) 
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
         if (user is null)
-            throw new KeyNotFoundException($"User with Email '{userId}' was not found.");
+            throw ExceptionManager
+                .ReturnNotFound("User Not Found", $"User with Email '{userId}' was not found.");
 
         if (user.RefreshToken != RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
-            throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+            throw ExceptionManager
+                .ReturnUnauthorized("Invalid or expired refresh token.",
+                "The refresh token provided is either invalid or has expired.");
 
         return user;
     }

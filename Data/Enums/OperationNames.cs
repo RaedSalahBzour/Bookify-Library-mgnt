@@ -20,7 +20,7 @@ public enum OperationNames
     DeleteBook,
     GetBook,
     GetBooks,
-    CLaimRemoved,
+    ClaimRemoved,
     RoleRemoved,
     RemoveClaimFromUser,
     GetUserClaims,

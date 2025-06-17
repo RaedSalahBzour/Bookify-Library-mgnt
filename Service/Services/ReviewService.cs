@@ -3,6 +3,7 @@ using Application.Reviews.Services;
 using AutoMapper;
 using Data.Entities;
 using Data.Interfaces;
+using Service.Exceptions;
 namespace Service.Services;
 
 public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewService
@@ -12,7 +13,7 @@ public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewServ
 
     public async Task<List<ReviewDto>> GetReviewsAsync()
     {
-        List<Review> reviews = _unitOfWork.ReviewRepository.GetAll();
+        List<Review> reviews = await _unitOfWork.ReviewRepository.GetAll();
         List<ReviewDto> reviewDtos = _mapper.Map<List<ReviewDto>>(reviews);
         return reviewDtos;
     }
@@ -20,7 +21,8 @@ public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewServ
     {
         Review? review = await _unitOfWork.ReviewRepository.GetByIdAsync(id);
         if (review is null)
-            throw new KeyNotFoundException($"Review With Id {id} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("Review Not Found", $"Review With Id {id} Was Not Found");
         ReviewDto reviewDto = _mapper.Map<ReviewDto>(review);
         return reviewDto;
     }
@@ -31,10 +33,12 @@ public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewServ
         (bool userExists, bool bookExists) = await _unitOfWork.ReviewRepository.CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
 
         if (!userExists)
-            throw new KeyNotFoundException($"User With Id {dto.UserId} Was Not Found");
+            throw ExceptionManager
+                   .ReturnNotFound("User Not Found", $"User With Id {dto.UserId} Was Not Found");
 
         if (!bookExists)
-            throw new KeyNotFoundException($"Book With Id {dto.BookId} Was Not Found");
+            throw ExceptionManager
+                    .ReturnNotFound("Book Not Found", $"Book With Id {dto.BookId} Was Not Found");
 
         await _unitOfWork.ReviewRepository.AddAsync(review);
         await _unitOfWork.ReviewRepository.SaveChangesAsync();
@@ -45,16 +49,19 @@ public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewServ
     {
         Review? review = await _unitOfWork.ReviewRepository.GetByIdAsync(id);
         if (review is null)
-            throw new KeyNotFoundException($"Review With Id {id} Was Not Found");
+            throw ExceptionManager
+    .ReturnNotFound("Review Not Found", $"Review With Id {id} Was Not Found");
         (bool userExists, bool bookExists) =
            await _unitOfWork.ReviewRepository
            .CheckUserAndBookExistAsync(dto.UserId, dto.BookId);
 
         if (!userExists)
-            throw new KeyNotFoundException($"User With Id {dto.UserId} Was Not Found");
+            throw ExceptionManager
+                    .ReturnNotFound("User Not Found", $"User With Id {dto.UserId} Was Not Found");
 
         if (!bookExists)
-            throw new KeyNotFoundException($"Book With Id {dto.BookId} Was Not Found");
+            throw ExceptionManager
+                    .ReturnNotFound("Book Not Found", $"Book With Id {dto.BookId} Was Not Found");
 
         _mapper.Map(dto, review);
         await _unitOfWork.ReviewRepository.Update(review);
@@ -66,7 +73,8 @@ public class ReviewService(IMapper mapper, IUnitOfWork unitOfWork) : IReviewServ
     {
         Review? review = await _unitOfWork.ReviewRepository.GetByIdAsync(id);
         if (review is null)
-            throw new KeyNotFoundException($"Review With Id {id} Was Not Found");
+            throw ExceptionManager
+    .ReturnNotFound("Review Not Found", $"Review With Id {id} Was Not Found");
         await _unitOfWork.ReviewRepository.Delete(review);
         await _unitOfWork.ReviewRepository.SaveChangesAsync();
         ReviewDto reviewDto = _mapper.Map<ReviewDto>(review);

@@ -1,10 +1,12 @@
 ﻿using Application.Authorization.Dtos.Roles;
 using Application.Authorization.Services;
+using Application.Users.Dtos;
 using AutoMapper;
 using Data.Entities;
 using Data.Enums;
 using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Service.Exceptions;
 
 namespace Service.Services;
 
@@ -22,7 +24,8 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         IdentityRole? role = await _unitOfWork.RoleRepository.FindRoleByIdAsync(id);
         if (role == null)
-            throw new KeyNotFoundException($"Role With Id {id} Was Not Found");
+            throw ExceptionManager
+                .ReturnNotFound("Role Not Found", $"Role With Id {id} Was Not Found");
         RoleDto roleDto = _mapper.Map<RoleDto>(role);
         return roleDto;
     }
@@ -31,14 +34,19 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         bool roleExists = await _unitOfWork.RoleRepository.RoleExistsAsync(CreateRoleDto.RoleName);
         if (roleExists)
-            throw new InvalidOperationException($"Role With Id {CreateRoleDto.RoleName} Is Already Exist");
+            throw ExceptionManager.ReturnConflict(
+                $"Role With Id {CreateRoleDto.RoleName} Is Already Exist",
+                "Each Role Name must be unique. Try a different one."
+               );
 
         IdentityRole? roleEntity = _mapper.Map<IdentityRole>(CreateRoleDto);
         roleEntity.ConcurrencyStamp = Guid.NewGuid().ToString();
         IdentityResult identityResult = await _unitOfWork.RoleRepository.CreateRoleAsync(roleEntity);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-          $"Operation '{OperationNames.CreateRole}' failed to complete.");
+            throw ExceptionManager.ReturnInternalServerError(
+         $"'{OperationNames.CreateRole}' failed to complete.",
+         $"Something went wrong while trying to '{OperationNames.CreateRole}'. Please try again later."
+            );
         return roleEntity;
 
     }
@@ -46,15 +54,21 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         IdentityRole? role = await _unitOfWork.RoleRepository.FindRoleByIdAsync(id);
         if (role is null)
-            throw new KeyNotFoundException($"Role With Id {UpdateRoleDto.RoleName} Was Not Found");
+            throw ExceptionManager
+               .ReturnNotFound("Role Not Found", $"Role With Id {id} Was Not Found");
         bool roleExists = await _unitOfWork.RoleRepository.RoleExistsAsync(UpdateRoleDto.RoleName);
         if (roleExists)
-            throw new KeyNotFoundException($"Role With Id {UpdateRoleDto.RoleName} Is Already Exist");
+            throw ExceptionManager.ReturnConflict(
+                $"Role With Id {UpdateRoleDto.RoleName} Is Already Exist",
+                "Each Role Name must be unique. Try a different one."
+               );
         _mapper.Map(UpdateRoleDto, role);
         IdentityResult identityResult = await _unitOfWork.RoleRepository.UpdateRoleAsync(role);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-          $"Operation '{OperationNames.UpdateRole}' failed to complete.");
+            throw ExceptionManager.ReturnInternalServerError(
+          $"'{OperationNames.UpdateRole}' failed to complete.",
+          $"Something went wrong while trying to '{OperationNames.UpdateRole}'. Please try again later."
+             );
         return role;
     }
 
@@ -62,12 +76,16 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         IdentityRole? role = await _unitOfWork.RoleRepository.FindRoleByIdAsync(id);
         if (role is null)
-            throw new KeyNotFoundException($"Role With Id {id} Was Not Found");
+            throw ExceptionManager
+               .ReturnNotFound("Role Not Found", $"Role With Id {id} Was Not Found");
 
         IdentityResult identityResult = await _unitOfWork.RoleRepository.DeleteRoleAsync(role);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-          $"Operation '{OperationNames.DeleteRole}' failed to complete.");
+            throw ExceptionManager.ReturnInternalServerError(
+         $"'{OperationNames.DeleteRole}' failed to complete.",
+         $"Something went wrong while trying to '{OperationNames.DeleteRole}'. Please try again later."
+            );
+
         return role;
     }
 
@@ -75,16 +93,20 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User with ID '{userId}' was not found.");
+            throw ExceptionManager
+                .ReturnNotFound("User Not Found", $"User with ID '{userId}' was not found.");
 
         IdentityRole? role = await _unitOfWork.RoleRepository.FindRoleByNameAsync(roleName);
         if (role == null)
-            throw new KeyNotFoundException($"Role with name '{roleName}' was not found.");
+            throw ExceptionManager
+                .ReturnNotFound("Role Not Found", $"Role with name '{roleName}' was not found.");
 
         IdentityResult identityResult = await _unitOfWork.RoleRepository.AddUserToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-          $"Operation '{OperationNames.AddUserToRole}' failed to complete.");
+            throw ExceptionManager.ReturnInternalServerError(
+        $"'{OperationNames.AddUserToRole}' failed to complete.",
+        $"Something went wrong while trying to '{OperationNames.AddUserToRole}'. Please try again later."
+           );
         string UserAssignedToRole = nameof(OperationNames.UserAssignedToRole);
         return UserAssignedToRole;
     }
@@ -92,16 +114,20 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User with ID '{userId}' was not found.");
+            throw ExceptionManager
+    .ReturnNotFound("User Not Found", $"User with ID '{userId}' was not found.");
 
         IdentityRole role = await _unitOfWork.RoleRepository.FindRoleByNameAsync(roleName);
         if (role == null)
-            throw new KeyNotFoundException($"Role with name '{roleName}' was not found.");
+            throw ExceptionManager
+                 .ReturnNotFound("Role Not Found", $"Role with name '{roleName}' was not found.");
 
         IdentityResult identityResult = await _unitOfWork.RoleRepository.RemoveUserFromRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
-            throw new InvalidOperationException(
-                     $"Operation '{OperationNames.RemoveUserFromRole}' failed to complete.");
+            throw ExceptionManager.ReturnInternalServerError(
+         $"'{OperationNames.RemoveUserFromRole}' failed to complete.",
+         $"Something went wrong while trying to '{OperationNames.RemoveUserFromRole}'. Please try again later."
+            );
 
         string UserUnAssignedFromRole = nameof(OperationNames.UserUnAssignedFromRole);
         return UserUnAssignedFromRole; ;
@@ -110,7 +136,8 @@ public class RoleService(IMapper mapper, IUnitOfWork unitOfWork) : IRoleService
     {
         User? user = await _unitOfWork.AuthRepository.GetUserByEmailAsync(email);
         if (user == null)
-            throw new KeyNotFoundException($"User with Email '{email}' was not found.");
+            throw ExceptionManager
+   .ReturnNotFound("User Not Found", $"User with Email '{email}' was not found.");
         IList<string> userRoles = await _unitOfWork.RoleRepository.GetUserRolesAsync(user);
         return userRoles;
     }

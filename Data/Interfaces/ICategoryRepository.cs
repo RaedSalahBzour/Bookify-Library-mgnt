@@ -4,7 +4,8 @@ namespace Data.Interfaces;
 
 public interface ICategoryRepository : IGenericRepository<Category>
 {
-    List<Category> GetCategories();
+    Task<bool> ExistsByNameAsync(string name);
+    Task<List<Category>> GetCategories();
     Task<Category> GetCategoryById(string id);
 
 }

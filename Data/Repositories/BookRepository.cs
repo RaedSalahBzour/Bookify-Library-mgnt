@@ -12,13 +12,13 @@ public class BookRepository(ApplicationDbContext context)
 
 
 
-    public List<Book> GetBooksAsync()
+    public async Task<List<Book>> GetBooksAsync()
     {
-        List<Book> books = GetAll(query =>
+        List<Book> books = await GetAll(query =>
         query.Include(b => b.Reviews)
          .Include(b => b.Borrowings)
          .Include(b => b.CategoryBooks)
-         .ThenInclude(cb => cb.Category)).ToList();
+         .ThenInclude(cb => cb.Category));
         return books;
     }
 
