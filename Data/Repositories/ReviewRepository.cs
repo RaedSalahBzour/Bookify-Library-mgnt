@@ -12,10 +12,9 @@ public class ReviewRepository(ApplicationDbContext context)
     public async Task<(bool userExists, bool bookExists)> CheckUserAndBookExistAsync(string userId,
         string bookId)
     {
-        Task<bool> userExists = _context.Users.AnyAsync(u => u.Id == userId);
-        Task<bool> bookExists = _context.Books.AnyAsync(b => b.Id == bookId);
-        await Task.WhenAll(userExists, bookExists);
-        return (userExists.Result, bookExists.Result);
+        bool userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+        bool bookExists = await _context.Books.AnyAsync(b => b.Id == bookId);
+        return (userExists, bookExists);
     }
 
 }

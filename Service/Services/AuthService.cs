@@ -43,8 +43,7 @@ public class AuthService(
         if (existingUserByEmail != null)
             throw ExceptionManager.ReturnConflict(
                 $"Email '{createUserDto.Email}' already exists.",
-                "Each email address must be unique. Try a different one."
-             );
+                "Each email address must be unique. Try a different one.");
 
 
         User? existingUserByUsername = await _unitOfWork.AuthRepository
@@ -107,7 +106,8 @@ public class AuthService(
             throw ExceptionManager.ReturnUnauthorized(
                 $"'{OperationNames.Login}' failed",
                 "Incorrect email or password"
-            ); bool isPasswordValid = _unitOfWork.AuthRepository.VerifyPasswordAsync(user, loginDto.Password);
+            );
+        bool isPasswordValid = _unitOfWork.AuthRepository.VerifyPasswordAsync(user, loginDto.Password);
 
         if (isPasswordValid == false)
             throw ExceptionManager.ReturnUnauthorized(
